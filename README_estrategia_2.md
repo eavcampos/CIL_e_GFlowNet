@@ -70,6 +70,26 @@ bash rodar_experimentos.sh           # depois: 2 configs x 4 seeds, 100 épocas
   (`--refazer` força rodar tudo de novo).
 - Windows: rodar no Git Bash ou no WSL.
 
+## Gráficos
+
+**Por execução** (os mesmos da Estratégia 1, mais os de 100 classes em blocos por tarefa), numa
+pasta própria: `../figures_cil/<config>_seed<seed>_<data_hora>/`. Log, JSON e checkpoint levam o
+mesmo identificador no nome, então nada é sobrescrito.
+
+**Comparativos**, gerados por `comparar_resultados.py` (chamado automaticamente no fim do
+`rodar_experimentos.sh`, ou à mão com `python comparar_resultados.py`), em
+`../comparacao/<data_hora>/`:
+
+| Arquivo | O que mostra |
+| --- | --- |
+| `1_pares_por_seed.png` | AAC, vazamento, erro dentro da tarefa e teto de ganho; cada seed é uma linha ligando linha de base e experimento, com a diferença média e em quantas seeds melhorou |
+| `2_vazamento_por_fronteira.png` | vazamento após cada tarefa, média e faixa (mínimo a máximo) entre seeds |
+| `3_acc_final_por_tarefa.png` | acurácia final de cada tarefa: onde o esquecimento se concentra |
+| `4_diagnostico_pseudo_negativos.png` | só experimento: fração de pseudo-negativos que vazam (deve cair) e ESS por época |
+| `resumo.csv` | os números de todos os gráficos, separados por `;` (abre no Excel) |
+
+Usa a execução mais recente de cada (config, seed) e só as seeds com as duas execuções concluídas.
+
 ## Como rodar uma execução isolada
 
 ```bash

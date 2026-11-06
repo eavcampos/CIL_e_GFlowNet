@@ -53,7 +53,7 @@ if [ -z "${PYTHON:-}" ]; then
 fi
 
 # --- verificações antes de começar ---------------------------------------------
-for f in "$SCRIPT" pseudo_negativos_cil.py metricas_vazamento.py "${CONFIGS[@]}"; do
+for f in "$SCRIPT" pseudo_negativos_cil.py metricas_vazamento.py comparar_resultados.py "${CONFIGS[@]}"; do
     [ -f "$f" ] || { echo "ERRO: arquivo $f não encontrado em $PASTA_PROJETO"; exit 1; }
 done
 "$PYTHON" -c "import torch, torchvision, sklearn, matplotlib, numpy" 2>/dev/null || {
@@ -144,5 +144,12 @@ echo "Resultados detalhados (JSON, figuras, checkpoints) em: $(cd .. && pwd)/res
     echo "Execução de $(date '+%d/%m/%Y %H:%M:%S')"
     for linha in "${RESUMO[@]}"; do echo "$linha"; done
 } >> "$PASTA_SAIDA/resumo.txt"
+
+# --- gráficos comparativos linha de base x experimento ------------------------------
+# Usa todas as seeds que tenham as DUAS execuções concluídas (mesmo que alguma tenha falhado).
+echo "============================================================"
+echo "Gerando gráficos comparativos (linha de base x experimento)..."
+"$PYTHON" comparar_resultados.py --resultados ../results --saida ../comparacao \
+    || echo "AVISO: a comparação falhou; rode à mão: $PYTHON comparar_resultados.py"
 
 [ $FALHAS -eq 0 ] || { echo "$FALHAS execução(ões) falharam."; exit 1; }

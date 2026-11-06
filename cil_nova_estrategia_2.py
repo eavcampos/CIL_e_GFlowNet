@@ -123,6 +123,7 @@ def carregar_configuracao():
         cfg = json.load(f)
     if args.seed is not None:
         cfg["seed"] = args.seed
+    cfg["_arquivo_config"] = os.path.abspath(args.config)   # [Estratégia 2] nomeia as saídas
     return cfg
 
 
@@ -154,16 +155,25 @@ PN_MODO = str(CFG_PN.get("modo", "nenhum")).lower()
 PN_POR_LOTE = int(CFG_PN.get("por_lote", BATCH_SIZE))
 LAMBDA_PN = float(CFG_PN.get("lambda_pn", 0.5))
 
+timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
+
+# [Estratégia 2] identificador único da execução: <config>_seed<seed>_<data_hora>, por exemplo
+# "baseline_seed1993_20261106_101500". Vai no nome do log, do JSON, do checkpoint e da pasta de
+# figuras, para que as 8 execuções do rodar_experimentos.sh não sobrescrevam umas às outras.
+NOME_CONFIG = os.path.splitext(os.path.basename(CFG.get("_arquivo_config", "config")))[0]
+if NOME_CONFIG.startswith("config_"):
+    NOME_CONFIG = NOME_CONFIG[len("config_"):]
+ID_EXECUCAO = f"{NOME_CONFIG}_seed{SEED}_{timestamp}"
+
 # Diretórios de saída (convenção do projeto: relativos ao cwd da estratégia)
 OS_LOG_DIR = "../logs"
 OS_RESULTS_DIR = "../results"
-OS_FIGURES_DIR = "../figures_cil"
+OS_FIGURES_DIR = os.path.join("../figures_cil", ID_EXECUCAO)   # [Estratégia 2] uma pasta por execução
 OS_CHECKPOINTS_DIR = "../checkpoints"
 for _d in (OS_LOG_DIR, OS_RESULTS_DIR, OS_FIGURES_DIR, OS_CHECKPOINTS_DIR):
     os.makedirs(_d, exist_ok=True)
 
-timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
-log_filename = os.path.join(OS_LOG_DIR, f"experiment_{timestamp}_nova_estrategia_2_seed{SEED}.log")
+log_filename = os.path.join(OS_LOG_DIR, f"experiment_{ID_EXECUCAO}.log")
 logging.basicConfig(
     level=logging.INFO, format="%(asctime)s [%(levelname)s] %(message)s",
     handlers=[logging.FileHandler(log_filename, encoding="utf-8"), logging.StreamHandler()]
@@ -1431,6 +1441,9 @@ def executar_experimento():
 
     json_data = {
         "estrategia": "nova_estrategia_2",
+        "id_execucao": ID_EXECUCAO,              # [Estratégia 2] ex.: baseline_seed1993_20261106_101500
+        "nome_config": NOME_CONFIG,              # [Estratégia 2] baseline / experimento
+        "arquivo_config": CFG.get("_arquivo_config"),
         "configuracao_efetiva": {
             "seed": SEED, "dataset": CFG_DATASET["nome"], "num_tasks": NUM_TASKS,
             "classes_por_tarefa": CLASSES_POR_TAREFA, "batch_size": BATCH_SIZE,
@@ -1600,7 +1613,7 @@ def executar_experimento():
         backbone, adapters, fc, lvq, loader_teste_total, banco, task_stats, "final")
 
     # === CHECKPOINT ===
-    checkpoint_path = os.path.join(OS_CHECKPOINTS_DIR, f"checkpoint_{timestamp}_nova_estrategia_2_seed{SEED}.pt")
+    checkpoint_path = os.path.join(OS_CHECKPOINTS_DIR, f"checkpoint_{ID_EXECUCAO}.pt")
     torch.save({
         "adapters_state_dicts": [ad.state_dict() for ad in adapters],
         "thetas_init_adapter": thetas_init_adapter,
@@ -1618,7 +1631,7 @@ def executar_experimento():
     }, checkpoint_path)
     logging.info(f" [Checkpoint] {checkpoint_path}")
 
-    json_filename = os.path.join(OS_RESULTS_DIR, f"results_{timestamp}_nova_estrategia_2_seed{SEED}.json")
+    json_filename = os.path.join(OS_RESULTS_DIR, f"results_{ID_EXECUCAO}.json")
     with open(json_filename, "w", encoding="utf-8") as f:
         json.dump(json_data, f, indent=4, ensure_ascii=False)
     logging.info(f" [JSON] {json_filename}")
