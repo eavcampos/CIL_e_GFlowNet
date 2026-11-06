@@ -54,7 +54,23 @@ Correspondência com o brinquedo (`pseudo_negativos_gfn.py`):
 | `r(z) = p_antiga(z) * exp(beta * score)` | igual, com a margem no lugar do score |
 | uso dos pontos | CE com rótulo antigo no treino do Adapter_t |
 
-## Como rodar
+## Como rodar tudo de uma vez
+
+```bash
+bash rodar_experimentos.sh --teste   # primeiro: seed 1993, 2 épocas, linha de base + experimento
+bash rodar_experimentos.sh           # depois: 2 configs x 4 seeds, 100 épocas
+```
+
+- `config_baseline.json`: `pseudo_negativos.modo = "nenhum"` (linha de base).
+- `config_experimento.json`: `pseudo_negativos.modo = "is"` (experimento).
+- Os dois são idênticos no resto: CIFAR-100, 5 tarefas x 20 classes, dataset em `../../my_data`.
+- A saída de cada execução vai para `../execucoes/<config>_seed<seed>.txt`, e um resumo
+  acumulado para `../execucoes/resumo.txt`.
+- Se o script for interrompido, basta chamá-lo de novo: o que terminou é pulado
+  (`--refazer` força rodar tudo de novo).
+- Windows: rodar no Git Bash ou no WSL.
+
+## Como rodar uma execução isolada
 
 ```bash
 # linha de base (equivale à Estratégia 1)
