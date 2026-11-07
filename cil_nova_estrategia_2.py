@@ -74,7 +74,7 @@ unidades_lvq_por_classe=16).
 
 Esta execução salva checkpoint (todos os Adapters, FC, LVQ completo, thetas
 de inicialização de cada Adapter/LVQ-por-tarefa, protótipos congelados e a
-partição de classes sorteada) em ../checkpoints/, para permitir reavaliação
+partição de classes sorteada) em resultados/checkpoints/, para permitir reavaliação
 sem retreinar.
 """
 import os
@@ -165,11 +165,13 @@ if NOME_CONFIG.startswith("config_"):
     NOME_CONFIG = NOME_CONFIG[len("config_"):]
 ID_EXECUCAO = f"{NOME_CONFIG}_seed{SEED}_{timestamp}"
 
-# Diretórios de saída (convenção do projeto: relativos ao cwd da estratégia)
-OS_LOG_DIR = "../logs"
-OS_RESULTS_DIR = "../results"
-OS_FIGURES_DIR = os.path.join("../figures_cil", ID_EXECUCAO)   # [Estratégia 2] uma pasta por execução
-OS_CHECKPOINTS_DIR = "../checkpoints"
+# [Estratégia 2] Diretórios de saída: DENTRO do projeto, em CIL_e_GFlowNet/resultados/, qualquer
+# que seja a pasta de onde o comando é executado (a Estratégia 1 usava ../ relativo ao cwd).
+OS_RESULTADOS_RAIZ = os.path.join(SCRIPT_DIR, "resultados")
+OS_LOG_DIR = os.path.join(OS_RESULTADOS_RAIZ, "logs")
+OS_RESULTS_DIR = os.path.join(OS_RESULTADOS_RAIZ, "results")
+OS_FIGURES_DIR = os.path.join(OS_RESULTADOS_RAIZ, "figures_cil", ID_EXECUCAO)   # uma pasta por execução
+OS_CHECKPOINTS_DIR = os.path.join(OS_RESULTADOS_RAIZ, "checkpoints")
 for _d in (OS_LOG_DIR, OS_RESULTS_DIR, OS_FIGURES_DIR, OS_CHECKPOINTS_DIR):
     os.makedirs(_d, exist_ok=True)
 

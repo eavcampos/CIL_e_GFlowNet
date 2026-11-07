@@ -1,11 +1,11 @@
 """
 Compara LINHA DE BASE e EXPERIMENTO a partir dos JSON gravados por cil_nova_estrategia_2.py.
 
-Lê ../results/results_*.json, agrupa por (config, seed) e, se houver mais de uma execução da
+Lê resultados/results/results_*.json, agrupa por (config, seed) e, se houver mais de uma execução da
 mesma combinação, usa a mais recente. Configs "baseline*" são pareados com "experimento*" de
 mesmo sufixo (ex.: baseline_teste com experimento_teste).
 
-Gera em ../comparacao/<data_hora>/:
+Gera em resultados/comparacao/<data_hora>/:
   resumo.csv                      uma linha por (seed, config) + médias e diferença pareada
   1_pares_por_seed.png            AAC, vazamento, erro dentro da tarefa e teto de ganho:
                                   cada seed é uma linha ligando linha de base -> experimento
@@ -14,7 +14,7 @@ Gera em ../comparacao/<data_hora>/:
   4_diagnostico_pseudo_negativos.png  (só experimento) fração que vaza e ESS por época
 
 Não precisa de PyTorch. Uso:
-  python comparar_resultados.py                       # ../results -> ../comparacao
+  python comparar_resultados.py                       # resultados/results -> resultados/comparacao
   python comparar_resultados.py --resultados PASTA --saida PASTA
 """
 from __future__ import annotations
@@ -231,8 +231,8 @@ def escrever_csv(m, seeds, pasta):
 def main():
     pasta_script = os.path.dirname(os.path.abspath(__file__))
     ap = argparse.ArgumentParser(description="Compara linha de base e experimento (Nova Estratégia 2)")
-    ap.add_argument("--resultados", default=os.path.join(pasta_script, "..", "results"))
-    ap.add_argument("--saida", default=os.path.join(pasta_script, "..", "comparacao"))
+    ap.add_argument("--resultados", default=os.path.join(pasta_script, "resultados", "results"))
+    ap.add_argument("--saida", default=os.path.join(pasta_script, "resultados", "comparacao"))
     args = ap.parse_args()
 
     grupos = carregar(args.resultados)

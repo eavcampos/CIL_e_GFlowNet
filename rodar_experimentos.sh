@@ -1,6 +1,9 @@
 #!/usr/bin/env bash
 # ============================================================================
-# Roda a LINHA DE BASE e o EXPERIMENTO da Nova Estratégia 2 nas 4 seeds planejadas.
+# Roda a LINHA DE BASE e o EXPERIMENTO da Nova Estratégia 2, em QUATRO BATERIAS, uma por seed:
+#   bateria 1 -> seed 1993     bateria 3 -> seed 1995
+#   bateria 2 -> seed 1994     bateria 4 -> seed 1996
+# Cada bateria = 2 execuções (linha de base e experimento da mesma seed).
 #
 #   config_baseline.json    -> pseudo_negativos.modo = "nenhum"  (sem pseudo-negativos)
 #   config_experimento.json -> pseudo_negativos.modo = "is"      (com pseudo-negativos)
@@ -9,11 +12,19 @@
 # depois o experimento, para que mesmo uma execução interrompida deixe pares comparáveis.
 #
 # Uso (na pasta do projeto, ou de qualquer lugar):
-#   bash rodar_experimentos.sh            # as 8 execuções (2 configs x 4 seeds), 100 épocas
-#   bash rodar_experimentos.sh --teste    # teste rápido: seed 1993 apenas, 2 épocas por tarefa
-#   bash rodar_experimentos.sh --refazer  # roda de novo inclusive o que já terminou com sucesso
+#   bash rodar_experimentos.sh --bateria 1   # seed 1993: linha de base + experimento
+#   bash rodar_experimentos.sh --bateria 2   # seed 1994
+#   bash rodar_experimentos.sh --bateria 3   # seed 1995
+#   bash rodar_experimentos.sh --bateria 4   # seed 1996
+#   bash rodar_experimentos.sh --bateria 1 2 # várias baterias em sequência
+#   bash rodar_experimentos.sh --teste       # teste rápido: seed 1993 apenas, 2 épocas por tarefa
+#   acrescente --refazer para rodar de novo inclusive o que já terminou com sucesso
 #
-# Retomada: cada execução bem-sucedida deixa um marcador em ../execucoes/*.ok. Se o script
+# Tudo é gravado DENTRO do projeto, em CIL_e_GFlowNet/resultados/ (logs, results, figures_cil,
+# checkpoints, execucoes, comparacao). A comparação no fim de cada bateria usa todas as seeds que
+# já tenham as duas execuções: após a bateria 1, só 1993; após a 2, 1993 e 1994; e assim por diante.
+#
+# Retomada: cada execução bem-sucedida deixa um marcador em resultados/execucoes/*.ok. Se o script
 # for interrompido (queda de energia, Ctrl+C), basta chamá-lo de novo: o que já terminou é pulado.
 #
 # Windows: rode no Git Bash ou no WSL. Para escolher o interpretador:
@@ -26,19 +37,47 @@ cd "$PASTA_PROJETO" || exit 1
 
 SCRIPT="cil_nova_estrategia_2.py"
 CONFIGS=("config_baseline.json" "config_experimento.json")
-SEEDS=(1993 1994 1995 1996)
+# bateria N -> seed SEEDS_POR_BATERIA[N-1]
+SEEDS_POR_BATERIA=(1993 1994 1995 1996)
 EPOCAS_TESTE=2
 
 MODO_TESTE=0
 REFAZER=0
-for arg in "$@"; do
-    case "$arg" in
+BATERIA=""
+while [ $# -gt 0 ]; do
+    case "$1" in
         --teste)   MODO_TESTE=1 ;;
         --refazer) REFAZER=1 ;;
-        -h|--help) sed -n '2,25p' "$0"; exit 0 ;;
-        *) echo "Opção desconhecida: $arg (use --teste, --refazer ou --help)"; exit 2 ;;
+        --bateria)
+            # aceita uma ou mais baterias: --bateria 1   ou   --bateria 1 2
+            while [ $# -gt 1 ] && [[ "$2" =~ ^[0-9]+$ ]]; do BATERIA="$BATERIA $2"; shift; done ;;
+        --bateria=*) BATERIA="${1#--bateria=}"; BATERIA="${BATERIA//,/ }" ;;
+        -h|--help) sed -n '2,30p' "$0"; exit 0 ;;
+        *) echo "Opção desconhecida: $1 (use --bateria 1 a 4, --teste, --refazer ou --help)"; exit 2 ;;
     esac
+    shift
 done
+
+if [ "$MODO_TESTE" -eq 1 ]; then
+    SEEDS=(1993)
+elif [ -n "${BATERIA// /}" ]; then
+    SEEDS=()
+    for b in $BATERIA; do
+        if [ "$b" -ge 1 ] && [ "$b" -le ${#SEEDS_POR_BATERIA[@]} ]; then
+            SEEDS+=("${SEEDS_POR_BATERIA[$((b - 1))]}")
+        else
+            echo "Bateria inválida: $b (use 1 a ${#SEEDS_POR_BATERIA[@]})"; exit 2
+        fi
+    done
+    BATERIA="${BATERIA# }"
+else
+    echo "Escolha a bateria (uma por seed):"
+    for i in "${!SEEDS_POR_BATERIA[@]}"; do
+        echo "  bash $0 --bateria $((i + 1))    # seed ${SEEDS_POR_BATERIA[$i]}"
+    done
+    echo "  bash $0 --teste        # teste rápido (seed 1993, $EPOCAS_TESTE épocas)"
+    exit 2
+fi
 
 # --- interpretador Python ----------------------------------------------------
 if [ -z "${PYTHON:-}" ]; then
@@ -64,12 +103,12 @@ GPU=$("$PYTHON" -c "import torch; print('sim' if torch.cuda.is_available() else 
 echo "Python: $("$PYTHON" -c 'import sys; print(sys.executable)') | GPU disponível: $GPU"
 [ "$GPU" = "sim" ] || echo "AVISO: sem GPU o treino completo pode levar muitas horas."
 
-PASTA_SAIDA="$(cd .. && pwd)/execucoes"
+PASTA_RESULTADOS="$PASTA_PROJETO/resultados"
+PASTA_SAIDA="$PASTA_RESULTADOS/execucoes"
 mkdir -p "$PASTA_SAIDA"
 
 # --- modo teste: configs temporários com poucas épocas -------------------------
 if [ "$MODO_TESTE" -eq 1 ]; then
-    SEEDS=(1993)
     PASTA_TESTE="$PASTA_PROJETO/_configs_teste"
     mkdir -p "$PASTA_TESTE"
     NOVOS=()
@@ -91,6 +130,9 @@ fi
 
 # --- execuções -------------------------------------------------------------------
 TOTAL=$(( ${#SEEDS[@]} * ${#CONFIGS[@]} ))
+if [ "$MODO_TESTE" -eq 0 ]; then
+    echo "BATERIA $BATERIA: seeds ${SEEDS[*]} ($TOTAL execuções). Resultados em $PASTA_RESULTADOS"
+fi
 N=0
 RESUMO=()
 FALHAS=0
@@ -113,7 +155,7 @@ for seed in "${SEEDS[@]}"; do
         echo "[$N/$TOTAL] $nome  —  início $(date '+%d/%m/%Y %H:%M:%S')"
         echo "  saída completa em: $saida"
         ini=$(date +%s)
-        # a pasta de trabalho é a do projeto: logs/, results/, figures_cil/, checkpoints/ vão para ../
+        # logs/, results/, figures_cil/, checkpoints/ vão para resultados/ dentro do projeto
         "$PYTHON" "$SCRIPT" --config "$cfg" --seed "$seed" > "$saida" 2>&1
         status=$?
         dur=$(( $(date +%s) - ini ))
@@ -137,11 +179,11 @@ done
 # --- resumo ----------------------------------------------------------------------
 dur=$(( $(date +%s) - INICIO_GERAL ))
 echo "============================================================"
-echo "RESUMO ($((dur / 3600))h$(( (dur % 3600) / 60 ))min no total)"
+echo "RESUMO${BATERIA:+ DA BATERIA $BATERIA} ($((dur / 3600))h$(( (dur % 3600) / 60 ))min no total)"
 for linha in "${RESUMO[@]}"; do echo "  $linha"; done
-echo "Resultados detalhados (JSON, figuras, checkpoints) em: $(cd .. && pwd)/results, figures_cil, checkpoints"
+echo "Resultados detalhados em: $PASTA_RESULTADOS (results, figures_cil, checkpoints, logs)"
 {
-    echo "Execução de $(date '+%d/%m/%Y %H:%M:%S')"
+    echo "Execução de $(date '+%d/%m/%Y %H:%M:%S')${BATERIA:+ — bateria $BATERIA}"
     for linha in "${RESUMO[@]}"; do echo "$linha"; done
 } >> "$PASTA_SAIDA/resumo.txt"
 
@@ -149,7 +191,7 @@ echo "Resultados detalhados (JSON, figuras, checkpoints) em: $(cd .. && pwd)/res
 # Usa todas as seeds que tenham as DUAS execuções concluídas (mesmo que alguma tenha falhado).
 echo "============================================================"
 echo "Gerando gráficos comparativos (linha de base x experimento)..."
-"$PYTHON" comparar_resultados.py --resultados ../results --saida ../comparacao \
+"$PYTHON" comparar_resultados.py --resultados "$PASTA_RESULTADOS/results" --saida "$PASTA_RESULTADOS/comparacao" \
     || echo "AVISO: a comparação falhou; rode à mão: $PYTHON comparar_resultados.py"
 
 [ $FALHAS -eq 0 ] || { echo "$FALHAS execução(ões) falharam."; exit 1; }

@@ -57,28 +57,50 @@ Correspondência com o brinquedo (`pseudo_negativos_gfn.py`):
 ## Como rodar tudo de uma vez
 
 ```bash
-bash rodar_experimentos.sh --teste   # primeiro: seed 1993, 2 épocas, linha de base + experimento
-bash rodar_experimentos.sh           # depois: 2 configs x 4 seeds, 100 épocas
+bash rodar_experimentos.sh --teste       # primeiro: seed 1993, 2 épocas, linha de base + experimento
+bash rodar_experimentos.sh --bateria 1   # seed 1993: linha de base + experimento, 100 épocas
+bash rodar_experimentos.sh --bateria 2   # seed 1994
+bash rodar_experimentos.sh --bateria 3   # seed 1995
+bash rodar_experimentos.sh --bateria 4   # seed 1996
+bash rodar_experimentos.sh --bateria 1 2 # várias baterias em sequência, se quiser
 ```
+
+Uma bateria por seed. A comparação no fim de cada bateria usa todas as seeds já concluídas:
+depois da bateria 1, só a seed 1993; depois da 2, 1993 e 1994; e assim por diante.
 
 - `config_baseline.json`: `pseudo_negativos.modo = "nenhum"` (linha de base).
 - `config_experimento.json`: `pseudo_negativos.modo = "is"` (experimento).
 - Os dois são idênticos no resto: CIFAR-100, 5 tarefas x 20 classes, dataset em `../../my_data`.
-- A saída de cada execução vai para `../execucoes/<config>_seed<seed>.txt`, e um resumo
-  acumulado para `../execucoes/resumo.txt`.
+- A saída de cada execução vai para `resultados/execucoes/<config>_seed<seed>.txt`, e um resumo
+  acumulado para `resultados/execucoes/resumo.txt`.
 - Se o script for interrompido, basta chamá-lo de novo: o que terminou é pulado
   (`--refazer` força rodar tudo de novo).
 - Windows: rodar no Git Bash ou no WSL.
 
+## Onde ficam os resultados
+
+Tudo dentro do projeto, em `CIL_e_GFlowNet/resultados/`, qualquer que seja a pasta de onde o
+comando é executado:
+
+```
+CIL_e_GFlowNet/resultados/
+├── execucoes/     saída do terminal de cada execução + resumo.txt
+├── logs/          log detalhado de cada execução
+├── results/       JSON com todos os números de cada execução
+├── figures_cil/   uma pasta de gráficos por execução
+├── checkpoints/   modelos treinados
+└── comparacao/    gráficos linha de base x experimento
+```
+
 ## Gráficos
 
 **Por execução** (os mesmos da Estratégia 1, mais os de 100 classes em blocos por tarefa), numa
-pasta própria: `../figures_cil/<config>_seed<seed>_<data_hora>/`. Log, JSON e checkpoint levam o
+pasta própria: `resultados/figures_cil/<config>_seed<seed>_<data_hora>/`. Log, JSON e checkpoint levam o
 mesmo identificador no nome, então nada é sobrescrito.
 
 **Comparativos**, gerados por `comparar_resultados.py` (chamado automaticamente no fim do
 `rodar_experimentos.sh`, ou à mão com `python comparar_resultados.py`), em
-`../comparacao/<data_hora>/`:
+`resultados/comparacao/<data_hora>/`:
 
 | Arquivo | O que mostra |
 | --- | --- |
