@@ -149,6 +149,25 @@ TAU_LVQ = float(CFG_TREINO.get("tau_lvq", 1.0))
 UNIDADES_LVQ_POR_CLASSE = int(CFG_TREINO.get("unidades_lvq_por_classe", 16))
 FREQ_LOG_EPOCAS = int(CFG_TREINO.get("frequencia_log_epocas", 10))
 
+# [Correções v2] Todas com padrão que reproduz o comportamento anterior (Estratégia 1/2 originais).
+# adapter_residual: o Adapter devolve phi + up(relu(down(phi))) em vez de só up(...). Com 'up'
+#   iniciado em zero, cada Adapter novo começa como a identidade (todos partem do espaço phi).
+ADAPTER_RESIDUAL = bool(CFG_TREINO.get("adapter_residual", False))
+# escala_logits: fator s que multiplica os cossenos antes da entropia cruzada (imagens reais e
+#   pseudo-negativos). Com s = 1 a softmax nunca fica confiante (NormFace, Wang et al., 2017).
+#   Não altera a predição (argmax), só o treino.
+ESCALA_LOGITS = float(CFG_TREINO.get("escala_logits", 1.0))
+# init_classes_novas: "aleatorio" (vetores ortogonais sorteados, comportamento anterior) ou
+#   "media_phi" (média normalizada das saídas do Adapter novo antes do treino; com adapter_residual
+#   isso é exatamente a média de phi de cada classe).
+INIT_CLASSES_NOVAS = str(CFG_TREINO.get("init_classes_novas", "aleatorio")).lower()
+# atualizar_prototipos_novos: ao fim de cada época, os vetores das classes novas passam a ser a
+#   média normalizada das saídas do Adapter novo nas imagens daquela época (treino e inferência
+#   usam o mesmo tipo de alvo; a margem dos pseudo-negativos é medida contra ele).
+ATUALIZAR_PROTOTIPOS_NOVOS = bool(CFG_TREINO.get("atualizar_prototipos_novos", False))
+if INIT_CLASSES_NOVAS not in ("aleatorio", "media_phi"):
+    raise ValueError(f"treino.init_classes_novas inválido: {INIT_CLASSES_NOVAS} (use 'aleatorio' ou 'media_phi')")
+
 # [Estratégia 2] pseudo-negativos
 CFG_PN = CFG.get("pseudo_negativos", {"modo": "nenhum"})
 PN_MODO = str(CFG_PN.get("modo", "nenhum")).lower()
@@ -394,16 +413,20 @@ def extrair_embedding(backbone, x):
 # 4. ADAPTER (bottleneck, idêntico às Estratégias 24-27c)
 # ============================================================================
 class Adapter(nn.Module):
-    def __init__(self, dim=DIM_EMBEDDING, r=R_ADAPTER):
+    def __init__(self, dim=DIM_EMBEDDING, r=R_ADAPTER, residual=None):
         super().__init__()
         self.down = nn.Linear(dim, r)
         self.up = nn.Linear(r, dim)
         nn.init.zeros_(self.up.weight)
         nn.init.zeros_(self.up.bias)
+        # [Correções v2] residual=True -> saída phi + up(h) (adapter de Houlsby et al., 2019);
+        # residual=False -> só up(h) (comportamento anterior: o Adapter começa devolvendo zero).
+        self.residual = ADAPTER_RESIDUAL if residual is None else bool(residual)
 
     def forward(self, x):
         h = F.relu(self.down(x))
-        return self.up(h)
+        saida = self.up(h)
+        return x + saida if self.residual else saida
 
 
 def congelar_adapter(adapter):
@@ -497,6 +520,37 @@ def expandir_fc_ortogonal(fc_atual, n_novas, dim=DIM_EMBEDDING, seed=SEED):
 # ============================================================================
 # 7. PROTÓTIPOS — média da saída do Adapter da própria tarefa (idêntico)
 # ============================================================================
+def medias_por_classe(backbone, adapter, loader, classes, dim=DIM_EMBEDDING):
+    """[Correções v2] Média normalizada da saída do Adapter para cada classe, numa única passada
+    pelo loader (calcular_prototipo faz uma passada por classe). Se a média der ~zero (Adapter sem
+    conexão residual, que começa devolvendo zero), usa a média de phi como alternativa."""
+    pos = {c: i for i, c in enumerate(classes)}
+    soma_emb = torch.zeros(len(classes), dim, device=DEVICE)
+    soma_phi = torch.zeros(len(classes), dim, device=DEVICE)
+    contagem = torch.zeros(len(classes), device=DEVICE)
+    with torch.no_grad():
+        for images, labels in loader:
+            images, labels = images.to(DEVICE), labels.to(DEVICE)
+            mask = torch.tensor([int(l) in pos for l in labels.tolist()], device=DEVICE, dtype=torch.bool)
+            if not mask.any():
+                continue
+            idx = torch.tensor([pos[int(l)] for l in labels[mask].tolist()], device=DEVICE)
+            phi = backbone(images[mask])
+            soma_phi.index_add_(0, idx, phi)
+            soma_emb.index_add_(0, idx, adapter(phi))
+            contagem.index_add_(0, idx, torch.ones_like(idx, dtype=torch.float))
+    medias = {}
+    usou_phi = []
+    for c, i in pos.items():
+        n = max(float(contagem[i].item()), 1.0)
+        m = soma_emb[i] / n
+        if torch.norm(m) < 1e-8:
+            m = soma_phi[i] / n
+            usou_phi.append(c)
+        medias[c] = m / (torch.norm(m) + 1e-12)
+    return medias, usou_phi
+
+
 def calcular_prototipo(backbone, adapter, loader, classe_alvo, dim=DIM_EMBEDDING):
     soma = torch.zeros(dim, device=DEVICE)
     contagem = 0
@@ -711,6 +765,20 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
 
     adapter_novo = Adapter(dim=DIM_EMBEDDING, r=R_ADAPTER).to(DEVICE)
     theta_init_adapter = copy.deepcopy(adapter_novo.state_dict())
+
+    # [Correções v2] classes novas começam na média das saídas do Adapter novo (com adapter_residual,
+    # a média de phi), em vez de vetores sorteados que só seriam trocados pelo protótipo no fim.
+    if INIT_CLASSES_NOVAS == "media_phi":
+        medias_ini, usou_phi = medias_por_classe(backbone, adapter_novo, loader_treino, classes_novas)
+        for c in classes_novas:
+            fc_expandida[c] = medias_ini[c]
+        logging.info(f"[Tarefa {indice_tarefa}] Classes novas iniciadas pela média das saídas do Adapter "
+                     f"novo{' (= média de phi, adapter residual)' if ADAPTER_RESIDUAL else ''}.")
+        if usou_phi:
+            logging.warning(f"[Tarefa {indice_tarefa}] Adapter sem conexão residual devolve zero no início: "
+                            f"{len(usou_phi)} classes iniciadas pela média de phi, que não está no espaço de "
+                            f"saída do Adapter. Use treino.adapter_residual = true com init_classes_novas = "
+                            f"'media_phi'.")
     theta_init_lvq = lvq.prototipos.detach().clone()
     logging.info(f"[Tarefa {indice_tarefa}] Snapshots de θ_init (Adapter_{indice_tarefa} e unidades LVQ "
                  f"da tarefa) capturados antes do treino (diagnóstico de negação).")
@@ -738,6 +806,9 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
         running_loss_pn, total_pn = 0.0, 0
         if usar_pn:
             gerador.reiniciar_estatisticas()
+        if ATUALIZAR_PROTOTIPOS_NOVOS:
+            soma_novas = torch.zeros(CLASSES_POR_TAREFA, DIM_EMBEDDING, device=DEVICE)
+            cont_novas = torch.zeros(CLASSES_POR_TAREFA, device=DEVICE)
         for images, labels in loader_treino:
             images, labels = images.to(DEVICE), labels.to(DEVICE)
             optimizer.zero_grad()
@@ -753,8 +824,13 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
                                      dim=1)
                 for c in todas_classes_ativas
             ], dim=1)
-            loss_ce = criterion(logits_cos, labels)
+            # [Correções v2] escala s nos logits (s = 1 reproduz o comportamento anterior)
+            loss_ce = criterion(ESCALA_LOGITS * logits_cos, labels)
             loss_lvq, bmu = lvq.perda_lvq(delta_novo, labels, classes_ativas=todas_classes_ativas)
+            if ATUALIZAR_PROTOTIPOS_NOVOS:
+                idx_local = labels - indice_tarefa * CLASSES_POR_TAREFA
+                soma_novas.index_add_(0, idx_local, delta_novo.detach())
+                cont_novas.index_add_(0, idx_local, torch.ones_like(idx_local, dtype=torch.float))
             loss = (1 - LAMBDA_LVQ) * loss_ce + LAMBDA_LVQ * loss_lvq
 
             # [Estratégia 2] phi sintéticos de classes antigas, com rótulo antigo. São avaliados
@@ -769,7 +845,7 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
                 S_pn = scores_combinados(phi_pn, adapters_anteriores, adapter_novo, fc_expandida, lvq,
                                          todas_classes_ativas, CLASSES_POR_TAREFA, ALPHA_LVQ, TAU_LVQ,
                                          grad_novo=True)
-                loss_pn = criterion(S_pn, y_pn)
+                loss_pn = criterion(ESCALA_LOGITS * S_pn, y_pn)
                 loss = loss + LAMBDA_PN * loss_pn
                 running_loss_pn += loss_pn.item() * len(y_pn)
                 total_pn += len(y_pn)
@@ -787,6 +863,14 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
         loss_ce_treino = running_loss_ce / total
         loss_lvq_treino = running_loss_lvq / total
         acc_treino = (corretos / total) * 100
+
+        # [Correções v2] classes novas passam a ser a média das saídas do Adapter nesta época
+        if ATUALIZAR_PROTOTIPOS_NOVOS:
+            with torch.no_grad():
+                for i, c in enumerate(classes_novas):
+                    if cont_novas[i] > 0:
+                        m = soma_novas[i] / cont_novas[i]
+                        fc_expandida[c] = m / (torch.norm(m) + 1e-12)
 
         adapter_novo.eval()
         adapters_atuais = adapters_anteriores + [adapter_novo]
@@ -828,6 +912,23 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
                              f"ESS/propostas: {fmt(st['ess_frac'], '.1%')} | "
                              f"logZ IS: {fmt(st['logZ_is'], '.3f')} | logZ GFN: {fmt(st['logZ_gfn'], '.3f')} | "
                              f"perda TB: {fmt(st['perda_tb'], '.2f')}")
+
+    # [Correções v2] epochs_por_tarefa = 0 (ex.: linha de base sem treino, config_ncm_v2.json):
+    # registra uma única avaliação, sem treino, para que gráficos e JSON tenham um ponto.
+    if not historico:
+        adapter_novo.eval()
+        acc_por_classe = testar_por_classe(backbone, adapters_anteriores + [adapter_novo], fc_expandida, lvq,
+                                            loader_teste_acumulado, todas_classes_ativas, CLASSES_POR_TAREFA,
+                                            ALPHA_LVQ, TAU_LVQ)
+        acc_por_tarefa_vista = [
+            float(np.mean([acc_por_classe[c] for c in range(t * CLASSES_POR_TAREFA, (t + 1) * CLASSES_POR_TAREFA)]))
+            for t in range(indice_tarefa + 1)
+        ]
+        historico.append({
+            "epoca": 0, "loss_ce": None, "loss_lvq": None, "acc_treino": None,
+            "acc_por_classe": {nomes_classe_cil[c]: acc_por_classe[c] for c in todas_classes_ativas},
+            "acc_por_tarefa": acc_por_tarefa_vista, "aac": float(np.mean(acc_por_tarefa_vista)),
+        })
 
     congelar_adapter(adapter_novo)
     lvq.congelar_classes(classes_novas)
@@ -925,11 +1026,16 @@ def diagnostico_task_arithmetic_fronteira(indice_fronteira, backbone, adapters_a
     construir_versao_negada_m2/m3 + avaliar_cat_dog_exclusao/
     avaliar_m1_m2_exclusao + construir_adapter_aleatorio_generico da
     Estratégia 26 para uma fronteira arbitrária."""
+    # [Correções v2] Antes, as versões original, negação e aleatório recebiam só fc_antigas. Como
+    # calcular_logits_finais só pontua as classes presentes em fc e cada classe usa o Adapter da sua
+    # tarefa, o Adapter novo (original, negado ou aleatório) nunca era usado e as quatro versões davam
+    # o mesmo número (= exclusão). Agora as classes novas competem nas três versões com Adapter novo.
     fc_antigas = fc[:len(adapters_antigos) * CLASSES_POR_TAREFA]
+    fc_todas = fc[:(len(adapters_antigos) + 1) * CLASSES_POR_TAREFA]
 
     adapter_negado, lvq_negado = construir_versao_negada(
         adapter_novo, theta_init_adapter, lvq, theta_init_lvq, classes_novas, linhas, colunas, blocos_linha, blocos_coluna)
-    acc_negacao = avaliar_com_substituicao(backbone, adapters_antigos + [adapter_negado], fc_antigas,
+    acc_negacao = avaliar_com_substituicao(backbone, adapters_antigos + [adapter_negado], fc_todas,
                                             lvq_negado, loader_teste_antigas)
 
     acc_exclusao = avaliar_exclusao(backbone, adapters_antigos, fc_antigas, lvq, loader_teste_antigas)
@@ -938,10 +1044,10 @@ def diagnostico_task_arithmetic_fronteira(indice_fronteira, backbone, adapters_a
     adapter_aleatorio = construir_adapter_aleatorio_generico(seed_aleatorio, dim=DIM_EMBEDDING, r=R_ADAPTER)
     lvq_aleatorio = construir_versao_aleatoria_lvq(lvq, classes_novas, seed_aleatorio, linhas, colunas,
                                                     blocos_linha, blocos_coluna)
-    acc_aleatorio = avaliar_com_substituicao(backbone, adapters_antigos + [adapter_aleatorio], fc_antigas,
+    acc_aleatorio = avaliar_com_substituicao(backbone, adapters_antigos + [adapter_aleatorio], fc_todas,
                                               lvq_aleatorio, loader_teste_antigas)
 
-    acc_original = avaliar_com_substituicao(backbone, adapters_antigos + [adapter_novo], fc_antigas, lvq,
+    acc_original = avaliar_com_substituicao(backbone, adapters_antigos + [adapter_novo], fc_todas, lvq,
                                               loader_teste_antigas)
 
     if abs(acc_aleatorio - acc_exclusao) < 5 and abs(acc_negacao - acc_exclusao) < 5:
@@ -1452,6 +1558,8 @@ def executar_experimento():
             "epochs_por_tarefa": EPOCHS_POR_TAREFA, "embedding_dim": DIM_EMBEDDING,
             "r_adapter": R_ADAPTER, "lambda_lvq": LAMBDA_LVQ, "alpha_lvq": ALPHA_LVQ, "tau_lvq": TAU_LVQ,
             "som_linhas": linhas, "som_colunas": colunas, "otimizador": CFG_OTIMIZADOR,
+            "adapter_residual": ADAPTER_RESIDUAL, "escala_logits": ESCALA_LOGITS,
+            "init_classes_novas": INIT_CLASSES_NOVAS, "atualizar_prototipos_novos": ATUALIZAR_PROTOTIPOS_NOVOS,
         },
         "particao_tarefas": {
             "classes_originais_por_tarefa": tarefas_classes_originais,
@@ -1563,6 +1671,12 @@ def executar_experimento():
                 backbone, adapters + [adapter_t], fc, lvq, loaders_teste_acumulado[t], banco,
                 task_stats, f"após a tarefa {t}")
 
+        # [Correções v2] acurácia no teste acumulado logo após cada tarefa (inclusive a tarefa 0),
+        # para a AAC incremental da literatura (média dessas acurácias), além da acurácia média final.
+        _lg, _lb = coletar_logits(backbone, adapters + [adapter_t], fc, lvq, loaders_teste_acumulado[t])
+        json_data.setdefault("acc_apos_tarefa", []).append(float((_lg.argmax(axis=1) == _lb).mean() * 100))
+        logging.info(f"[Tarefa {t}] Acurácia no teste acumulado após a tarefa: {json_data['acc_apos_tarefa'][-1]:.2f}%")
+
         adapters.append(adapter_t)
         thetas_init_adapter.append(theta_init_adapter_t)
         thetas_init_lvq.append(theta_init_lvq_t)
@@ -1590,8 +1704,13 @@ def executar_experimento():
     matriz_scores = calcular_matriz_scores_medios(backbone, adapters, fc, lvq, loader_teste_total, NUM_CLASSES_TOTAIS)
     alinhamento_diagonal = {nomes_classe_cil[c]: float(matriz_scores[c, c]) for c in range(NUM_CLASSES_TOTAIS)}
 
+    # [Correções v2] "aac" (nome mantido por compatibilidade) é a acurácia MÉDIA FINAL entre tarefas;
+    # "aac_incremental" é a AAC da literatura: média das acurácias após cada tarefa.
+    aac_incremental = float(np.mean(json_data.get("acc_apos_tarefa", [float("nan")])))
+    logging.info(f" > AAC incremental (média das acurácias após cada tarefa): {aac_incremental:.2f}%")
     json_data["resultado_final"] = {
-        "acc_por_tarefa": acc_por_tarefa_final, "aac": aac, "nc1_concatenado": nc1,
+        "acc_por_tarefa": acc_por_tarefa_final, "aac": aac, "aac_incremental": aac_incremental,
+        "nc1_concatenado": nc1,
         "alinhamento_diagonal": alinhamento_diagonal, "matriz_scores_medios": matriz_scores.tolist(),
     }
 

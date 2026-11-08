@@ -54,6 +54,69 @@ Correspondência com o brinquedo (`pseudo_negativos_gfn.py`):
 | `r(z) = p_antiga(z) * exp(beta * score)` | igual, com a margem no lugar do score |
 | uso dos pontos | CE com rótulo antigo no treino do Adapter_t |
 
+## Os três braços
+
+| Config | `pseudo_negativos.modo` | Papel |
+| --- | --- | --- |
+| `config_baseline.json` | `nenhum` | linha de base, sem pseudo-negativos |
+| `config_gauss.json` | `gauss` | pseudo-negativos sorteados às cegas: o replay gaussiano já conhecido (PASS, SLCA, DMR) |
+| `config_experimento.json` | `is` | pseudo-negativos escolhidos pela margem de vazamento: a proposta |
+
+- `baseline -> gauss` mede o ganho do que já é conhecido;
+- `gauss -> experimento` mede o ganho da escolha guiada pela margem (`gauss` é o caso `beta = 0`).
+
+Cada bateria roda os três braços da sua seed. Execuções já concluídas são puladas: uma bateria
+rodada antes da existência do `config_gauss.json` executa só o braço `gauss` quando chamada de novo.
+`comparar_resultados.py` compara os três braços nas seeds em que os três existem e, se houver seeds
+sem o `gauss`, também linha de base x experimento em todas as seeds (pasta com sufixo `_2bracos`).
+
+## Correções v2
+
+A análise da bateria 1 (seed 1993, linha de base e experimento) mostrou que 90,6% do erro final é
+vazamento, mas também que o treino quase não aprende e que os pseudo-negativos mal agem. As causas
+estão no código herdado da Estratégia 1 e foram corrigidas como **opções de config**. Os valores
+padrão reproduzem o comportamento anterior, então os configs antigos continuam dando os mesmos
+resultados.
+
+| Opção (`treino.`) | Padrão (antigo) | v2 | O que corrige |
+| --- | --- | --- | --- |
+| `escala_logits` | `1.0` | `16.0` | Cossenos em [-1, 1] sem escala: a softmax nunca fica confiante e a entropia cruzada fica colada em ln(N) (NormFace). Vale para as imagens reais e para os pseudo-negativos. Não muda a predição. |
+| `init_classes_novas` | `"aleatorio"` | `"media_phi"` | Durante o treino, as classes novas eram vetores sorteados, trocados pela média da classe só no fim. A margem dos pseudo-negativos era medida contra esses vetores. |
+| `atualizar_prototipos_novos` | `false` | `true` | Ao fim de cada época, as classes novas passam a ser a média das saídas do Adapter nas imagens da época. |
+| `alpha_lvq`, `lambda_lvq` | `0.4`, `0.3` | `0`, `0` | As unidades LVQ começam perto da origem e nunca saem de lá: a perda LVQ fica em ~1e-11 e o score LVQ em ~0. Desligado. |
+| `adapter_residual` | `false` | `true` | O Adapter devolvia só `up(h)` (começa em zero, cada tarefa num espaço próprio de até 64 dimensões). Com `true`, devolve `phi + up(h)` e começa como identidade. |
+
+Também mudou, sem opção (são correções de diagnóstico, não do treino):
+
+- **Diagnóstico de aritmética de tarefas**: as versões original, negação e aleatório recebiam só
+  as classes antigas, então o Adapter novo nunca era usado e as quatro versões davam o mesmo
+  número. Agora as classes novas competem nessas três versões.
+- **AAC incremental**: o campo `aac` do JSON é a acurácia média final entre tarefas. Agora o JSON
+  também traz `acc_apos_tarefa` (acurácia no teste acumulado após cada tarefa, inclusive a 0) e
+  `resultado_final.aac_incremental` (a média delas, a AAC da literatura). O
+  `comparar_resultados.py` mostra as duas e reconstrói a incremental para execuções antigas.
+- **`epochs_por_tarefa = 0`** agora funciona (uma avaliação sem treino).
+
+### Configs v2
+
+| Config | Papel |
+| --- | --- |
+| `config_ncm_v2.json` | Referência sem treino: cosseno entre phi e a média de phi de cada classe (SimpleCIL). Não tem vazamento entre Adapters por construção. Leva minutos. |
+| `config_baseline_v2.json` | Linha de base v2, sem pseudo-negativos |
+| `config_gauss_v2.json` | Pseudo-negativos às cegas, v2 |
+| `config_experimento_v2.json` | Pseudo-negativos pela margem, v2 |
+
+```bash
+bash rodar_experimentos.sh --v2 --teste       # primeiro: seed 1993, 2 épocas (ncm sem treino)
+bash rodar_experimentos.sh --v2 --bateria 1   # seed 1993, os quatro configs v2
+```
+
+Os resultados v2 ficam em `resultados/`, com `_v2` no nome, e o `comparar_resultados.py` os compara
+num grupo separado (pasta de comparação com sufixo `_v2`), com a referência NCM no `resumo.csv`.
+
+**O que olhar primeiro:** se `ncm_v2` tiver acurácia maior que `baseline_v2`, os Adapters treinados
+estão piorando o ponto de partida, e isso precisa ser discutido antes dos pseudo-negativos.
+
 ## Como rodar tudo de uma vez
 
 ```bash

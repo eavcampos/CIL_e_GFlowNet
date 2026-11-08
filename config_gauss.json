@@ -1,5 +1,5 @@
 {
-    "estrategia": "Nova Estratégia 2 — Nova Estratégia 1 + pseudo-negativos no espaço phi do backbone congelado",
+    "estrategia": "Terceiro braço — Nova Estratégia 2 com pseudo-negativos sorteados às cegas das gaussianas (modo 'gauss')",
     "versao": "nova_estrategia_2",
     "descricao": "Igual à Nova Estratégia 1, mais: (1) banco de gaussianas por classe em phi = backbone(imagem), atualizado ao fim de cada tarefa, sem guardar imagens; (2) pseudo-negativos (phi sintéticos de classes antigas, com rótulo antigo) somados à CE do treino da tarefa atual, para ensinar o Adapter novo a recusar classes antigas; (3) métricas de vazamento entre tarefas (metricas_vazamento.py) por fronteira e no final.",
     "seed": 1993,
@@ -58,7 +58,7 @@
         "Zhou, D.W. et al. Revisiting Class-Incremental Learning with Pre-Trained Models (SimpleCIL/ADAM). IJCV 2024 — origem do benchmark OmniBenchmark usado aqui como dataset plugável"
     ],
     "pseudo_negativos": {
-        "modo": "is",
+        "modo": "gauss",
         "nota_modo": "'nenhum' reproduz a Nova Estratégia 1 (linha de base); 'gauss' = sorteio direto das gaussianas; 'is' = amostragem por importância focada onde há vazamento (recomendado começar por aqui); 'gfn' = GFlowNet híbrida com buffer do 'is' (só se o ESS do 'is' ficar muito baixo).",
         "por_lote": 48,
         "nota_por_lote": "Pseudo-negativos somados a cada lote real (default = batch_size).",
@@ -83,5 +83,6 @@
         },
         "nota_teste_rapido": "Para um primeiro teste de execução: treino.epochs_por_tarefa = 2 (mantendo 5 x 20). Isso já exercita todas as fronteiras, o banco com 80 classes e os gráficos de 100 classes.",
         "nota_n_proposta": "Propostas da amostragem por importância por lote. Com até 80 classes antigas (tarefa 4), 4096 dá ~50 propostas por classe antiga; com 1024 seriam ~13, e o ESS ficaria instável."
-    }
+    },
+    "papel_no_estudo": "TERCEIRO BRAÇO: idêntico a config_baseline.json e config_experimento.json em tudo, exceto pseudo_negativos.modo = 'gauss'. Representa o replay gaussiano de pseudo-features já conhecido na literatura (PASS, SLCA, DMR). Comparações: baseline -> gauss mede o ganho do que já é conhecido; gauss -> experimento (is) mede o ganho da escolha guiada pela margem. 'gauss' equivale a 'is' com beta = 0."
 }

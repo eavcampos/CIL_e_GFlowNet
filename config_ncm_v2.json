@@ -1,5 +1,5 @@
 {
-    "estrategia": "Experimento — Nova Estratégia 2 com pseudo-negativos por amostragem por importância (modo 'is')",
+    "estrategia": "Referência NCM v2 — classificador pela média de phi, sem treino (SimpleCIL)",
     "versao": "nova_estrategia_2",
     "descricao": "Igual à Nova Estratégia 1, mais: (1) banco de gaussianas por classe em phi = backbone(imagem), atualizado ao fim de cada tarefa, sem guardar imagens; (2) pseudo-negativos (phi sintéticos de classes antigas, com rótulo antigo) somados à CE do treino da tarefa atual, para ensinar o Adapter novo a recusar classes antigas; (3) métricas de vazamento entre tarefas (metricas_vazamento.py) por fronteira e no final.",
     "seed": 1993,
@@ -29,17 +29,23 @@
         "nota": "5 tarefas x 20 classes = as 100 classes do CIFAR-100. Com 100 de 100 classes, a seed não muda QUAIS classes entram, só a ORDEM em que aparecem e como se agrupam nas tarefas. num_tasks * classes_por_tarefa classes são sorteadas (sem reposição) do total de classes do dataset escolhido, usando 'seed'. As classes de cada tarefa nunca se repetem entre tarefas nem dentro da mesma tarefa."
     },
     "treino": {
-        "epochs_por_tarefa": 100,
+        "epochs_por_tarefa": 0,
         "batch_size": 48,
         "embedding_dim": 512,
         "r_adapter": 64,
         "weight_decay_adapter": 0.0001,
-        "lambda_lvq": 0.3,
-        "alpha_lvq": 0.4,
+        "lambda_lvq": 0.0,
+        "alpha_lvq": 0.0,
         "tau_lvq": 1.0,
         "unidades_lvq_por_classe": 16,
         "frequencia_log_epocas": 10,
-        "nota_lvq": "A grade do mapa LVQ hexagonal é dimensionada automaticamente a partir de num_tasks, classes_por_tarefa e unidades_lvq_por_classe (generalização de SOM_LINHAS=12/SOM_COLUNAS=8 da Estratégia 26, que corresponde exatamente a num_tasks=3, classes_por_tarefa=2, unidades_lvq_por_classe=16)."
+        "nota_lvq": "A grade do mapa LVQ hexagonal é dimensionada automaticamente a partir de num_tasks, classes_por_tarefa e unidades_lvq_por_classe (generalização de SOM_LINHAS=12/SOM_COLUNAS=8 da Estratégia 26, que corresponde exatamente a num_tasks=3, classes_por_tarefa=2, unidades_lvq_por_classe=16).",
+        "adapter_residual": true,
+        "escala_logits": 16.0,
+        "init_classes_novas": "media_phi",
+        "atualizar_prototipos_novos": true,
+        "nota_correcoes_v2": "Correções v2 (ver README, seção 'Correções v2'): (1) escala_logits = 16 multiplica os cossenos antes da entropia cruzada; (2) init_classes_novas = 'media_phi' + atualizar_prototipos_novos = true: as classes novas são representadas pela média das saídas do Adapter desde o início do treino, em vez de vetores sorteados; (3) LVQ desligado (alpha_lvq = lambda_lvq = 0), pois as unidades nunca saíam da origem; (5) adapter_residual = true: o Adapter devolve phi + up(h) e começa como identidade.",
+        "nota_ncm": "Sem treino: com adapter_residual = true e 'up' iniciado em zero, cada Adapter é a identidade, e a classificação é o cosseno entre phi e a média de phi de cada classe (classificador pela média sobre o backbone congelado; SimpleCIL, Zhou et al., IJCV 2024). Não há vazamento entre Adapters por construção: todas as classes vivem no mesmo espaço phi."
     },
     "otimizador": {
         "tipo": "SGD",
@@ -58,7 +64,7 @@
         "Zhou, D.W. et al. Revisiting Class-Incremental Learning with Pre-Trained Models (SimpleCIL/ADAM). IJCV 2024 — origem do benchmark OmniBenchmark usado aqui como dataset plugável"
     ],
     "pseudo_negativos": {
-        "modo": "is",
+        "modo": "nenhum",
         "nota_modo": "'nenhum' reproduz a Nova Estratégia 1 (linha de base); 'gauss' = sorteio direto das gaussianas; 'is' = amostragem por importância focada onde há vazamento (recomendado começar por aqui); 'gfn' = GFlowNet híbrida com buffer do 'is' (só se o ESS do 'is' ficar muito baixo).",
         "por_lote": 48,
         "nota_por_lote": "Pseudo-negativos somados a cada lote real (default = batch_size).",
@@ -84,5 +90,5 @@
         "nota_teste_rapido": "Para um primeiro teste de execução: treino.epochs_por_tarefa = 2 (mantendo 5 x 20). Isso já exercita todas as fronteiras, o banco com 80 classes e os gráficos de 100 classes.",
         "nota_n_proposta": "Propostas da amostragem por importância por lote. Com até 80 classes antigas (tarefa 4), 4096 dá ~50 propostas por classe antiga; com 1024 seriam ~13, e o ESS ficaria instável."
     },
-    "papel_no_estudo": "EXPERIMENTO: idêntico a config_baseline.json em tudo, exceto pseudo_negativos.modo = 'is'. Qualquer diferença de resultado entre os dois, na mesma seed, é efeito dos pseudo-negativos."
+    "papel_no_estudo": "REFERÊNCIA: mostra o desempenho do backbone congelado sem Adapters treinados. Se superar a linha de base, os Adapters criam o vazamento."
 }

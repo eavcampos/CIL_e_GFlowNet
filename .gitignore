@@ -13,7 +13,7 @@ checkpoints/
 # ---- Gráficos de cada execução (dpi 300, ~1 MB cada, dezenas por execução) --
 # Os gráficos comparativos (resultados/comparacao/) continuam sendo versionados.
 # Para versionar também estes, apague a linha abaixo.
-###resultados/figures_cil/
+resultados/figures_cil/
 
 # ---- Marcadores internos do rodar_experimentos.sh ---------------------------
 # Só indicam o que já rodou nesta máquina; em outro clone, devem começar vazios.
