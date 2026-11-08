@@ -1,0 +1,67 @@
+# =============================================================================
+# CIL_e_GFlowNet - arquivos que NÃO devem subir para o GitHub
+# =============================================================================
+
+# ---- Modelos treinados (centenas de MB) -------------------------------------
+resultados/checkpoints/
+checkpoints/
+*.pt
+*.pth
+*.ckpt
+*.safetensors
+
+# ---- Gráficos de cada execução (dpi 300, ~1 MB cada, dezenas por execução) --
+# Os gráficos comparativos (resultados/comparacao/) continuam sendo versionados.
+# Para versionar também estes, apague a linha abaixo.
+###resultados/figures_cil/
+
+# ---- Marcadores internos do rodar_experimentos.sh ---------------------------
+# Só indicam o que já rodou nesta máquina; em outro clone, devem começar vazios.
+resultados/execucoes/*.ok
+
+# ---- Datasets (ficam em ../../my_data, mas por segurança) -------------------
+my_data/
+data/
+cifar-100-python/
+cifar-10-batches-py/
+*.tar.gz
+omnibenchmark/
+
+# ---- Arrays e objetos grandes salvos à parte --------------------------------
+*.npy
+*.npz
+*.pkl
+*.pickle
+*.h5
+*.hdf5
+
+# ---- Python ------------------------------------------------------------------
+__pycache__/
+*.py[cod]
+.ipynb_checkpoints/
+.venv/
+venv/
+env/
+.env
+
+# ---- Compactados e arquivos de compilação LaTeX -----------------------------
+*.zip
+*.aux
+*.log
+*.bbl
+*.blg
+*.out
+*.toc
+*.fls
+*.fdb_latexmk
+*.synctex.gz
+
+# Os logs de execução são texto pequeno e úteis: voltam a ser versionados
+!resultados/logs/*.log
+
+# ---- Sistema operacional e editores -----------------------------------------
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.idea/
