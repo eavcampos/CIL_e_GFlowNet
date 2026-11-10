@@ -1,0 +1,93 @@
+{
+    "estrategia": "Linha de base v2 — Estratégia 2 sem pseudo-negativos, com as correções v2",
+    "versao": "nova_estrategia_2",
+    "descricao": "Igual à Nova Estratégia 1, mais: (1) banco de gaussianas por classe em phi = backbone(imagem), atualizado ao fim de cada tarefa, sem guardar imagens; (2) pseudo-negativos (phi sintéticos de classes antigas, com rótulo antigo) somados à CE do treino da tarefa atual, para ensinar o Adapter novo a recusar classes antigas; (3) métricas de vazamento entre tarefas (metricas_vazamento.py) por fronteira e no final.",
+    "seed": 1993,
+    "seeds_experimento_planejados": [
+        1993,
+        1994,
+        1995,
+        1996
+    ],
+    "nota_seed": "Rodar o experimento completo uma vez para cada valor de 'seed' acima (editando este campo, ou via 'python cil_nova_estrategia_1.py --seed 1994') para obter as 4 repetições independentes do estudo. A mesma seed controla tanto a reprodutibilidade geral (random/numpy/torch) quanto o sorteio de quais classes do dataset compõem cada tarefa.",
+    "dataset": {
+        "nome": "cifar100",
+        "nota_nome": "Valores aceitos: 'cifar10', 'cifar100' ou 'omnibenchmark'.",
+        "raiz_cifar": "../../my_data",
+        "raiz_omnibenchmark": "../../my_data/omnibenchmark",
+        "nota_omnibenchmark": "Esperado em formato ImageFolder com subpastas 'train/' e 'test/', cada uma contendo uma subpasta por classe (convenção torchvision.datasets.ImageFolder) — mesmo benchmark de 300 classes fine-grained usado em SimpleCIL/ADAM (Zhou et al., IJCV 2024) e EASE/RanPAC, já citados nas Estratégias 24c-24e deste projeto.",
+        "resize": [
+            64,
+            64
+        ],
+        "nota_resize": "Backbones pré-treinados no ImageNet normalmente esperam ~224x224; 64x64 é mantido por comparabilidade com as Estratégias 24-27c, mas pode ser alterado aqui.",
+        "nota_raiz": "Caminhos relativos são resolvidos a partir da pasta onde está cil_nova_estrategia_2.py (não da pasta de onde o comando é executado). '../../my_data' = dois níveis acima do projeto. Para o CIFAR-100, esta pasta deve CONTER a subpasta 'cifar-100-python' (formato do torchvision). Pode-se usar caminho absoluto. Use '/' mesmo no Windows."
+    },
+    "tarefas": {
+        "num_tasks": 5,
+        "classes_por_tarefa": 20,
+        "nota": "5 tarefas x 20 classes = as 100 classes do CIFAR-100. Com 100 de 100 classes, a seed não muda QUAIS classes entram, só a ORDEM em que aparecem e como se agrupam nas tarefas. num_tasks * classes_por_tarefa classes são sorteadas (sem reposição) do total de classes do dataset escolhido, usando 'seed'. As classes de cada tarefa nunca se repetem entre tarefas nem dentro da mesma tarefa."
+    },
+    "treino": {
+        "epochs_por_tarefa": 100,
+        "batch_size": 48,
+        "embedding_dim": 512,
+        "r_adapter": 64,
+        "weight_decay_adapter": 0.0001,
+        "lambda_lvq": 0.0,
+        "alpha_lvq": 0.0,
+        "tau_lvq": 1.0,
+        "unidades_lvq_por_classe": 16,
+        "frequencia_log_epocas": 10,
+        "nota_lvq": "A grade do mapa LVQ hexagonal é dimensionada automaticamente a partir de num_tasks, classes_por_tarefa e unidades_lvq_por_classe (generalização de SOM_LINHAS=12/SOM_COLUNAS=8 da Estratégia 26, que corresponde exatamente a num_tasks=3, classes_por_tarefa=2, unidades_lvq_por_classe=16).",
+        "adapter_residual": true,
+        "escala_logits": 16.0,
+        "init_classes_novas": "media_phi",
+        "atualizar_prototipos_novos": true,
+        "nota_correcoes_v2": "Correções v2 (ver README, seção 'Correções v2'): (1) escala_logits = 16 multiplica os cossenos antes da entropia cruzada; (2) init_classes_novas = 'media_phi' + atualizar_prototipos_novos = true: as classes novas são representadas pela média das saídas do Adapter desde o início do treino, em vez de vetores sorteados; (3) LVQ desligado (alpha_lvq = lambda_lvq = 0), pois as unidades nunca saíam da origem; (5) adapter_residual = true: o Adapter devolve phi + up(h) e começa como identidade."
+    },
+    "otimizador": {
+        "tipo": "SGD",
+        "lr": 0.01,
+        "momentum": 0.9,
+        "weight_decay": 0.0,
+        "nesterov": false,
+        "nota": "tipo aceita 'SGD' (default), 'Adam', 'AdamW' ou 'RMSprop'. Hiperparâmetros não aplicáveis ao tipo escolhido são ignorados (ex.: 'momentum' é ignorado para Adam/AdamW, que usam 'betas' opcional)."
+    },
+    "referencias": [
+        "Estratégia 26 (este trabalho): base direta — arquitetura de Adapters permanentes por tarefa, mapa LVQ, diagnóstico A/B/C e drift semântico, generalizados aqui para N tarefas/classes e datasets plugáveis",
+        "Houlsby, N. et al. Parameter-Efficient Transfer Learning for NLP. ICML 2019 — design do adapter bottleneck",
+        "Sato, A., Yamada, K. Generalized Learning Vector Quantization. NIPS 1995 — formulação GLVQ reaproveitada no mapa LVQ",
+        "Ilharco et al. Editing Models with Task Arithmetic. ICLR 2023 — diagnóstico A/B/C de negação/exclusão/aleatorização",
+        "Yu, Twardowski, Liu, Herranz, Wang, Cheng, Jui, van de Weijer. Semantic Drift Compensation for Class-Incremental Learning. arXiv 2004.00440, 2020 — cálculo de drift semântico exato",
+        "Zhou, D.W. et al. Revisiting Class-Incremental Learning with Pre-Trained Models (SimpleCIL/ADAM). IJCV 2024 — origem do benchmark OmniBenchmark usado aqui como dataset plugável"
+    ],
+    "pseudo_negativos": {
+        "modo": "nenhum",
+        "nota_modo": "'nenhum' reproduz a Nova Estratégia 1 (linha de base); 'gauss' = sorteio direto das gaussianas; 'is' = amostragem por importância focada onde há vazamento (recomendado começar por aqui); 'gfn' = GFlowNet híbrida com buffer do 'is' (só se o ESS do 'is' ficar muito baixo).",
+        "por_lote": 48,
+        "nota_por_lote": "Pseudo-negativos somados a cada lote real (default = batch_size).",
+        "lambda_pn": 0.5,
+        "nota_lambda_pn": "Peso da CE dos pseudo-negativos na perda total.",
+        "beta": 5.0,
+        "nota_beta": "Usado em 'is' e 'gfn'. Peso exp(beta * margem), margem = melhor score de classe nova - score da própria classe antiga (scores em [-1, 1]). beta = 0 equivale a 'gauss'; beta grande concentra tudo no pior ponto e derruba o ESS.",
+        "n_proposta": 4096,
+        "rank_cov": 32,
+        "encolhimento": 0.001,
+        "relu": true,
+        "nota_relu": "phi da ResNet-18 sai de ReLU + avgpool (não negativo); a gaussiana não é. relu=true aplica ReLU aos phi sintéticos antes de usá-los.",
+        "gfn": {
+            "passos": 4,
+            "oculta": 256,
+            "lr": 0.001,
+            "lr_logZ": 0.1,
+            "lote": 128,
+            "atualizacoes_por_lote": 1,
+            "fracao_buffer": 0.25,
+            "exploracao": 1.3
+        },
+        "nota_teste_rapido": "Para um primeiro teste de execução: treino.epochs_por_tarefa = 2 (mantendo 5 x 20). Isso já exercita todas as fronteiras, o banco com 80 classes e os gráficos de 100 classes.",
+        "nota_n_proposta": "Propostas da amostragem por importância por lote. Com até 80 classes antigas (tarefa 4), 4096 dá ~50 propostas por classe antiga; com 1024 seriam ~13, e o ESS ficaria instável."
+    },
+    "papel_no_estudo": "LINHA DE BASE v2: igual a config_gauss_v2.json e config_experimento_v2.json, exceto pseudo_negativos.modo = 'nenhum'."
+}
