@@ -1,5 +1,5 @@
 {
-    "estrategia": "Terceiro braço — Nova Estratégia 2 com pseudo-negativos sorteados às cegas das gaussianas (modo 'gauss')",
+    "estrategia": "Gauss — pseudo-negativos sorteados às cegas do banco de gaussianas (beta = 0)",
     "versao": "nova_estrategia_2",
     "descricao": "Igual à Nova Estratégia 1, mais: (1) banco de gaussianas por classe em phi = backbone(imagem), atualizado ao fim de cada tarefa, sem guardar imagens; (2) pseudo-negativos (phi sintéticos de classes antigas, com rótulo antigo) somados à CE do treino da tarefa atual, para ensinar o Adapter novo a recusar classes antigas; (3) métricas de vazamento entre tarefas (metricas_vazamento.py) por fronteira e no final.",
     "seed": 1993,
@@ -34,12 +34,28 @@
         "embedding_dim": 512,
         "r_adapter": 64,
         "weight_decay_adapter": 0.0001,
-        "lambda_lvq": 0.3,
-        "alpha_lvq": 0.4,
+        "lambda_lvq": 0.0,
+        "alpha_lvq": 0.0,
         "tau_lvq": 1.0,
         "unidades_lvq_por_classe": 16,
         "frequencia_log_epocas": 10,
-        "nota_lvq": "A grade do mapa LVQ hexagonal é dimensionada automaticamente a partir de num_tasks, classes_por_tarefa e unidades_lvq_por_classe (generalização de SOM_LINHAS=12/SOM_COLUNAS=8 da Estratégia 26, que corresponde exatamente a num_tasks=3, classes_por_tarefa=2, unidades_lvq_por_classe=16)."
+        "nota_lvq": "A grade do mapa LVQ hexagonal é dimensionada automaticamente a partir de num_tasks, classes_por_tarefa e unidades_lvq_por_classe (generalização de SOM_LINHAS=12/SOM_COLUNAS=8 da Estratégia 26, que corresponde exatamente a num_tasks=3, classes_por_tarefa=2, unidades_lvq_por_classe=16).",
+        "adapter_residual": true,
+        "escala_logits": 16.0,
+        "init_classes_novas": "media_phi",
+        "atualizar_prototipos_novos": true,
+        "parada_antecipada": {
+            "ativo": true,
+            "fracao_validacao": 0.1,
+            "paciencia": 5,
+            "delta_minimo": 0.001,
+            "epocas_minimas": 5,
+            "metrica": "val_ce",
+            "restaurar_melhor": true,
+            "pseudo_negativos_validacao": 1000,
+            "nota": "Parada antecipada: 10% do treino de cada classe vira validação (o teste nunca é usado para decidir). Para quando a entropia cruzada na validação ('val_ce') não melhora mais que delta_minimo por 'paciencia' épocas seguidas, depois de 'epocas_minimas'; restaura o Adapter da melhor época. 'val_ce' é a mesma métrica para todos os braços (comparação justa); 'val_ce_mais_pn' soma lambda_pn x a CE de um conjunto fixo de pseudo-negativos (só nos braços com pseudo-negativos). epochs_por_tarefa passa a ser o MÁXIMO."
+        },
+        "nota_opcoes": "(1) escala_logits multiplica os cossenos antes da entropia cruzada (com 1, a softmax nunca fica confiante: NormFace); (2) init_classes_novas = 'media_phi' + atualizar_prototipos_novos: as classes novas são representadas pela média das saídas do Adapter desde o início do treino; (3) LVQ desligado (alpha_lvq = lambda_lvq = 0); (4) adapter_residual: o Adapter devolve phi + up(h) e começa como identidade; (5) parada_antecipada: validação separada do treino decide quando parar."
     },
     "otimizador": {
         "tipo": "SGD",
@@ -84,5 +100,5 @@
         "nota_teste_rapido": "Para um primeiro teste de execução: treino.epochs_por_tarefa = 2 (mantendo 5 x 20). Isso já exercita todas as fronteiras, o banco com 80 classes e os gráficos de 100 classes.",
         "nota_n_proposta": "Propostas da amostragem por importância por lote. Com até 80 classes antigas (tarefa 4), 4096 dá ~50 propostas por classe antiga; com 1024 seriam ~13, e o ESS ficaria instável."
     },
-    "papel_no_estudo": "TERCEIRO BRAÇO: idêntico a config_baseline.json e config_experimento.json em tudo, exceto pseudo_negativos.modo = 'gauss'. Representa o replay gaussiano de pseudo-features já conhecido na literatura (PASS, SLCA, DMR). Comparações: baseline -> gauss mede o ganho do que já é conhecido; gauss -> experimento (is) mede o ganho da escolha guiada pela margem. 'gauss' equivale a 'is' com beta = 0."
+    "papel_no_estudo": "GAUSS: idêntico à linha de base, exceto pseudo_negativos.modo = 'gauss' (replay gaussiano já conhecido na literatura: PASS, SLCA, DMR)."
 }

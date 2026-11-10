@@ -58,7 +58,7 @@ plt.rcParams.update({
 })
 
 
-REFERENCIAS = ["ncm"]   # [Correções v2] classificador pela média de phi, sem treino (config_ncm_v2.json)
+REFERENCIAS = ["ncm"]   # [Correção] classificador pela média de phi, sem treino (config_ncm.json)
 
 
 def papel(nome_config):
@@ -253,6 +253,42 @@ def grafico_diagnostico(grupo, seeds, pasta, sufixo):
     salvar(fig, pasta, "4_diagnostico_pseudo_negativos.png")
 
 
+def grafico_h4_validacao(grupo, bracos, seeds, pasta, sufixo):
+    """[Parada antecipada] Hipótese H4 medida do jeito certo: fração de um conjunto FIXO de
+    pseudo-negativos sorteados às cegas do banco que vazaria (margem > 0), por época, em TODOS os braços
+    (inclusive a linha de base). Só existe em execuções com parada antecipada ativa."""
+    d0 = grupo[bracos[0]][seeds[0]]
+    tarefas = sorted(int(t) for t in d0["tarefas"] if int(t) >= 1)
+    if not tarefas or d0["tarefas"][str(tarefas[0])]["historico_treino"][0].get("pn_val_frac_vaza") is None:
+        return
+    fig, axes = plt.subplots(1, len(bracos), figsize=(4.6 * len(bracos), 4.2), sharey=True)
+    axes = np.atleast_1d(axes)
+    for ax, p in zip(axes, bracos):
+        for j, t in enumerate(tarefas):
+            curvas = [[np.nan if r.get("pn_val_frac_vaza") is None else 100 * r["pn_val_frac_vaza"]
+                       for r in grupo[p][s]["tarefas"][str(t)]["historico_treino"]] for s in seeds]
+            comp = min(len(c) for c in curvas)
+            media = np.nanmean(np.array([c[:comp] for c in curvas]), axis=0)
+            cor = RAMPA_TAREFAS[min(j, len(RAMPA_TAREFAS) - 1)]
+            ax.plot(range(1, comp + 1), media, color=cor, linewidth=2, label=f"tarefa {t}")
+            ax.annotate(f"T{t}", (comp, media[-1]), xytext=(6, 0), textcoords="offset points",
+                        va="center", fontsize=9, color=TINTA)
+        ax.set_title(ROTULO[p], loc="left", fontsize=10)
+        ax.set_xlabel("Época")
+        ax.set_ylim(0, 100)
+    axes[0].set_ylabel("% dos pseudo-negativos fixos que vazam")
+    axes[-1].legend(loc="center left", bbox_to_anchor=(1.08, 0.5), fontsize=8)
+    fig.suptitle(f"H4: pseudo-negativos de validação (fixos, sorteados às cegas) que vazam — deve cair{sufixo}",
+                 x=0.01, ha="left", fontsize=12, color=TINTA, fontweight="bold")
+    fig.tight_layout()
+    salvar(fig, pasta, "5_h4_pseudo_negativos_validacao.png")
+
+
+def epocas_executadas(d):
+    """Épocas executadas por tarefa (com parada antecipada, varia)."""
+    return [len(d["tarefas"][t]["historico_treino"]) for t in sorted(d["tarefas"], key=int)]
+
+
 def escrever_csv(m, bracos, seeds, pasta, referencias=None):
     referencias = referencias or {}
     caminho = os.path.join(pasta, "resumo.csv")
@@ -320,6 +356,10 @@ def main():
             grafico_fronteiras(grupo, bracos, seeds, pasta, rotulo)
             grafico_acc_tarefas(m, bracos, seeds, pasta, rotulo)
             grafico_diagnostico(grupo, seeds, pasta, rotulo)
+            grafico_h4_validacao(grupo, bracos, seeds, pasta, rotulo)
+            for p in bracos:
+                print(f"   épocas executadas por tarefa ({p}): "
+                      + " | ".join(f"seed {s}: {epocas_executadas(grupo[p][s])}" for s in seeds))
             for k, (titulo, _, _) in NOMES_METRICA.items():
                 medias = " | ".join(f"{p[:5]} {np.mean([m[p][s][k] for s in seeds]):6.2f}" for p in bracos)
                 difs = " | ".join(f"Δ {a[:5]}−{b[:5]} {np.mean([m[a][s][k] - m[b][s][k] for s in seeds]):+6.2f}"

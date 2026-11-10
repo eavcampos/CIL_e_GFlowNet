@@ -16,7 +16,7 @@ Idêntica à Nova Estratégia 1 (abaixo), com três acréscimos, todos marcados 
      as unidades LVQ antigas estão congelados, o gradiente só pode BAIXAR o score das classes
      novas para esses phi: é o "isto não é meu" que hoje o Adapter_t nunca aprende.
        perda = (1 - lambda_lvq) * CE_real + lambda_lvq * L_LVQ + lambda_pn * CE_pseudo
-     Modos (config_estrategia_2.json -> pseudo_negativos.modo):
+     Modos (config_experimento.json -> pseudo_negativos.modo):
        "nenhum" -> reproduz a Nova Estratégia 1 (linha de base);
        "gauss"  -> sorteio direto das gaussianas;
        "is"     -> amostragem por importância focada onde há vazamento (margem > 0);
@@ -26,6 +26,13 @@ Idêntica à Nova Estratégia 1 (abaixo), com três acréscimos, todos marcados 
      exata 1 - Acc = Lambda + E_WP, teto de ganho com oráculo de tarefa, matriz L, índice de
      direção (recência), correlação semântica e parcela atribuível à escala (kappa), após
      cada fronteira e no final. Complementam a "margem de vazamento" já existente.
+
+  4. OPÇÕES DE TREINO (bloco "treino" do config; sem a chave, vale o comportamento antigo):
+     adapter_residual (Adapter devolve phi + up(h)), escala_logits (escala s nos cossenos da CE),
+     init_classes_novas = "media_phi" e atualizar_prototipos_novos (classes novas representadas
+     pela média das saídas do Adapter durante o treino), alpha_lvq/lambda_lvq (LVQ; 0 desliga) e
+     parada_antecipada (validação separada do treino decide quando parar e restaura a melhor
+     época). Os quatro configs do estudo usam todas essas opções; ver README_estrategia_2.md.
 """
 """
 NOVA ESTRATÉGIA 1: GENERALIZAÇÃO DA ESTRATÉGIA 26
@@ -102,7 +109,7 @@ import matplotlib.cm as cm
 
 # [Estratégia 2]
 from pseudo_negativos_cil import (BancoGaussianas, GeradorPseudoNegativos, coletar_phi_por_classe,
-                                  scores_combinados)
+                                  scores_combinados, margem_vazamento)
 from metricas_vazamento import leakage_metrics
 
 # ============================================================================
@@ -113,7 +120,7 @@ SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
 def carregar_configuracao():
     parser = argparse.ArgumentParser(description="Nova Estratégia 2 (generalização da Estratégia 26)")
-    parser.add_argument("--config", default=os.path.join(SCRIPT_DIR, "config_estrategia_2.json"),
+    parser.add_argument("--config", default=os.path.join(SCRIPT_DIR, "config_experimento.json"),
                          help="Caminho para o config.json (default: config.json ao lado deste script)")
     parser.add_argument("--seed", type=int, default=None,
                          help="Sobrescreve config['seed'] (conveniência para rodar as 4 seeds planejadas "
@@ -149,7 +156,7 @@ TAU_LVQ = float(CFG_TREINO.get("tau_lvq", 1.0))
 UNIDADES_LVQ_POR_CLASSE = int(CFG_TREINO.get("unidades_lvq_por_classe", 16))
 FREQ_LOG_EPOCAS = int(CFG_TREINO.get("frequencia_log_epocas", 10))
 
-# [Correções v2] Todas com padrão que reproduz o comportamento anterior (Estratégia 1/2 originais).
+# [Correção] Todas com padrão que reproduz o comportamento anterior (Estratégia 1/2 originais).
 # adapter_residual: o Adapter devolve phi + up(relu(down(phi))) em vez de só up(...). Com 'up'
 #   iniciado em zero, cada Adapter novo começa como a identidade (todos partem do espaço phi).
 ADAPTER_RESIDUAL = bool(CFG_TREINO.get("adapter_residual", False))
@@ -165,6 +172,22 @@ INIT_CLASSES_NOVAS = str(CFG_TREINO.get("init_classes_novas", "aleatorio")).lowe
 #   média normalizada das saídas do Adapter novo nas imagens daquela época (treino e inferência
 #   usam o mesmo tipo de alvo; a margem dos pseudo-negativos é medida contra ele).
 ATUALIZAR_PROTOTIPOS_NOVOS = bool(CFG_TREINO.get("atualizar_prototipos_novos", False))
+# [Parada antecipada] treino.parada_antecipada = {"ativo": true, ...}. A decisão usa SÓ uma parte de
+# validação separada do TREINO de cada tarefa (nunca o teste). Com "ativo": false (padrão), nada muda.
+CFG_PA = CFG_TREINO.get("parada_antecipada", {}) or {}
+PA_ATIVO = bool(CFG_PA.get("ativo", False))
+PA_FRACAO_VAL = float(CFG_PA.get("fracao_validacao", 0.1)) if PA_ATIVO else 0.0
+PA_PACIENCIA = int(CFG_PA.get("paciencia", 5))
+PA_DELTA = float(CFG_PA.get("delta_minimo", 1e-3))
+PA_EPOCAS_MIN = int(CFG_PA.get("epocas_minimas", 5))
+PA_METRICA = str(CFG_PA.get("metrica", "val_ce")).lower()
+PA_RESTAURAR = bool(CFG_PA.get("restaurar_melhor", True))
+PA_N_PN_VAL = int(CFG_PA.get("pseudo_negativos_validacao", 1000))
+if PA_METRICA not in ("val_ce", "val_ce_mais_pn"):
+    raise ValueError(f"parada_antecipada.metrica inválida: {PA_METRICA} (use 'val_ce' ou 'val_ce_mais_pn')")
+if PA_ATIVO and not (0.0 < PA_FRACAO_VAL < 0.5):
+    raise ValueError("parada_antecipada.fracao_validacao deve estar entre 0 e 0.5")
+
 if INIT_CLASSES_NOVAS not in ("aleatorio", "media_phi"):
     raise ValueError(f"treino.init_classes_novas inválido: {INIT_CLASSES_NOVAS} (use 'aleatorio' ou 'media_phi')")
 
@@ -257,7 +280,7 @@ def carregar_dataset_base(cfg_dataset):
         else:
             logging.warning(f"[Dataset] Pasta {pasta_esperada!r} NÃO encontrada em {raiz}. O torchvision vai "
                             f"tentar baixar o dataset para lá. Se ele já foi baixado, confira "
-                            f"'dataset.raiz_cifar' em config_estrategia_2.json: deve apontar para a pasta que "
+                            f"'dataset.raiz_cifar' em config_experimento.json: deve apontar para a pasta que "
                             f"CONTÉM {pasta_esperada!r}, não para ela mesma.")
     transform = transforms.Compose([
         transforms.Resize(resize),
@@ -343,7 +366,8 @@ def preparar_particao_e_nomes(train_set, tarefas_classes_originais):
     return mapa_original_para_cil, nomes_classe_cil
 
 
-def obter_loaders_cil(train_set, test_set, tarefas_classes_originais, mapa_original_para_cil, batch_size):
+def obter_loaders_cil(train_set, test_set, tarefas_classes_originais, mapa_original_para_cil, batch_size,
+                      fracao_validacao=0.0, seed=0):
     """Generaliza obter_loaders_cil() da Estratégia 26 para N tarefas de
     tamanho arbitrário. Os índices por tarefa/por classe são calculados
     ANTES do remapeamento de rótulos (usando os rótulos originais do
@@ -367,11 +391,32 @@ def obter_loaders_cil(train_set, test_set, tarefas_classes_originais, mapa_origi
             indices_teste_por_classe_cil[classe_cil] = [i for i, l in enumerate(targets_teste_originais) if l == c_orig]
             classe_cil += 1
 
+    # [Parada antecipada] separa, de cada classe do TREINO, uma fração para validação (estratificada,
+    # determinada pela seed). Essas imagens saem do treino, dos protótipos e do banco de gaussianas.
+    indices_validacao_por_tarefa = [None] * len(tarefas_classes_originais)
+    if fracao_validacao > 0:
+        rng = np.random.RandomState(seed + 7)
+        novos_treino = []
+        for t, tarefa in enumerate(tarefas_classes_originais):
+            treino_t, val_t = [], []
+            for c_orig in tarefa:
+                idx_c = np.array([i for i in indices_treino_por_tarefa[t] if targets_treino_originais[i] == c_orig])
+                rng.shuffle(idx_c)
+                n_val = max(1, int(round(fracao_validacao * len(idx_c))))
+                val_t.extend(idx_c[:n_val].tolist())
+                treino_t.extend(idx_c[n_val:].tolist())
+            novos_treino.append(sorted(treino_t))
+            indices_validacao_por_tarefa[t] = sorted(val_t)
+        indices_treino_por_tarefa = novos_treino
+
     remapear_rotulos(train_set, mapa_original_para_cil)
     remapear_rotulos(test_set, mapa_original_para_cil)
 
     loaders_treino = [DataLoader(Subset(train_set, idx), batch_size=batch_size, shuffle=True)
                       for idx in indices_treino_por_tarefa]
+    loaders_validacao = [None if idx is None else DataLoader(Subset(train_set, idx), batch_size=batch_size,
+                                                              shuffle=False)
+                         for idx in indices_validacao_por_tarefa]
     loaders_teste_tarefa = [DataLoader(Subset(test_set, idx), batch_size=batch_size, shuffle=False)
                              for idx in indices_teste_por_tarefa]
     loaders_teste_classe = {c: DataLoader(Subset(test_set, idx), batch_size=batch_size, shuffle=False)
@@ -384,7 +429,7 @@ def obter_loaders_cil(train_set, test_set, tarefas_classes_originais, mapa_origi
         loaders_teste_acumulado.append(
             DataLoader(Subset(test_set, list(indices_acumulados)), batch_size=batch_size, shuffle=False))
 
-    return loaders_treino, loaders_teste_tarefa, loaders_teste_acumulado, loaders_teste_classe
+    return loaders_treino, loaders_teste_tarefa, loaders_teste_acumulado, loaders_teste_classe, loaders_validacao
 
 
 # ============================================================================
@@ -419,7 +464,7 @@ class Adapter(nn.Module):
         self.up = nn.Linear(r, dim)
         nn.init.zeros_(self.up.weight)
         nn.init.zeros_(self.up.bias)
-        # [Correções v2] residual=True -> saída phi + up(h) (adapter de Houlsby et al., 2019);
+        # [Correção] residual=True -> saída phi + up(h) (adapter de Houlsby et al., 2019);
         # residual=False -> só up(h) (comportamento anterior: o Adapter começa devolvendo zero).
         self.residual = ADAPTER_RESIDUAL if residual is None else bool(residual)
 
@@ -521,7 +566,7 @@ def expandir_fc_ortogonal(fc_atual, n_novas, dim=DIM_EMBEDDING, seed=SEED):
 # 7. PROTÓTIPOS — média da saída do Adapter da própria tarefa (idêntico)
 # ============================================================================
 def medias_por_classe(backbone, adapter, loader, classes, dim=DIM_EMBEDDING):
-    """[Correções v2] Média normalizada da saída do Adapter para cada classe, numa única passada
+    """[Correção] Média normalizada da saída do Adapter para cada classe, numa única passada
     pelo loader (calcular_prototipo faz uma passada por classe). Se a média der ~zero (Adapter sem
     conexão residual, que começa devolvendo zero), usa a média de phi como alternativa."""
     pos = {c: i for i, c in enumerate(classes)}
@@ -751,8 +796,43 @@ def prever_final(backbone, adapters, fc, lvq, loader_teste, classes_por_tarefa, 
 #     Estratégia 26 em uma única função parametrizada pelo índice da tarefa.
 #     Tarefa 0 é apenas o caso particular "sem adapters anteriores".
 # ============================================================================
+PARADA_POR_TAREFA = {}   # [Parada antecipada] resumo por tarefa, gravado no JSON
+
+
+def avaliar_validacao(backbone, adapters_anteriores, adapter_novo, fc, lvq, loader_val, classes_ativas,
+                      classes_novas, phi_pn_val=None, y_pn_val=None):
+    """[Parada antecipada] Métricas na validação (parte separada do TREINO da tarefa atual):
+      val_ce / val_acc: a mesma entropia cruzada do treino (cossenos x escala, todas as classes ativas);
+      pn_val_ce / pn_val_frac_vaza: num conjunto FIXO de pseudo-negativos sorteados às cegas do banco
+      (mesmo conjunto em todas as épocas e em todos os braços): CE com rótulo antigo e fração com
+      margem > 0. É a medida correta da hipótese H4, pois não depende do amostrador do braço."""
+    adapter_novo.eval()
+    soma_ce, corretos, total = 0.0, 0, 0
+    with torch.no_grad():
+        for images, labels in loader_val:
+            images, labels = images.to(DEVICE), labels.to(DEVICE)
+            phi = backbone(images)
+            deltas = [ad(phi) for ad in adapters_anteriores] + [adapter_novo(phi)]
+            logits = torch.stack([
+                F.cosine_similarity(deltas[c // CLASSES_POR_TAREFA],
+                                     fc[c].unsqueeze(0).expand_as(deltas[c // CLASSES_POR_TAREFA]), dim=1)
+                for c in classes_ativas], dim=1)
+            soma_ce += F.cross_entropy(ESCALA_LOGITS * logits, labels, reduction="sum").item()
+            corretos += (logits.argmax(1) == labels).sum().item()
+            total += labels.size(0)
+        res = {"val_ce": soma_ce / max(total, 1), "val_acc": 100.0 * corretos / max(total, 1),
+               "pn_val_ce": None, "pn_val_frac_vaza": None}
+        if phi_pn_val is not None and len(phi_pn_val) > 0:
+            S = scores_combinados(phi_pn_val, adapters_anteriores, adapter_novo, fc, lvq, classes_ativas,
+                                  CLASSES_POR_TAREFA, ALPHA_LVQ, TAU_LVQ, grad_novo=False)
+            res["pn_val_ce"] = F.cross_entropy(ESCALA_LOGITS * S, y_pn_val).item()
+            res["pn_val_frac_vaza"] = float((margem_vazamento(S, y_pn_val, classes_novas, classes_ativas) > 0)
+                                            .float().mean().item())
+    return res
+
+
 def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
-                    loader_treino, loader_teste_acumulado, nomes_classe_cil, gerador=None):
+                    loader_treino, loader_teste_acumulado, nomes_classe_cil, gerador=None, loader_val=None):
     classes_novas = list(range(indice_tarefa * CLASSES_POR_TAREFA, (indice_tarefa + 1) * CLASSES_POR_TAREFA))
     todas_classes_ativas = list(range(0, (indice_tarefa + 1) * CLASSES_POR_TAREFA))
     nomes_tarefa = ", ".join(nomes_classe_cil[c] for c in classes_novas)
@@ -766,7 +846,7 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
     adapter_novo = Adapter(dim=DIM_EMBEDDING, r=R_ADAPTER).to(DEVICE)
     theta_init_adapter = copy.deepcopy(adapter_novo.state_dict())
 
-    # [Correções v2] classes novas começam na média das saídas do Adapter novo (com adapter_residual,
+    # [Correção] classes novas começam na média das saídas do Adapter novo (com adapter_residual,
     # a média de phi), em vez de vetores sorteados que só seriam trocados pelo protótipo no fim.
     if INIT_CLASSES_NOVAS == "media_phi":
         medias_ini, usou_phi = medias_por_classe(backbone, adapter_novo, loader_treino, classes_novas)
@@ -799,6 +879,20 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
                      f"{PN_POR_LOTE} por lote, lambda_pn={LAMBDA_PN}, classes antigas="
                      f"{[nomes_classe_cil[c] for c in gerador.classes_antigas]}")
 
+    # [Parada antecipada] conjunto fixo de pseudo-negativos de validação (sorteio às cegas do banco)
+    usar_pa = PA_ATIVO and loader_val is not None
+    phi_pn_val = y_pn_val = None
+    if usar_pa and indice_tarefa >= 1 and gerador is not None and gerador.classes_antigas:
+        with torch.no_grad():
+            ger = torch.Generator(device="cpu").manual_seed(SEED + 500 + indice_tarefa)
+            idx = torch.randint(len(gerador.classes_antigas), (PA_N_PN_VAL,), generator=ger).to(DEVICE)
+            y_pn_val = torch.tensor(gerador.classes_antigas, device=DEVICE)[idx]
+            phi_pn_val = gerador._pos(gerador.banco.amostrar(y_pn_val))
+    melhor = {"metrica": float("inf"), "epoca": 0, "estado": None}
+    sem_melhora = 0
+    parar = False
+    info_parada = None
+
     historico = []
     for epoch in range(EPOCHS_POR_TAREFA):
         adapter_novo.train()
@@ -824,7 +918,7 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
                                      dim=1)
                 for c in todas_classes_ativas
             ], dim=1)
-            # [Correções v2] escala s nos logits (s = 1 reproduz o comportamento anterior)
+            # [Correção] escala s nos logits (s = 1 reproduz o comportamento anterior)
             loss_ce = criterion(ESCALA_LOGITS * logits_cos, labels)
             loss_lvq, bmu = lvq.perda_lvq(delta_novo, labels, classes_ativas=todas_classes_ativas)
             if ATUALIZAR_PROTOTIPOS_NOVOS:
@@ -864,13 +958,31 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
         loss_lvq_treino = running_loss_lvq / total
         acc_treino = (corretos / total) * 100
 
-        # [Correções v2] classes novas passam a ser a média das saídas do Adapter nesta época
+        # [Correção] classes novas passam a ser a média das saídas do Adapter nesta época
         if ATUALIZAR_PROTOTIPOS_NOVOS:
             with torch.no_grad():
                 for i, c in enumerate(classes_novas):
                     if cont_novas[i] > 0:
                         m = soma_novas[i] / cont_novas[i]
                         fc_expandida[c] = m / (torch.norm(m) + 1e-12)
+
+        # [Parada antecipada] validação (parte do TREINO) e decisão de parar; o teste abaixo é só registro
+        val = None
+        if usar_pa:
+            val = avaliar_validacao(backbone, adapters_anteriores, adapter_novo, fc_expandida, lvq, loader_val,
+                                    todas_classes_ativas, classes_novas, phi_pn_val, y_pn_val)
+            metrica = val["val_ce"]
+            if PA_METRICA == "val_ce_mais_pn" and usar_pn and val["pn_val_ce"] is not None:
+                metrica = metrica + LAMBDA_PN * val["pn_val_ce"]
+            if metrica < melhor["metrica"] - PA_DELTA:
+                melhor = {"metrica": metrica, "epoca": epoch + 1,
+                          "estado": (copy.deepcopy(adapter_novo.state_dict()), lvq.prototipos.detach().clone(),
+                                     fc_expandida[classes_novas].clone())}
+                sem_melhora = 0
+            else:
+                sem_melhora += 1
+            if epoch + 1 >= PA_EPOCAS_MIN and sem_melhora >= PA_PACIENCIA:
+                parar = True
 
         adapter_novo.eval()
         adapters_atuais = adapters_anteriores + [adapter_novo]
@@ -888,6 +1000,8 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
                                                           for c in todas_classes_ativas},
             "acc_por_tarefa": acc_por_tarefa_vista, "aac": aac_ep,
         }
+        if val is not None:
+            registro.update(val)
         if usar_pn:
             # [Estratégia 2] diagnósticos por época:
             #   frac_vaza  = fração dos pseudo-negativos com margem > 0 (vazariam para classe nova);
@@ -898,7 +1012,7 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
             registro["pseudo_negativos"] = gerador.resumo_estatisticas()
         historico.append(registro)
 
-        if (epoch + 1) % FREQ_LOG_EPOCAS == 0 or epoch == EPOCHS_POR_TAREFA - 1:
+        if (epoch + 1) % FREQ_LOG_EPOCAS == 0 or epoch == EPOCHS_POR_TAREFA - 1 or parar:
             resumo_classes = " | ".join(f"{nomes_classe_cil[c]}: {acc_por_classe[c]:.2f}%" for c in classes_novas)
             logging.info(f"   [Tarefa {indice_tarefa}] Época [{epoch+1}/{EPOCHS_POR_TAREFA}] -> "
                          f"CE:{loss_ce_treino:.4f} | L_LVQ:{loss_lvq_treino:.4f} | "
@@ -912,8 +1026,37 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
                              f"ESS/propostas: {fmt(st['ess_frac'], '.1%')} | "
                              f"logZ IS: {fmt(st['logZ_is'], '.3f')} | logZ GFN: {fmt(st['logZ_gfn'], '.3f')} | "
                              f"perda TB: {fmt(st['perda_tb'], '.2f')}")
+            if val is not None:
+                fmt2 = lambda v, f: "-" if v is None else format(v, f)
+                logging.info(f"      [Validação] CE:{val['val_ce']:.4f} | acc:{val['val_acc']:.2f}% | "
+                             f"pseudo-neg. fixos: CE {fmt2(val['pn_val_ce'], '.4f')}, "
+                             f"vazam {fmt2(val['pn_val_frac_vaza'], '.1%')} | melhor época até aqui: "
+                             f"{melhor['epoca']} | sem melhora há {sem_melhora}")
 
-    # [Correções v2] epochs_por_tarefa = 0 (ex.: linha de base sem treino, config_ncm_v2.json):
+        if parar:
+            logging.info(f"[Tarefa {indice_tarefa}] PARADA ANTECIPADA na época {epoch + 1}: {PA_METRICA} sem "
+                         f"melhora > {PA_DELTA} há {sem_melhora} épocas (melhor época: {melhor['epoca']}).")
+            break
+
+    # [Parada antecipada] restaura o estado da melhor época na validação
+    if usar_pa and historico:
+        epocas_executadas = historico[-1]["epoca"]
+        restaurado = False
+        if PA_RESTAURAR and melhor["estado"] is not None and melhor["epoca"] != epocas_executadas:
+            estado_ad, protos_lvq, fc_novas = melhor["estado"]
+            adapter_novo.load_state_dict(estado_ad)
+            with torch.no_grad():
+                lvq.prototipos.copy_(protos_lvq)
+                fc_expandida[classes_novas] = fc_novas
+            restaurado = True
+        info_parada = {"ativa": True, "metrica": PA_METRICA, "melhor_epoca": melhor["epoca"],
+                       "melhor_valor": melhor["metrica"], "epocas_executadas": epocas_executadas,
+                       "parou_antes_do_maximo": bool(parar), "estado_restaurado": restaurado}
+        logging.info(f"[Tarefa {indice_tarefa}] Parada antecipada: {epocas_executadas} épocas executadas, melhor "
+                     f"época {melhor['epoca']} ({PA_METRICA}={melhor['metrica']:.4f})"
+                     f"{'; Adapter e protótipos dessa época restaurados' if restaurado else ''}.")
+
+    # [Correção] epochs_por_tarefa = 0 (ex.: linha de base sem treino, config_ncm.json):
     # registra uma única avaliação, sem treino, para que gráficos e JSON tenham um ponto.
     if not historico:
         adapter_novo.eval()
@@ -948,6 +1091,7 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
         fc_final = torch.cat([fc_expandida[:indice_tarefa * CLASSES_POR_TAREFA]] +
                               [p.unsqueeze(0) for p in prototipos_novos], dim=0)
 
+    PARADA_POR_TAREFA[indice_tarefa] = info_parada
     return adapter_novo, fc_final, historico, theta_init_adapter, theta_init_lvq, classes_novas
 
 
@@ -1026,7 +1170,7 @@ def diagnostico_task_arithmetic_fronteira(indice_fronteira, backbone, adapters_a
     construir_versao_negada_m2/m3 + avaliar_cat_dog_exclusao/
     avaliar_m1_m2_exclusao + construir_adapter_aleatorio_generico da
     Estratégia 26 para uma fronteira arbitrária."""
-    # [Correções v2] Antes, as versões original, negação e aleatório recebiam só fc_antigas. Como
+    # [Correção] Antes, as versões original, negação e aleatório recebiam só fc_antigas. Como
     # calcular_logits_finais só pontua as classes presentes em fc e cada classe usa o Adapter da sua
     # tarefa, o Adapter novo (original, negado ou aleatório) nunca era usado e as quatro versões davam
     # o mesmo número (= exclusão). Agora as classes novas competem nas três versões com Adapter novo.
@@ -1537,8 +1681,15 @@ def executar_experimento():
         nomes = [nomes_classe_cil[mapa_original_para_cil[c]] for c in tarefa_orig]
         logging.info(f"[Partição de tarefas] Tarefa {t}: classes originais {tarefa_orig} -> {nomes}")
 
-    loaders_treino, loaders_teste_tarefa, loaders_teste_acumulado, loaders_teste_classe = obter_loaders_cil(
-        train_set, test_set, tarefas_classes_originais, mapa_original_para_cil, BATCH_SIZE)
+    loaders_treino, loaders_teste_tarefa, loaders_teste_acumulado, loaders_teste_classe, loaders_validacao = \
+        obter_loaders_cil(train_set, test_set, tarefas_classes_originais, mapa_original_para_cil, BATCH_SIZE,
+                          fracao_validacao=PA_FRACAO_VAL, seed=SEED)
+    if PA_ATIVO:
+        logging.info(f"[Parada antecipada] ATIVA: {PA_FRACAO_VAL:.0%} do treino de cada classe vira validação; "
+                     f"métrica={PA_METRICA}, paciência={PA_PACIENCIA}, delta mínimo={PA_DELTA}, "
+                     f"épocas mínimas={PA_EPOCAS_MIN}, máximo={EPOCHS_POR_TAREFA}, restaurar melhor={PA_RESTAURAR}. "
+                     f"Imagens de treino por tarefa: {[len(l.dataset) for l in loaders_treino]}; "
+                     f"de validação: {[len(l.dataset) for l in loaders_validacao]}.")
 
     backbone = criar_backbone_pretreinado_congelado()
     linhas, colunas = dimensionar_grade_lvq(NUM_TASKS, CLASSES_POR_TAREFA, UNIDADES_LVQ_POR_CLASSE)
@@ -1560,6 +1711,7 @@ def executar_experimento():
             "som_linhas": linhas, "som_colunas": colunas, "otimizador": CFG_OTIMIZADOR,
             "adapter_residual": ADAPTER_RESIDUAL, "escala_logits": ESCALA_LOGITS,
             "init_classes_novas": INIT_CLASSES_NOVAS, "atualizar_prototipos_novos": ATUALIZAR_PROTOTIPOS_NOVOS,
+            "parada_antecipada": CFG_PA if PA_ATIVO else {"ativo": False},
         },
         "particao_tarefas": {
             "classes_originais_por_tarefa": tarefas_classes_originais,
@@ -1595,7 +1747,7 @@ def executar_experimento():
         gerador.preparar_tarefa(classes_antigas=list(range(t * CLASSES_POR_TAREFA)))
         adapter_t, fc, historico_t, theta_init_adapter_t, theta_init_lvq_t, classes_novas = treinar_tarefa(
             t, backbone, lvq, adapters, fc, loaders_treino[t], loaders_teste_acumulado[t], nomes_classe_cil,
-            gerador=gerador)
+            gerador=gerador, loader_val=loaders_validacao[t])
 
         # [Estratégia 2] alimenta o banco com phi das classes desta tarefa (backbone congelado:
         # não depende do Adapter, então estas estatísticas valem para todas as tarefas futuras)
@@ -1611,6 +1763,7 @@ def executar_experimento():
         json_data["tarefas"][str(t)] = {
             "classes": [nomes_classe_cil[c] for c in classes_novas],
             "historico_treino": historico_t,
+            "parada_antecipada": PARADA_POR_TAREFA.get(t),
         }
         plotar_acc_por_classe(historico_t, classes_novas, nomes_classe_cil, t,
                               f"acc_por_classe_tarefa{t}_nova_estrategia_2")
@@ -1671,7 +1824,7 @@ def executar_experimento():
                 backbone, adapters + [adapter_t], fc, lvq, loaders_teste_acumulado[t], banco,
                 task_stats, f"após a tarefa {t}")
 
-        # [Correções v2] acurácia no teste acumulado logo após cada tarefa (inclusive a tarefa 0),
+        # [Correção] acurácia no teste acumulado logo após cada tarefa (inclusive a tarefa 0),
         # para a AAC incremental da literatura (média dessas acurácias), além da acurácia média final.
         _lg, _lb = coletar_logits(backbone, adapters + [adapter_t], fc, lvq, loaders_teste_acumulado[t])
         json_data.setdefault("acc_apos_tarefa", []).append(float((_lg.argmax(axis=1) == _lb).mean() * 100))
@@ -1704,7 +1857,7 @@ def executar_experimento():
     matriz_scores = calcular_matriz_scores_medios(backbone, adapters, fc, lvq, loader_teste_total, NUM_CLASSES_TOTAIS)
     alinhamento_diagonal = {nomes_classe_cil[c]: float(matriz_scores[c, c]) for c in range(NUM_CLASSES_TOTAIS)}
 
-    # [Correções v2] "aac" (nome mantido por compatibilidade) é a acurácia MÉDIA FINAL entre tarefas;
+    # [Correção] "aac" (nome mantido por compatibilidade) é a acurácia MÉDIA FINAL entre tarefas;
     # "aac_incremental" é a AAC da literatura: média das acurácias após cada tarefa.
     aac_incremental = float(np.mean(json_data.get("acc_apos_tarefa", [float("nan")])))
     logging.info(f" > AAC incremental (média das acurácias após cada tarefa): {aac_incremental:.2f}%")

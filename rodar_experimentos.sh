@@ -1,36 +1,24 @@
 #!/usr/bin/env bash
 # ============================================================================
-# Roda a LINHA DE BASE e o EXPERIMENTO da Nova Estratégia 2, em QUATRO BATERIAS, uma por seed:
+# Roda os QUATRO configs da Estratégia 2, em QUATRO BATERIAS, uma por seed:
 #   bateria 1 -> seed 1993     bateria 3 -> seed 1995
 #   bateria 2 -> seed 1994     bateria 4 -> seed 1996
-# Cada bateria = 3 execuções (linha de base, experimento e gauss, todas da mesma seed).
 #
-#   config_baseline.json    -> pseudo_negativos.modo = "nenhum"  (sem pseudo-negativos)
-#   config_experimento.json -> pseudo_negativos.modo = "is"      (pseudo-negativos escolhidos pela margem)
-#   config_gauss.json       -> pseudo_negativos.modo = "gauss"   (pseudo-negativos sorteados às cegas;
-#                              o replay gaussiano já conhecido na literatura)
-#
-# Os dois configs são idênticos no resto. Para cada seed, roda primeiro a linha de base e
-# depois o experimento, para que mesmo uma execução interrompida deixe pares comparáveis.
+#   config_ncm.json         -> referência sem treino (média de phi; leva minutos)
+#   config_baseline.json    -> pseudo_negativos.modo = "nenhum"  (linha de base)
+#   config_experimento.json -> pseudo_negativos.modo = "is"      (pseudo-negativos pela margem)
+#   config_gauss.json       -> pseudo_negativos.modo = "gauss"   (pseudo-negativos às cegas)
+# Os três últimos são idênticos no resto.
 #
 # Uso (na pasta do projeto, ou de qualquer lugar):
-#   bash rodar_experimentos.sh --bateria 1   # seed 1993: linha de base + experimento
-#   bash rodar_experimentos.sh --bateria 2   # seed 1994
-#   bash rodar_experimentos.sh --bateria 3   # seed 1995
-#   bash rodar_experimentos.sh --bateria 4   # seed 1996
+#   bash rodar_experimentos.sh --teste       # primeiro: seed 1993, poucas épocas
+#   bash rodar_experimentos.sh --bateria 1   # seed 1993
+#   bash rodar_experimentos.sh --bateria 2   # seed 1994 (3: 1995, 4: 1996)
 #   bash rodar_experimentos.sh --bateria 1 2 # várias baterias em sequência
-#   bash rodar_experimentos.sh --teste       # teste rápido: seed 1993 apenas, 2 épocas por tarefa
 #   acrescente --refazer para rodar de novo inclusive o que já terminou com sucesso
 #
-# CORREÇÕES v2 (escala nos logits, classes novas pela média, LVQ desligado, adapter residual):
-#   bash rodar_experimentos.sh --v2 --teste      # teste rápido do conjunto v2
-#   bash rodar_experimentos.sh --v2 --bateria 1  # seed 1993: ncm_v2 (minutos) + linha de base,
-#                                                #   experimento e gauss v2
-# Os resultados v2 ficam na mesma pasta resultados/, com "_v2" no nome, e são comparados à parte.
-#
-# Tudo é gravado DENTRO do projeto, em CIL_e_GFlowNet/resultados/ (logs, results, figures_cil,
-# checkpoints, execucoes, comparacao). A comparação no fim de cada bateria usa todas as seeds que
-# já tenham as duas execuções: após a bateria 1, só 1993; após a 2, 1993 e 1994; e assim por diante.
+# Tudo é gravado DENTRO do projeto, em resultados/ (logs, results, figures_cil, checkpoints,
+# execucoes, comparacao). A comparação no fim de cada bateria usa todas as seeds já concluídas.
 #
 # Retomada: cada execução bem-sucedida deixa um marcador em resultados/execucoes/*.ok. Se o script
 # for interrompido (queda de energia, Ctrl+C), basta chamá-lo de novo: o que já terminou é pulado.
@@ -44,11 +32,8 @@ PASTA_PROJETO="$(cd "$(dirname "${BASH_SOURCE[0]}")" && pwd)"
 cd "$PASTA_PROJETO" || exit 1
 
 SCRIPT="cil_nova_estrategia_2.py"
-# Ordem: os dois braços originais primeiro, depois o terceiro. Execuções já concluídas (marcador .ok)
-# são puladas, então baterias rodadas antes do terceiro braço existir só executam o "gauss".
-CONFIGS=("config_baseline.json" "config_experimento.json" "config_gauss.json")
-# [Correções v2] referência sem treino primeiro (leva minutos), depois os três braços corrigidos
-CONFIGS_V2=("config_ncm_v2.json" "config_baseline_v2.json" "config_experimento_v2.json" "config_gauss_v2.json")
+# Ordem: a referência sem treino primeiro (minutos), depois linha de base, experimento e gauss.
+CONFIGS=("config_ncm.json" "config_baseline.json" "config_experimento.json" "config_gauss.json")
 # bateria N -> seed SEEDS_POR_BATERIA[N-1]
 SEEDS_POR_BATERIA=(1993 1994 1995 1996)
 EPOCAS_TESTE=2
@@ -59,14 +44,13 @@ BATERIA=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --teste)   MODO_TESTE=1 ;;
-        --v2)      CONFIGS=("${CONFIGS_V2[@]}") ;;
         --refazer) REFAZER=1 ;;
         --bateria)
             # aceita uma ou mais baterias: --bateria 1   ou   --bateria 1 2
             while [ $# -gt 1 ] && [[ "$2" =~ ^[0-9]+$ ]]; do BATERIA="$BATERIA $2"; shift; done ;;
         --bateria=*) BATERIA="${1#--bateria=}"; BATERIA="${BATERIA//,/ }" ;;
-        -h|--help) sed -n '2,37p' "$0"; exit 0 ;;
-        *) echo "Opção desconhecida: $1 (use --bateria 1 a 4, --teste, --v2, --refazer ou --help)"; exit 2 ;;
+        -h|--help) sed -n '2,28p' "$0"; exit 0 ;;
+        *) echo "Opção desconhecida: $1 (use --bateria 1 a 4, --teste, --refazer ou --help)"; exit 2 ;;
     esac
     shift
 done
@@ -131,8 +115,13 @@ if [ "$MODO_TESTE" -eq 1 ]; then
 import json, sys
 origem, destino, epocas = sys.argv[1], sys.argv[2], int(sys.argv[3])
 cfg = json.load(open(origem, encoding="utf-8"))
-if cfg["treino"].get("epochs_por_tarefa", 1) > 0:      # config_ncm_v2.json continua sem treino
+if cfg["treino"].get("epochs_por_tarefa", 1) > 0:      # config_ncm.json continua sem treino
     cfg["treino"]["epochs_por_tarefa"] = epocas
+    pa = cfg["treino"].get("parada_antecipada", {})
+    if pa.get("ativo"):
+        # exercita o caminho da parada antecipada (parar e restaurar a melhor época) em poucas épocas
+        cfg["treino"]["epochs_por_tarefa"] = max(epocas, 4)
+        pa["epocas_minimas"], pa["paciencia"] = 2, 1
 # os caminhos do dataset são resolvidos a partir da pasta do SCRIPT, então não mudam aqui
 json.dump(cfg, open(destino, "w", encoding="utf-8"), indent=4, ensure_ascii=False)
 EOF
@@ -204,7 +193,7 @@ echo "Resultados detalhados em: $PASTA_RESULTADOS (results, figures_cil, checkpo
 # --- gráficos comparativos linha de base x experimento ------------------------------
 # Usa todas as seeds que tenham as DUAS execuções concluídas (mesmo que alguma tenha falhado).
 echo "============================================================"
-echo "Gerando gráficos comparativos (linha de base x experimento)..."
+echo "Gerando gráficos comparativos (linha de base, gauss, experimento e referência NCM)..."
 "$PYTHON" comparar_resultados.py --resultados "$PASTA_RESULTADOS/results" --saida "$PASTA_RESULTADOS/comparacao" \
     || echo "AVISO: a comparação falhou; rode à mão: $PYTHON comparar_resultados.py"
 
