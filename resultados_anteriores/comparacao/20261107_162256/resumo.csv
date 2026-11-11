@@ -1,6 +1,0 @@
-seed;config;aac;vazamento;erro_dentro_da_tarefa;teto_de_ganho;acc_T0;acc_T1;acc_T2;acc_T3;acc_T4
-1993;baseline;27.410;65.800;6.790;40.050;14.050;21.650;22.500;37.000;41.850
-1993;experimento;28.150;65.330;6.520;40.050;14.900;20.400;24.100;38.200;43.150
-média;baseline;27.410;65.800;6.790;40.050
-média;experimento;28.150;65.330;6.520;40.050
-diferença média (exp - base);;+0.740;-0.470;-0.270;+0.000

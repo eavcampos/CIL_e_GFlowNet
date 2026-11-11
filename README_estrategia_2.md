@@ -77,14 +77,25 @@ O **teste nunca decide nada**. De cada classe do treino, 10% são separados como
 | Chave | Valor | Significado |
 | --- | --- | --- |
 | `fracao_validacao` | `0.1` | fração do treino de cada classe usada como validação |
-| `metrica` | `"val_ce"` | entropia cruzada na validação, igual para todos os braços (`"val_ce_mais_pn"` soma `lambda_pn` × a CE de pseudo-negativos fixos) |
-| `paciencia` | `5` | épocas seguidas sem melhora antes de parar |
+| `metrica` | `"ambas"` | acompanha **separadamente** (1) a CE de validação nas classes novas (aprender o novo) e (2) a CE de um conjunto fixo de pseudo-negativos sorteados às cegas (recusar o antigo); só para quando **nenhuma das duas** melhora há `paciencia` épocas. Igual em todos os braços, inclusive a linha de base (na tarefa 0, só a parte 1). Alternativas: `"val_ce"` (só o novo) e `"val_ce_mais_pn"` (soma com recorde único) |
+| `peso_pn_validacao` | `0.5` | peso da parte 2 na soma usada para escolher a época restaurada (independe de `lambda_pn`, que é peso de treino) |
+| `paciencia` | `10` | épocas seguidas sem melhora antes de parar |
 | `delta_minimo` | `0.001` | melhora mínima |
 | `epocas_minimas` | `5` | nunca para antes disto |
-| `restaurar_melhor` | `true` | ao parar, volta ao Adapter e aos protótipos da melhor época |
+| `restaurar_melhor` | `true` | ao parar, volta ao Adapter e aos protótipos da melhor época da **janela final** (últimas `paciencia + 1` épocas), pela soma das duas partes |
 | `pseudo_negativos_validacao` | `1000` | conjunto fixo de pseudo-negativos de validação (ver H4) |
 
 `epochs_por_tarefa` (100) passa a ser o máximo.
+
+**Por que `"ambas"`.** O Adapter novo aprende duas coisas, em tempos diferentes: primeiro a
+reconhecer as classes novas; a recusa das antigas **primeiro piora** (ele "agarra" tudo) e só depois
+melhora. Na seed 1993, a regra `val_ce` (só o novo) parava e restaurava épocas em que a recusa ainda
+não tinha sido aprendida (braço gauss, tarefa 1: 57% dos pseudo-negativos fixos vazavam na época
+restaurada e 25% cinco épocas depois), e a acurácia final caiu de 33,2% (100 épocas) para 28,2%. Uma
+soma das duas partes com um recorde único também falha: o mínimo fica nas primeiras épocas, antes de
+o Adapter agarrar, e a simulação nos logs da seed 1993 mostrou que ela pararia ainda mais cedo
+(época 11, restaurando a época 1). Com `"ambas"`, cada parte tem seu recorde e o treino só para
+quando as duas estabilizam; a restauração olha só a janela final, para não voltar a essas épocas.
 
 ## Como rodar
 

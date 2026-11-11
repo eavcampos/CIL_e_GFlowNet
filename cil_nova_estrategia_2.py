@@ -183,8 +183,12 @@ PA_EPOCAS_MIN = int(CFG_PA.get("epocas_minimas", 5))
 PA_METRICA = str(CFG_PA.get("metrica", "val_ce")).lower()
 PA_RESTAURAR = bool(CFG_PA.get("restaurar_melhor", True))
 PA_N_PN_VAL = int(CFG_PA.get("pseudo_negativos_validacao", 1000))
-if PA_METRICA not in ("val_ce", "val_ce_mais_pn"):
-    raise ValueError(f"parada_antecipada.metrica inválida: {PA_METRICA} (use 'val_ce' ou 'val_ce_mais_pn')")
+# Peso da CE dos pseudo-negativos fixos na métrica "val_ce_mais_pn". É o MESMO em todos os braços
+# (inclusive a linha de base, que também é avaliada nos pseudo-negativos fixos), para que a regra de
+# parada seja idêntica entre eles. Independe de pseudo_negativos.lambda_pn, que é peso de TREINO.
+PA_PESO_PN = float(CFG_PA.get("peso_pn_validacao", 0.5))
+if PA_METRICA not in ("val_ce", "val_ce_mais_pn", "ambas"):
+    raise ValueError(f"parada_antecipada.metrica inválida: {PA_METRICA} (use 'ambas', 'val_ce' ou 'val_ce_mais_pn')")
 if PA_ATIVO and not (0.0 < PA_FRACAO_VAL < 0.5):
     raise ValueError("parada_antecipada.fracao_validacao deve estar entre 0 e 0.5")
 
@@ -890,6 +894,17 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
             phi_pn_val = gerador._pos(gerador.banco.amostrar(y_pn_val))
     melhor = {"metrica": float("inf"), "epoca": 0, "estado": None}
     sem_melhora = 0
+    # [Parada antecipada, métrica "ambas"] cada parte tem seu próprio recorde e seu contador:
+    #   novo  = val_ce (reconhecer as classes novas);
+    #   antigo = pn_val_ce (recusar as classes antigas; não existe na tarefa 0).
+    # Só para quando NENHUMA das duas melhora há 'paciencia' épocas. Isso é necessário porque a recusa
+    # não é monotônica: o Adapter primeiro "agarra" as classes antigas (pn_val_ce sobe) e só depois
+    # aprende a recusá-las (pn_val_ce desce). Uma soma das duas com um único recorde teria seu mínimo
+    # nas primeiras épocas e pararia antes de a recusa ser aprendida (verificado nos logs da seed 1993).
+    recorde = {"novo": float("inf"), "antigo": float("inf")}
+    sem_melhora_parte = {"novo": 0, "antigo": 0}
+    janela = []   # estados das últimas (paciencia + 1) épocas, para restaurar a melhor delas
+    lvq_ativo = (ALPHA_LVQ != 0 or LAMBDA_LVQ != 0)
     parar = False
     info_parada = None
 
@@ -971,10 +986,43 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
         if usar_pa:
             val = avaliar_validacao(backbone, adapters_anteriores, adapter_novo, fc_expandida, lvq, loader_val,
                                     todas_classes_ativas, classes_novas, phi_pn_val, y_pn_val)
+            # Métricas: "ambas" (padrão do estudo) = só para quando NEM reconhecer as novas (val_ce) NEM
+            # recusar as antigas (pn_val_ce) melhora há 'paciencia' épocas; igual em todos os braços;
+            # restaura a melhor época da janela final. "val_ce" = só reconhecer as novas (parava antes
+            # de a recusa ser aprendida). "val_ce_mais_pn" = soma com recorde único (mesmo problema,
+            # porque a recusa primeiro piora e depois melhora). Na tarefa 0 não há classes antigas.
             metrica = val["val_ce"]
-            if PA_METRICA == "val_ce_mais_pn" and usar_pn and val["pn_val_ce"] is not None:
-                metrica = metrica + LAMBDA_PN * val["pn_val_ce"]
-            if metrica < melhor["metrica"] - PA_DELTA:
+            if PA_METRICA == "val_ce_mais_pn" and val["pn_val_ce"] is not None:
+                metrica = metrica + PA_PESO_PN * val["pn_val_ce"]
+            if PA_METRICA == "ambas":
+                if val["pn_val_ce"] is not None:
+                    metrica = val["val_ce"] + PA_PESO_PN * val["pn_val_ce"]   # só para escolher dentro da janela
+                partes = {"novo": val["val_ce"], "antigo": val["pn_val_ce"]}
+                for k, v in partes.items():
+                    if v is None:
+                        continue
+                    if v < recorde[k] - PA_DELTA:
+                        recorde[k], sem_melhora_parte[k] = v, 0
+                    else:
+                        sem_melhora_parte[k] += 1
+                tem_antigo = val["pn_val_ce"] is not None
+                sem_melhora = (min(sem_melhora_parte["novo"], sem_melhora_parte["antigo"]) if tem_antigo
+                               else sem_melhora_parte["novo"])
+                janela.append((metrica, epoch + 1, copy.deepcopy(adapter_novo.state_dict()),
+                               lvq.prototipos.detach().clone() if lvq_ativo else None,
+                               fc_expandida[classes_novas].clone()))
+                janela = janela[-(PA_PACIENCIA + 1):]
+                m_j, e_j, ad_j, lvq_j, fc_j = min(janela, key=lambda x: x[0])
+                melhor = {"metrica": m_j, "epoca": e_j, "estado": (ad_j, lvq_j, fc_j)}
+                val["metrica_parada"] = metrica
+                val["sem_melhora_novo"] = sem_melhora_parte["novo"]
+                val["sem_melhora_antigo"] = sem_melhora_parte["antigo"] if tem_antigo else None
+                if epoch + 1 >= PA_EPOCAS_MIN and sem_melhora >= PA_PACIENCIA:
+                    parar = True
+            val["metrica_parada"] = metrica
+            if PA_METRICA == "ambas":
+                pass
+            elif metrica < melhor["metrica"] - PA_DELTA:
                 melhor = {"metrica": metrica, "epoca": epoch + 1,
                           "estado": (copy.deepcopy(adapter_novo.state_dict()), lvq.prototipos.detach().clone(),
                                      fc_expandida[classes_novas].clone())}
@@ -1028,10 +1076,12 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
                              f"perda TB: {fmt(st['perda_tb'], '.2f')}")
             if val is not None:
                 fmt2 = lambda v, f: "-" if v is None else format(v, f)
-                logging.info(f"      [Validação] CE:{val['val_ce']:.4f} | acc:{val['val_acc']:.2f}% | "
+                logging.info(f"      [Validação] métrica de parada:{val['metrica_parada']:.4f} | CE:{val['val_ce']:.4f} | acc:{val['val_acc']:.2f}% | "
                              f"pseudo-neg. fixos: CE {fmt2(val['pn_val_ce'], '.4f')}, "
                              f"vazam {fmt2(val['pn_val_frac_vaza'], '.1%')} | melhor época até aqui: "
-                             f"{melhor['epoca']} | sem melhora há {sem_melhora}")
+                             f"{melhor['epoca']} | sem melhora há {sem_melhora}"
+                             + (f" (novo: {val.get('sem_melhora_novo')}, antigo: {val.get('sem_melhora_antigo')})"
+                                if PA_METRICA == "ambas" else ""))
 
         if parar:
             logging.info(f"[Tarefa {indice_tarefa}] PARADA ANTECIPADA na época {epoch + 1}: {PA_METRICA} sem "
@@ -1046,7 +1096,8 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
             estado_ad, protos_lvq, fc_novas = melhor["estado"]
             adapter_novo.load_state_dict(estado_ad)
             with torch.no_grad():
-                lvq.prototipos.copy_(protos_lvq)
+                if protos_lvq is not None:
+                    lvq.prototipos.copy_(protos_lvq)
                 fc_expandida[classes_novas] = fc_novas
             restaurado = True
         info_parada = {"ativa": True, "metrica": PA_METRICA, "melhor_epoca": melhor["epoca"],

@@ -47,13 +47,14 @@
         "parada_antecipada": {
             "ativo": true,
             "fracao_validacao": 0.1,
-            "paciencia": 5,
+            "metrica": "ambas",
+            "peso_pn_validacao": 0.5,
+            "paciencia": 10,
             "delta_minimo": 0.001,
             "epocas_minimas": 5,
-            "metrica": "val_ce",
             "restaurar_melhor": true,
             "pseudo_negativos_validacao": 1000,
-            "nota": "Parada antecipada: 10% do treino de cada classe vira validação (o teste nunca é usado para decidir). Para quando a entropia cruzada na validação ('val_ce') não melhora mais que delta_minimo por 'paciencia' épocas seguidas, depois de 'epocas_minimas'; restaura o Adapter da melhor época. 'val_ce' é a mesma métrica para todos os braços (comparação justa); 'val_ce_mais_pn' soma lambda_pn x a CE de um conjunto fixo de pseudo-negativos (só nos braços com pseudo-negativos). epochs_por_tarefa passa a ser o MÁXIMO."
+            "nota": "Parada antecipada: 10% do treino de cada classe vira validação (o teste nunca decide nada). Métrica 'ambas': acompanha separadamente (1) a CE de validação nas classes novas (aprender o novo) e (2) a CE de um conjunto FIXO de 1000 pseudo-negativos sorteados às cegas (recusar o antigo), e só para quando NENHUMA das duas melhora mais que delta_minimo há 'paciencia' épocas, depois de 'epocas_minimas'. Igual em todos os braços, inclusive a linha de base; na tarefa 0 vale só a parte (1). Ao parar, restaura a época da janela final (últimas paciencia+1 épocas) com menor val_ce + peso_pn_validacao x pn_val_ce. epochs_por_tarefa é o MÁXIMO."
         },
         "nota_opcoes": "(1) escala_logits multiplica os cossenos antes da entropia cruzada (com 1, a softmax nunca fica confiante: NormFace); (2) init_classes_novas = 'media_phi' + atualizar_prototipos_novos: as classes novas são representadas pela média das saídas do Adapter desde o início do treino; (3) LVQ desligado (alpha_lvq = lambda_lvq = 0); (4) adapter_residual: o Adapter devolve phi + up(h) e começa como identidade; (5) parada_antecipada: validação separada do treino decide quando parar."
     },
