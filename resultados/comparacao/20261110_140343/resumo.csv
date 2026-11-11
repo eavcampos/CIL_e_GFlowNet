@@ -1,0 +1,10 @@
+seed;config;aac;vazamento;erro_dentro_da_tarefa;teto_de_ganho;aac_incremental;acc_T0;acc_T1;acc_T2;acc_T3;acc_T4
+1993;baseline;20.990;71.950;7.060;50.400;37.352;0.000;0.150;4.750;36.150;63.900
+1993;gauss;28.200;63.070;8.730;41.870;41.449;0.450;8.900;21.850;46.200;63.600
+1993;experimento;26.810;64.270;8.920;42.620;40.253;0.200;6.750;20.600;46.000;60.500
+1993;ncm (referência, sem treino);41.250;47.120;11.630;24.230;49.298;34.400;40.250;40.700;49.600;41.300
+média;baseline;20.990;71.950;7.060;50.400
+média;gauss;28.200;63.070;8.730;41.870
+média;experimento;26.810;64.270;8.920;42.620
+diferença média (gauss - baseline);;+7.210;-8.880;+1.670;-8.530
+diferença média (experimento - gauss);;-1.390;+1.200;+0.190;+0.750

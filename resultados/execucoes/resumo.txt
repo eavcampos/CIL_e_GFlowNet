@@ -1,0 +1,5 @@
+Execução de 10/11/2026 14:03:42 — bateria 1
+config_ncm_seed1993 | OK | 0h44min | AAC (5 tarefas): 41.25% | vazamento 47.12%
+config_baseline_seed1993 | OK | 3h31min | AAC (5 tarefas): 20.99% | vazamento 71.95%
+config_experimento_seed1993 | OK | 3h4min | AAC (5 tarefas): 26.81% | vazamento 64.27%
+config_gauss_seed1993 | OK | 3h11min | AAC (5 tarefas): 28.20% | vazamento 63.07%
