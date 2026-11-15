@@ -1,0 +1,1126 @@
+2026-11-14 09:48:42,497 [INFO] [Reprodutibilidade] Seed=1996 (random, numpy, torch, cudnn determinístico). Esta mesma seed também controla o sorteio das classes por tarefa.
+2026-11-14 09:48:42,497 [INFO] [Configuração] dataset=cifar100 | num_tasks=5 | classes_por_tarefa=20 | batch_size=48 | otimizador=SGD | device=cuda:0 | pseudo_negativos=is
+2026-11-14 09:48:42,498 [INFO] === [Nova Estratégia 2] Generalização da Estratégia 26 — 5 tarefas x 20 classes, dataset=cifar100, seed=1996 ===
+2026-11-14 09:48:42,498 [INFO] [Dataset] Usando cifar100 já baixado em /home/My_CIL/tests/My_projects/my_data/cifar-100-python
+2026-11-14 09:48:44,527 [INFO] [Dataset] cifar100 carregado — 100 classes disponíveis, 50000 imagens de treino, 10000 imagens de teste.
+2026-11-14 09:48:44,529 [INFO] [Partição de tarefas] Tarefa 0: classes originais [35, 18, 40, 85, 63, 62, 77, 73, 12, 44, 31, 26, 78, 33, 9, 86, 92, 87, 93, 71] -> ['girl', 'caterpillar', 'lamp', 'tank', 'porcupine', 'poppy', 'snail', 'shark', 'bridge', 'lizard', 'elephant', 'crab', 'snake', 'forest', 'bottle', 'telephone', 'tulip', 'television', 'turtle', 'sea']
+2026-11-14 09:48:44,529 [INFO] [Partição de tarefas] Tarefa 1: classes originais [45, 7, 17, 6, 24, 21, 27, 99, 81, 2, 94, 57, 13, 30, 8, 55, 76, 46, 49, 47] -> ['lobster', 'beetle', 'castle', 'bee', 'cockroach', 'chimpanzee', 'crocodile', 'worm', 'streetcar', 'baby', 'wardrobe', 'pear', 'bus', 'dolphin', 'bicycle', 'otter', 'skyscraper', 'man', 'mountain', 'maple_tree']
+2026-11-14 09:48:44,529 [INFO] [Partição de tarefas] Tarefa 2: classes originais [60, 36, 16, 43, 54, 83, 88, 51, 15, 20, 53, 66, 50, 3, 98, 90, 80, 5, 32, 75] -> ['plain', 'hamster', 'can', 'lion', 'orchid', 'sweet_pepper', 'tiger', 'mushroom', 'camel', 'chair', 'orange', 'raccoon', 'mouse', 'bear', 'woman', 'train', 'squirrel', 'bed', 'flatfish', 'skunk']
+2026-11-14 09:48:44,529 [INFO] [Partição de tarefas] Tarefa 3: classes originais [89, 10, 82, 64, 29, 70, 91, 52, 95, 23, 69, 56, 96, 68, 39, 42, 19, 0, 22, 72] -> ['tractor', 'bowl', 'sunflower', 'possum', 'dinosaur', 'rose', 'trout', 'oak_tree', 'whale', 'cloud', 'rocket', 'palm_tree', 'willow_tree', 'road', 'keyboard', 'leopard', 'cattle', 'apple', 'clock', 'seal']
+2026-11-14 09:48:44,530 [INFO] [Partição de tarefas] Tarefa 4: classes originais [65, 61, 74, 59, 25, 37, 48, 84, 34, 28, 4, 11, 14, 79, 97, 41, 38, 67, 1, 58] -> ['rabbit', 'plate', 'shrew', 'pine_tree', 'couch', 'house', 'motorcycle', 'table', 'fox', 'cup', 'beaver', 'boy', 'butterfly', 'spider', 'wolf', 'lawn_mower', 'kangaroo', 'ray', 'aquarium_fish', 'pickup_truck']
+2026-11-14 09:48:44,789 [INFO] [Parada antecipada] ATIVA: 10% do treino de cada classe vira validação; métrica=ambas, paciência=10, delta mínimo=0.001, épocas mínimas=5, máximo=100, restaurar melhor=True. Imagens de treino por tarefa: [9000, 9000, 9000, 9000, 9000]; de validação: [1000, 1000, 1000, 1000, 1000].
+2026-11-14 09:48:45,088 [INFO] [Backbone] ResNet-18 pré-treinada no ImageNet, congelada desde a criação.
+2026-11-14 09:48:45,326 [INFO] [Mapa LVQ] Grade hexagonal 20x80=1600 unidades (5 blocos de linha x 20 blocos de coluna, 16 unidades/classe).
+2026-11-14 09:49:38,512 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/tsne_nova_estrategia_2_00_antes_do_treino.png
+2026-11-14 09:49:38,512 [INFO] [Estratégia 2] Pseudo-negativos: modo=is ("nenhum" reproduz a Nova Estratégia 1).
+2026-11-14 09:49:43,804 [INFO] [Tarefa 0] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-14 09:49:43,804 [INFO] [Tarefa 0] Snapshots de θ_init (Adapter_0 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-14 09:49:43,812 [INFO] === Tarefa 0 (girl, caterpillar, lamp, tank, porcupine, poppy, snail, shark, bridge, lizard, elephant, crab, snake, forest, bottle, telephone, tulip, television, turtle, sea): treinando Adapter_0 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-14 09:51:44,800 [INFO]    [Tarefa 0] Época [10/100] -> CE:0.6351 | L_LVQ:0.0003 | Acc treino: 79.22% | AAC acumulado: 73.70% | girl: 86.00% | caterpillar: 67.00% | lamp: 74.00% | tank: 84.00% | porcupine: 75.00% | poppy: 70.00% | snail: 58.00% | shark: 76.00% | bridge: 87.00% | lizard: 56.00% | elephant: 77.00% | crab: 68.00% | snake: 65.00% | forest: 79.00% | bottle: 78.00% | telephone: 74.00% | tulip: 70.00% | television: 88.00% | turtle: 49.00% | sea: 93.00%
+2026-11-14 09:51:44,800 [INFO]       [Validação] métrica de parada:0.7458 | CE:0.7458 | acc:75.30% | pseudo-neg. fixos: CE -, vazam - | melhor época até aqui: 10 | sem melhora há 0 (novo: 0, antigo: None)
+2026-11-14 09:53:43,602 [INFO]    [Tarefa 0] Época [20/100] -> CE:0.3893 | L_LVQ:0.0003 | Acc treino: 87.91% | AAC acumulado: 73.45% | girl: 81.00% | caterpillar: 63.00% | lamp: 71.00% | tank: 80.00% | porcupine: 79.00% | poppy: 77.00% | snail: 58.00% | shark: 69.00% | bridge: 82.00% | lizard: 41.00% | elephant: 75.00% | crab: 78.00% | snake: 75.00% | forest: 83.00% | bottle: 79.00% | telephone: 80.00% | tulip: 69.00% | television: 87.00% | turtle: 52.00% | sea: 90.00%
+2026-11-14 09:53:43,602 [INFO]       [Validação] métrica de parada:0.7706 | CE:0.7706 | acc:74.70% | pseudo-neg. fixos: CE -, vazam - | melhor época até aqui: 12 | sem melhora há 8 (novo: 8, antigo: None)
+2026-11-14 09:54:08,281 [INFO]    [Tarefa 0] Época [22/100] -> CE:0.3533 | L_LVQ:0.0003 | Acc treino: 89.20% | AAC acumulado: 73.85% | girl: 85.00% | caterpillar: 75.00% | lamp: 75.00% | tank: 85.00% | porcupine: 77.00% | poppy: 76.00% | snail: 64.00% | shark: 80.00% | bridge: 82.00% | lizard: 49.00% | elephant: 71.00% | crab: 65.00% | snake: 69.00% | forest: 78.00% | bottle: 75.00% | telephone: 73.00% | tulip: 68.00% | television: 86.00% | turtle: 55.00% | sea: 89.00%
+2026-11-14 09:54:08,281 [INFO]       [Validação] métrica de parada:0.7728 | CE:0.7728 | acc:76.50% | pseudo-neg. fixos: CE -, vazam - | melhor época até aqui: 12 | sem melhora há 10 (novo: 10, antigo: None)
+2026-11-14 09:54:08,281 [INFO] [Tarefa 0] PARADA ANTECIPADA na época 22: ambas sem melhora > 0.001 há 10 épocas (melhor época: 12).
+2026-11-14 09:54:08,282 [INFO] [Tarefa 0] Parada antecipada: 22 épocas executadas, melhor época 12 (ambas=0.7305); Adapter e protótipos dessa época restaurados.
+2026-11-14 09:54:08,289 [INFO] [Tarefa 0] Adapter_0 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 73.85%).
+2026-11-14 09:54:13,106 [INFO] [Tarefa 0] Protótipo (FC) de girl substituído (450 imagens de treino).
+2026-11-14 09:54:17,744 [INFO] [Tarefa 0] Protótipo (FC) de caterpillar substituído (450 imagens de treino).
+2026-11-14 09:54:22,697 [INFO] [Tarefa 0] Protótipo (FC) de lamp substituído (450 imagens de treino).
+2026-11-14 09:54:27,614 [INFO] [Tarefa 0] Protótipo (FC) de tank substituído (450 imagens de treino).
+2026-11-14 09:54:32,706 [INFO] [Tarefa 0] Protótipo (FC) de porcupine substituído (450 imagens de treino).
+2026-11-14 09:54:37,264 [INFO] [Tarefa 0] Protótipo (FC) de poppy substituído (450 imagens de treino).
+2026-11-14 09:54:42,394 [INFO] [Tarefa 0] Protótipo (FC) de snail substituído (450 imagens de treino).
+2026-11-14 09:54:47,452 [INFO] [Tarefa 0] Protótipo (FC) de shark substituído (450 imagens de treino).
+2026-11-14 09:54:52,396 [INFO] [Tarefa 0] Protótipo (FC) de bridge substituído (450 imagens de treino).
+2026-11-14 09:54:56,847 [INFO] [Tarefa 0] Protótipo (FC) de lizard substituído (450 imagens de treino).
+2026-11-14 09:55:01,973 [INFO] [Tarefa 0] Protótipo (FC) de elephant substituído (450 imagens de treino).
+2026-11-14 09:55:07,262 [INFO] [Tarefa 0] Protótipo (FC) de crab substituído (450 imagens de treino).
+2026-11-14 09:55:11,865 [INFO] [Tarefa 0] Protótipo (FC) de snake substituído (450 imagens de treino).
+2026-11-14 09:55:16,587 [INFO] [Tarefa 0] Protótipo (FC) de forest substituído (450 imagens de treino).
+2026-11-14 09:55:21,889 [INFO] [Tarefa 0] Protótipo (FC) de bottle substituído (450 imagens de treino).
+2026-11-14 09:55:26,692 [INFO] [Tarefa 0] Protótipo (FC) de telephone substituído (450 imagens de treino).
+2026-11-14 09:55:31,516 [INFO] [Tarefa 0] Protótipo (FC) de tulip substituído (450 imagens de treino).
+2026-11-14 09:55:36,307 [INFO] [Tarefa 0] Protótipo (FC) de television substituído (450 imagens de treino).
+2026-11-14 09:55:41,582 [INFO] [Tarefa 0] Protótipo (FC) de turtle substituído (450 imagens de treino).
+2026-11-14 09:55:46,191 [INFO] [Tarefa 0] Protótipo (FC) de sea substituído (450 imagens de treino).
+2026-11-14 09:55:51,990 [INFO] [Banco] girl: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.1822).
+2026-11-14 09:55:52,008 [INFO] [Banco] caterpillar: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5395).
+2026-11-14 09:55:52,025 [INFO] [Banco] lamp: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9377).
+2026-11-14 09:55:52,043 [INFO] [Banco] tank: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.0743).
+2026-11-14 09:55:52,060 [INFO] [Banco] porcupine: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8491).
+2026-11-14 09:55:52,078 [INFO] [Banco] poppy: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.3901).
+2026-11-14 09:55:52,096 [INFO] [Banco] snail: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.7902).
+2026-11-14 09:55:52,113 [INFO] [Banco] shark: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5263).
+2026-11-14 09:55:52,130 [INFO] [Banco] bridge: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2171).
+2026-11-14 09:55:52,148 [INFO] [Banco] lizard: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6618).
+2026-11-14 09:55:52,166 [INFO] [Banco] elephant: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1485).
+2026-11-14 09:55:52,183 [INFO] [Banco] crab: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.2923).
+2026-11-14 09:55:52,200 [INFO] [Banco] snake: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.7403).
+2026-11-14 09:55:52,217 [INFO] [Banco] forest: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.5316).
+2026-11-14 09:55:52,233 [INFO] [Banco] bottle: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8934).
+2026-11-14 09:55:52,249 [INFO] [Banco] telephone: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5808).
+2026-11-14 09:55:52,266 [INFO] [Banco] tulip: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.1491).
+2026-11-14 09:55:52,282 [INFO] [Banco] television: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.1599).
+2026-11-14 09:55:52,298 [INFO] [Banco] turtle: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8062).
+2026-11-14 09:55:52,315 [INFO] [Banco] sea: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.8853).
+2026-11-14 09:56:01,189 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/acc_por_classe_tarefa0_nova_estrategia_2.png
+2026-11-14 09:56:01,687 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/aac_acumulado_tarefa0_nova_estrategia_2.png
+2026-11-14 09:56:03,400 [INFO] [Tarefa 0] Acurácia no teste acumulado após a tarefa: 74.75%
+2026-11-14 09:56:08,141 [INFO] [Tarefa 1] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-14 09:56:08,141 [INFO] [Tarefa 1] Snapshots de θ_init (Adapter_1 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-14 09:56:08,149 [INFO] === Tarefa 1 (lobster, beetle, castle, bee, cockroach, chimpanzee, crocodile, worm, streetcar, baby, wardrobe, pear, bus, dolphin, bicycle, otter, skyscraper, man, mountain, maple_tree): treinando Adapter_1 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-14 09:56:08,149 [INFO] [Tarefa 1] Pseudo-negativos ATIVOS: modo=is, 48 por lote, lambda_pn=0.5, classes antigas=['girl', 'caterpillar', 'lamp', 'tank', 'porcupine', 'poppy', 'snail', 'shark', 'bridge', 'lizard', 'elephant', 'crab', 'snake', 'forest', 'bottle', 'telephone', 'tulip', 'television', 'turtle', 'sea']
+2026-11-14 10:03:29,102 [INFO]    [Tarefa 1] Época [10/100] -> CE:0.8983 | L_LVQ:0.0002 | Acc treino: 71.79% | AAC acumulado: 43.80% | lobster: 67.00% | beetle: 67.00% | castle: 90.00% | bee: 68.00% | cockroach: 77.00% | chimpanzee: 84.00% | crocodile: 78.00% | worm: 86.00% | streetcar: 70.00% | baby: 70.00% | wardrobe: 96.00% | pear: 81.00% | bus: 63.00% | dolphin: 82.00% | bicycle: 83.00% | otter: 39.00% | skyscraper: 77.00% | man: 70.00% | mountain: 86.00% | maple_tree: 86.00%
+2026-11-14 10:03:29,102 [INFO]       [Pseudo-negativos] CE_pn:1.2713 | vazam (margem>0): 26.5% | margem média: -0.0815 | ESS/propostas: 60.4% | logZ IS: -0.632 | logZ GFN: - | perda TB: -
+2026-11-14 10:03:29,103 [INFO]       [Validação] métrica de parada:2.4909 | CE:0.8178 | acc:73.50% | pseudo-neg. fixos: CE 3.3460, vazam 88.9% | melhor época até aqui: 1 | sem melhora há 0 (novo: 0, antigo: 9)
+2026-11-14 10:10:48,904 [INFO]    [Tarefa 1] Época [20/100] -> CE:0.6413 | L_LVQ:0.0002 | Acc treino: 79.60% | AAC acumulado: 47.85% | lobster: 64.00% | beetle: 69.00% | castle: 90.00% | bee: 86.00% | cockroach: 78.00% | chimpanzee: 90.00% | crocodile: 65.00% | worm: 83.00% | streetcar: 63.00% | baby: 74.00% | wardrobe: 97.00% | pear: 86.00% | bus: 64.00% | dolphin: 76.00% | bicycle: 82.00% | otter: 51.00% | skyscraper: 83.00% | man: 69.00% | mountain: 81.00% | maple_tree: 90.00%
+2026-11-14 10:10:48,904 [INFO]       [Pseudo-negativos] CE_pn:1.1184 | vazam (margem>0): 23.6% | margem média: -0.1040 | ESS/propostas: 57.6% | logZ IS: -0.789 | logZ GFN: - | perda TB: -
+2026-11-14 10:10:48,904 [INFO]       [Validação] métrica de parada:1.8296 | CE:0.8148 | acc:74.80% | pseudo-neg. fixos: CE 2.0296, vazam 64.1% | melhor época até aqui: 18 | sem melhora há 3 (novo: 3, antigo: 19)
+2026-11-14 10:18:09,947 [INFO]    [Tarefa 1] Época [30/100] -> CE:0.4435 | L_LVQ:0.0003 | Acc treino: 86.46% | AAC acumulado: 56.08% | lobster: 70.00% | beetle: 67.00% | castle: 91.00% | bee: 82.00% | cockroach: 76.00% | chimpanzee: 83.00% | crocodile: 62.00% | worm: 83.00% | streetcar: 71.00% | baby: 77.00% | wardrobe: 95.00% | pear: 84.00% | bus: 60.00% | dolphin: 75.00% | bicycle: 85.00% | otter: 49.00% | skyscraper: 79.00% | man: 58.00% | mountain: 81.00% | maple_tree: 85.00%
+2026-11-14 10:18:09,947 [INFO]       [Pseudo-negativos] CE_pn:0.9181 | vazam (margem>0): 17.1% | margem média: -0.1533 | ESS/propostas: 53.3% | logZ IS: -1.047 | logZ GFN: - | perda TB: -
+2026-11-14 10:18:09,947 [INFO]       [Validação] métrica de parada:1.1932 | CE:0.9092 | acc:74.00% | pseudo-neg. fixos: CE 0.5679, vazam 12.7% | melhor época até aqui: 30 | sem melhora há 0 (novo: 13, antigo: 0)
+2026-11-14 10:25:31,375 [INFO]    [Tarefa 1] Época [40/100] -> CE:0.2888 | L_LVQ:0.0003 | Acc treino: 92.31% | AAC acumulado: 58.15% | lobster: 54.00% | beetle: 69.00% | castle: 87.00% | bee: 76.00% | cockroach: 72.00% | chimpanzee: 86.00% | crocodile: 71.00% | worm: 82.00% | streetcar: 70.00% | baby: 70.00% | wardrobe: 97.00% | pear: 82.00% | bus: 58.00% | dolphin: 77.00% | bicycle: 81.00% | otter: 47.00% | skyscraper: 73.00% | man: 65.00% | mountain: 80.00% | maple_tree: 83.00%
+2026-11-14 10:25:31,375 [INFO]       [Pseudo-negativos] CE_pn:0.9141 | vazam (margem>0): 14.5% | margem média: -0.1659 | ESS/propostas: 51.9% | logZ IS: -1.119 | logZ GFN: - | perda TB: -
+2026-11-14 10:25:31,375 [INFO]       [Validação] métrica de parada:1.1907 | CE:0.9933 | acc:73.20% | pseudo-neg. fixos: CE 0.3948, vazam 3.0% | melhor época até aqui: 38 | sem melhora há 0 (novo: 23, antigo: 0)
+2026-11-14 10:32:52,468 [INFO]    [Tarefa 1] Época [50/100] -> CE:0.2158 | L_LVQ:0.0003 | Acc treino: 95.62% | AAC acumulado: 59.23% | lobster: 59.00% | beetle: 67.00% | castle: 88.00% | bee: 72.00% | cockroach: 76.00% | chimpanzee: 87.00% | crocodile: 65.00% | worm: 82.00% | streetcar: 64.00% | baby: 68.00% | wardrobe: 95.00% | pear: 83.00% | bus: 58.00% | dolphin: 77.00% | bicycle: 80.00% | otter: 42.00% | skyscraper: 78.00% | man: 63.00% | mountain: 79.00% | maple_tree: 82.00%
+2026-11-14 10:32:52,468 [INFO]       [Pseudo-negativos] CE_pn:0.9059 | vazam (margem>0): 13.4% | margem média: -0.1750 | ESS/propostas: 51.8% | logZ IS: -1.170 | logZ GFN: - | perda TB: -
+2026-11-14 10:32:52,469 [INFO]       [Validação] métrica de parada:1.2400 | CE:1.0531 | acc:72.80% | pseudo-neg. fixos: CE 0.3738, vazam 2.0% | melhor época até aqui: 44 | sem melhora há 0 (novo: 33, antigo: 0)
+2026-11-14 10:40:12,864 [INFO]    [Tarefa 1] Época [60/100] -> CE:0.1700 | L_LVQ:0.0003 | Acc treino: 97.42% | AAC acumulado: 59.00% | lobster: 60.00% | beetle: 66.00% | castle: 84.00% | bee: 67.00% | cockroach: 78.00% | chimpanzee: 88.00% | crocodile: 64.00% | worm: 82.00% | streetcar: 64.00% | baby: 72.00% | wardrobe: 96.00% | pear: 80.00% | bus: 56.00% | dolphin: 78.00% | bicycle: 81.00% | otter: 46.00% | skyscraper: 79.00% | man: 65.00% | mountain: 77.00% | maple_tree: 84.00%
+2026-11-14 10:40:12,865 [INFO]       [Pseudo-negativos] CE_pn:0.8930 | vazam (margem>0): 12.5% | margem média: -0.1897 | ESS/propostas: 51.2% | logZ IS: -1.235 | logZ GFN: - | perda TB: -
+2026-11-14 10:40:12,865 [INFO]       [Validação] métrica de parada:1.2908 | CE:1.1062 | acc:72.40% | pseudo-neg. fixos: CE 0.3691, vazam 1.7% | melhor época até aqui: 51 | sem melhora há 8 (novo: 43, antigo: 8)
+2026-11-14 10:41:40,711 [INFO]    [Tarefa 1] Época [62/100] -> CE:0.1618 | L_LVQ:0.0003 | Acc treino: 97.88% | AAC acumulado: 58.50% | lobster: 59.00% | beetle: 70.00% | castle: 85.00% | bee: 70.00% | cockroach: 76.00% | chimpanzee: 89.00% | crocodile: 60.00% | worm: 81.00% | streetcar: 71.00% | baby: 68.00% | wardrobe: 96.00% | pear: 80.00% | bus: 57.00% | dolphin: 78.00% | bicycle: 74.00% | otter: 47.00% | skyscraper: 80.00% | man: 64.00% | mountain: 79.00% | maple_tree: 83.00%
+2026-11-14 10:41:40,711 [INFO]       [Pseudo-negativos] CE_pn:0.8868 | vazam (margem>0): 12.0% | margem média: -0.1906 | ESS/propostas: 51.4% | logZ IS: -1.243 | logZ GFN: - | perda TB: -
+2026-11-14 10:41:40,711 [INFO]       [Validação] métrica de parada:1.2808 | CE:1.0937 | acc:73.30% | pseudo-neg. fixos: CE 0.3742, vazam 2.4% | melhor época até aqui: 54 | sem melhora há 10 (novo: 45, antigo: 10)
+2026-11-14 10:41:40,711 [INFO] [Tarefa 1] PARADA ANTECIPADA na época 62: ambas sem melhora > 0.001 há 10 épocas (melhor época: 54).
+2026-11-14 10:41:40,712 [INFO] [Tarefa 1] Parada antecipada: 62 épocas executadas, melhor época 54 (ambas=1.2498); Adapter e protótipos dessa época restaurados.
+2026-11-14 10:41:40,719 [INFO] [Tarefa 1] Adapter_1 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 58.50%).
+2026-11-14 10:41:45,457 [INFO] [Tarefa 1] Protótipo (FC) de lobster substituído (450 imagens de treino).
+2026-11-14 10:41:50,530 [INFO] [Tarefa 1] Protótipo (FC) de beetle substituído (450 imagens de treino).
+2026-11-14 10:41:55,699 [INFO] [Tarefa 1] Protótipo (FC) de castle substituído (450 imagens de treino).
+2026-11-14 10:42:00,412 [INFO] [Tarefa 1] Protótipo (FC) de bee substituído (450 imagens de treino).
+2026-11-14 10:42:05,100 [INFO] [Tarefa 1] Protótipo (FC) de cockroach substituído (450 imagens de treino).
+2026-11-14 10:42:10,342 [INFO] [Tarefa 1] Protótipo (FC) de chimpanzee substituído (450 imagens de treino).
+2026-11-14 10:42:15,726 [INFO] [Tarefa 1] Protótipo (FC) de crocodile substituído (450 imagens de treino).
+2026-11-14 10:42:20,573 [INFO] [Tarefa 1] Protótipo (FC) de worm substituído (450 imagens de treino).
+2026-11-14 10:42:25,369 [INFO] [Tarefa 1] Protótipo (FC) de streetcar substituído (450 imagens de treino).
+2026-11-14 10:42:30,879 [INFO] [Tarefa 1] Protótipo (FC) de baby substituído (450 imagens de treino).
+2026-11-14 10:42:35,805 [INFO] [Tarefa 1] Protótipo (FC) de wardrobe substituído (450 imagens de treino).
+2026-11-14 10:42:40,673 [INFO] [Tarefa 1] Protótipo (FC) de pear substituído (450 imagens de treino).
+2026-11-14 10:42:45,695 [INFO] [Tarefa 1] Protótipo (FC) de bus substituído (450 imagens de treino).
+2026-11-14 10:42:50,993 [INFO] [Tarefa 1] Protótipo (FC) de dolphin substituído (450 imagens de treino).
+2026-11-14 10:42:55,974 [INFO] [Tarefa 1] Protótipo (FC) de bicycle substituído (450 imagens de treino).
+2026-11-14 10:43:00,532 [INFO] [Tarefa 1] Protótipo (FC) de otter substituído (450 imagens de treino).
+2026-11-14 10:43:05,838 [INFO] [Tarefa 1] Protótipo (FC) de skyscraper substituído (450 imagens de treino).
+2026-11-14 10:43:10,942 [INFO] [Tarefa 1] Protótipo (FC) de man substituído (450 imagens de treino).
+2026-11-14 10:43:15,785 [INFO] [Tarefa 1] Protótipo (FC) de mountain substituído (450 imagens de treino).
+2026-11-14 10:43:20,563 [INFO] [Tarefa 1] Protótipo (FC) de maple_tree substituído (450 imagens de treino).
+2026-11-14 10:43:26,615 [INFO] [Banco] lobster: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1610).
+2026-11-14 10:43:26,633 [INFO] [Banco] beetle: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1760).
+2026-11-14 10:43:26,651 [INFO] [Banco] castle: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.6111).
+2026-11-14 10:43:26,669 [INFO] [Banco] bee: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1284).
+2026-11-14 10:43:26,687 [INFO] [Banco] cockroach: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.3782).
+2026-11-14 10:43:26,704 [INFO] [Banco] chimpanzee: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6432).
+2026-11-14 10:43:26,720 [INFO] [Banco] crocodile: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6250).
+2026-11-14 10:43:26,737 [INFO] [Banco] worm: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2926).
+2026-11-14 10:43:26,754 [INFO] [Banco] streetcar: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2573).
+2026-11-14 10:43:26,771 [INFO] [Banco] baby: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.4985).
+2026-11-14 10:43:26,788 [INFO] [Banco] wardrobe: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.8129).
+2026-11-14 10:43:26,805 [INFO] [Banco] pear: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.3007).
+2026-11-14 10:43:26,822 [INFO] [Banco] bus: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5085).
+2026-11-14 10:43:26,839 [INFO] [Banco] dolphin: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5261).
+2026-11-14 10:43:26,856 [INFO] [Banco] bicycle: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.0899).
+2026-11-14 10:43:26,873 [INFO] [Banco] otter: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.0319).
+2026-11-14 10:43:26,889 [INFO] [Banco] skyscraper: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.7541).
+2026-11-14 10:43:26,906 [INFO] [Banco] man: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.9626).
+2026-11-14 10:43:26,923 [INFO] [Banco] mountain: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.6082).
+2026-11-14 10:43:26,940 [INFO] [Banco] maple_tree: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.5267).
+2026-11-14 10:43:37,840 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/acc_por_classe_tarefa1_nova_estrategia_2.png
+2026-11-14 10:43:38,311 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/aac_acumulado_tarefa1_nova_estrategia_2.png
+2026-11-14 10:44:00,940 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/tsne_nova_estrategia_2_02_pos_tarefa1.png
+2026-11-14 10:44:00,940 [INFO] ============================================================
+2026-11-14 10:44:00,940 [INFO] === DIAGNÓSTICO A/B/C — fronteira tarefa 0 -> tarefa 1 ===
+2026-11-14 10:44:10,736 [INFO]  > [Fronteira 0->1][Original]  Acc tarefas antigas: 42.55%
+2026-11-14 10:44:10,737 [INFO]  > [Fronteira 0->1][Negação]   Acc tarefas antigas: 34.85%
+2026-11-14 10:44:10,737 [INFO]  > [Fronteira 0->1][Exclusão]  Acc tarefas antigas: 74.75%
+2026-11-14 10:44:10,737 [INFO]  > [Fronteira 0->1][Aleatório] Acc tarefas antigas: 71.15%
+2026-11-14 10:44:10,737 [INFO]  > Interpretação automática: Negação recupera acurácia de forma parecida à aleatória -> há interferência de peso/conteúdo real, mas não distinguível de uma versão genérica não-treinada.
+2026-11-14 10:44:11,260 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/diagnostico_task_arithmetic_nova_estrategia_2_f0_1.png
+2026-11-14 10:44:11,260 [INFO] === DRIFT SEMÂNTICO EXATO (Yu et al., 2020) — após a tarefa 1 ===
+2026-11-14 10:44:15,968 [INFO]  > [Drift após tarefa 1] girl: ||Δ||=0.00000279 (cos_sim=1.00000000)
+2026-11-14 10:44:20,800 [INFO]  > [Drift após tarefa 1] caterpillar: ||Δ||=0.00000134 (cos_sim=1.00000000)
+2026-11-14 10:44:26,189 [INFO]  > [Drift após tarefa 1] lamp: ||Δ||=0.00000294 (cos_sim=1.00000000)
+2026-11-14 10:44:31,323 [INFO]  > [Drift após tarefa 1] tank: ||Δ||=0.00000254 (cos_sim=1.00000000)
+2026-11-14 10:44:36,088 [INFO]  > [Drift após tarefa 1] porcupine: ||Δ||=0.00000182 (cos_sim=1.00000000)
+2026-11-14 10:44:40,749 [INFO]  > [Drift após tarefa 1] poppy: ||Δ||=0.00000252 (cos_sim=1.00000024)
+2026-11-14 10:44:46,336 [INFO]  > [Drift após tarefa 1] snail: ||Δ||=0.00000098 (cos_sim=1.00000000)
+2026-11-14 10:44:51,076 [INFO]  > [Drift após tarefa 1] shark: ||Δ||=0.00000269 (cos_sim=1.00000000)
+2026-11-14 10:44:55,979 [INFO]  > [Drift após tarefa 1] bridge: ||Δ||=0.00000156 (cos_sim=1.00000012)
+2026-11-14 10:45:00,882 [INFO]  > [Drift após tarefa 1] lizard: ||Δ||=0.00000283 (cos_sim=1.00000000)
+2026-11-14 10:45:06,440 [INFO]  > [Drift após tarefa 1] elephant: ||Δ||=0.00000161 (cos_sim=1.00000000)
+2026-11-14 10:45:11,377 [INFO]  > [Drift após tarefa 1] crab: ||Δ||=0.00000163 (cos_sim=1.00000000)
+2026-11-14 10:45:16,120 [INFO]  > [Drift após tarefa 1] snake: ||Δ||=0.00000202 (cos_sim=1.00000000)
+2026-11-14 10:45:21,228 [INFO]  > [Drift após tarefa 1] forest: ||Δ||=0.00000123 (cos_sim=0.99999994)
+2026-11-14 10:45:26,441 [INFO]  > [Drift após tarefa 1] bottle: ||Δ||=0.00000112 (cos_sim=1.00000012)
+2026-11-14 10:45:31,225 [INFO]  > [Drift após tarefa 1] telephone: ||Δ||=0.00000144 (cos_sim=1.00000000)
+2026-11-14 10:45:35,766 [INFO]  > [Drift após tarefa 1] tulip: ||Δ||=0.00000211 (cos_sim=1.00000000)
+2026-11-14 10:45:41,291 [INFO]  > [Drift após tarefa 1] television: ||Δ||=0.00000297 (cos_sim=1.00000000)
+2026-11-14 10:45:45,987 [INFO]  > [Drift após tarefa 1] turtle: ||Δ||=0.00000031 (cos_sim=1.00000000)
+2026-11-14 10:45:50,974 [INFO]  > [Drift após tarefa 1] sea: ||Δ||=0.00000202 (cos_sim=1.00000012)
+2026-11-14 10:45:55,454 [INFO]  > [Vazamento após tarefa 1] girl: margem=-0.0984 (próprio=0.5051, concorrente mais forte=baby=0.6034)
+2026-11-14 10:45:55,454 [INFO]  > [Vazamento após tarefa 1] caterpillar: margem=+0.1441 (próprio=0.4346, concorrente mais forte=lizard=0.2905)
+2026-11-14 10:45:55,454 [INFO]  > [Vazamento após tarefa 1] lamp: margem=+0.1902 (próprio=0.4600, concorrente mais forte=bottle=0.2698)
+2026-11-14 10:45:55,454 [INFO]  > [Vazamento após tarefa 1] tank: margem=+0.2095 (próprio=0.5142, concorrente mais forte=bus=0.3047)
+2026-11-14 10:45:55,454 [INFO]  > [Vazamento após tarefa 1] porcupine: margem=+0.1646 (próprio=0.4766, concorrente mais forte=otter=0.3120)
+2026-11-14 10:45:55,454 [INFO]  > [Vazamento após tarefa 1] poppy: margem=+0.0822 (próprio=0.5384, concorrente mais forte=tulip=0.4562)
+2026-11-14 10:45:55,454 [INFO]  > [Vazamento após tarefa 1] snail: margem=+0.0909 (próprio=0.4420, concorrente mais forte=otter=0.3511)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] shark: margem=+0.0174 (próprio=0.5042, concorrente mais forte=dolphin=0.4869)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] bridge: margem=+0.2446 (próprio=0.5061, concorrente mais forte=tank=0.2615)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] lizard: margem=+0.0005 (próprio=0.3955, concorrente mais forte=crocodile=0.3949)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] elephant: margem=+0.1594 (próprio=0.5094, concorrente mais forte=chimpanzee=0.3500)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] crab: margem=+0.0272 (próprio=0.4578, concorrente mais forte=lobster=0.4306)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] snake: margem=+0.1094 (próprio=0.4570, concorrente mais forte=worm=0.3475)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] forest: margem=+0.3019 (próprio=0.4689, concorrente mais forte=sea=0.1670)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] bottle: margem=+0.1785 (próprio=0.5020, concorrente mais forte=lamp=0.3235)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] telephone: margem=+0.1960 (próprio=0.5127, concorrente mais forte=television=0.3167)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] tulip: margem=+0.0688 (próprio=0.5089, concorrente mais forte=poppy=0.4401)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] television: margem=+0.2300 (próprio=0.4841, concorrente mais forte=telephone=0.2541)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] turtle: margem=+0.1236 (próprio=0.4767, concorrente mais forte=otter=0.3531)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] sea: margem=+0.2354 (próprio=0.5591, concorrente mais forte=mountain=0.3237)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] lobster: margem=+0.2000 (próprio=0.5187, concorrente mais forte=crab=0.3187)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] beetle: margem=+0.1724 (próprio=0.6763, concorrente mais forte=cockroach=0.5039)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] castle: margem=+0.3174 (próprio=0.7216, concorrente mais forte=bridge=0.4042)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] bee: margem=+0.2431 (próprio=0.6178, concorrente mais forte=beetle=0.3747)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] cockroach: margem=+0.1554 (próprio=0.7012, concorrente mais forte=beetle=0.5457)
+2026-11-14 10:45:55,455 [INFO]  > [Vazamento após tarefa 1] chimpanzee: margem=+0.2923 (próprio=0.7358, concorrente mais forte=otter=0.4436)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] crocodile: margem=+0.1628 (próprio=0.6033, concorrente mais forte=otter=0.4405)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] worm: margem=+0.2944 (próprio=0.6979, concorrente mais forte=snake=0.4035)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] streetcar: margem=+0.1411 (próprio=0.6398, concorrente mais forte=bus=0.4987)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] baby: margem=+0.1567 (próprio=0.6430, concorrente mais forte=man=0.4862)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] wardrobe: margem=+0.4017 (próprio=0.7193, concorrente mais forte=television=0.3177)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] pear: margem=+0.4805 (próprio=0.6741, concorrente mais forte=tulip=0.1936)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] bus: margem=+0.0995 (próprio=0.5850, concorrente mais forte=streetcar=0.4855)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] dolphin: margem=+0.2386 (próprio=0.7058, concorrente mais forte=shark=0.4672)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] bicycle: margem=+0.4025 (próprio=0.6632, concorrente mais forte=streetcar=0.2607)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] otter: margem=+0.1473 (próprio=0.5296, concorrente mais forte=crocodile=0.3822)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] skyscraper: margem=+0.3758 (próprio=0.6996, concorrente mais forte=bridge=0.3238)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] man: margem=+0.1126 (próprio=0.6430, concorrente mais forte=baby=0.5304)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] mountain: margem=+0.2529 (próprio=0.6662, concorrente mais forte=sea=0.4133)
+2026-11-14 10:45:55,456 [INFO]  > [Vazamento após tarefa 1] maple_tree: margem=+0.3001 (próprio=0.6862, concorrente mais forte=forest=0.3861)
+2026-11-14 10:45:56,562 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/margem_vazamento_nova_estrategia_2_apos_tarefa1.png
+2026-11-14 10:46:01,768 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 1 ===
+2026-11-14 10:46:01,768 [INFO]    Acurácia CIL ................  58.38%
+2026-11-14 10:46:01,768 [INFO]    Vazamento (Lambda) ..........  28.02%
+2026-11-14 10:46:01,768 [INFO]    Vazamento balanceado ........  28.02%
+2026-11-14 10:46:01,768 [INFO]    Erro dentro da task (E_WP) ..  13.60%
+2026-11-14 10:46:01,768 [INFO]    Parcela do erro por vazamento  67.33%
+2026-11-14 10:46:01,768 [INFO]    Acurácia com oráculo de task   75.55%
+2026-11-14 10:46:01,768 [INFO]    Teto de ganho ...............  17.17 p.p.
+2026-11-14 10:46:01,768 [INFO]    Índice de direção D .........   7.243
+2026-11-14 10:46:01,768 [INFO]    Spearman(L, j-i) recência ...   1.000
+2026-11-14 10:46:01,768 [INFO]    Spearman(L, S) semântica ....  -1.000
+2026-11-14 10:46:01,768 [INFO]      parcial, controlando j-i ..  -1.000
+2026-11-14 10:46:01,768 [INFO]    Vazamento após normalização .  22.62%
+2026-11-14 10:46:01,769 [INFO]    Parcela atribuível a escala .  19.27%
+2026-11-14 10:46:01,769 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-14 10:46:01,769 [INFO]      k = -1: 0.068
+2026-11-14 10:46:01,769 [INFO]      k = +1: 0.492
+2026-11-14 10:46:01,769 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-14 10:46:01,769 [INFO]      0.507 0.492
+2026-11-14 10:46:01,769 [INFO]      0.068 0.932
+2026-11-14 10:46:06,418 [INFO] [Tarefa 1] Acurácia no teste acumulado após a tarefa: 58.38%
+2026-11-14 10:46:11,530 [INFO] [Tarefa 2] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-14 10:46:11,530 [INFO] [Tarefa 2] Snapshots de θ_init (Adapter_2 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-14 10:46:11,537 [INFO] === Tarefa 2 (plain, hamster, can, lion, orchid, sweet_pepper, tiger, mushroom, camel, chair, orange, raccoon, mouse, bear, woman, train, squirrel, bed, flatfish, skunk): treinando Adapter_2 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-14 10:46:11,537 [INFO] [Tarefa 2] Pseudo-negativos ATIVOS: modo=is, 48 por lote, lambda_pn=0.5, classes antigas=['girl', 'caterpillar', 'lamp', 'tank', 'porcupine', 'poppy', 'snail', 'shark', 'bridge', 'lizard', 'elephant', 'crab', 'snake', 'forest', 'bottle', 'telephone', 'tulip', 'television', 'turtle', 'sea', 'lobster', 'beetle', 'castle', 'bee', 'cockroach', 'chimpanzee', 'crocodile', 'worm', 'streetcar', 'baby', 'wardrobe', 'pear', 'bus', 'dolphin', 'bicycle', 'otter', 'skyscraper', 'man', 'mountain', 'maple_tree']
+2026-11-14 10:56:41,928 [INFO]    [Tarefa 2] Época [10/100] -> CE:1.2880 | L_LVQ:0.0002 | Acc treino: 58.44% | AAC acumulado: 34.75% | plain: 83.00% | hamster: 68.00% | can: 85.00% | lion: 67.00% | orchid: 91.00% | sweet_pepper: 59.00% | tiger: 56.00% | mushroom: 54.00% | camel: 54.00% | chair: 72.00% | orange: 93.00% | raccoon: 51.00% | mouse: 22.00% | bear: 43.00% | woman: 59.00% | train: 86.00% | squirrel: 20.00% | bed: 69.00% | flatfish: 59.00% | skunk: 63.00%
+2026-11-14 10:56:41,929 [INFO]       [Pseudo-negativos] CE_pn:3.8454 | vazam (margem>0): 63.6% | margem média: +0.1142 | ESS/propostas: 28.3% | logZ IS: -0.046 | logZ GFN: - | perda TB: -
+2026-11-14 10:56:41,929 [INFO]       [Validação] métrica de parada:3.3883 | CE:1.2051 | acc:62.70% | pseudo-neg. fixos: CE 4.3664, vazam 88.1% | melhor época até aqui: 1 | sem melhora há 2 (novo: 2, antigo: 9)
+2026-11-14 11:07:13,445 [INFO]    [Tarefa 2] Época [20/100] -> CE:1.0102 | L_LVQ:0.0002 | Acc treino: 68.21% | AAC acumulado: 37.45% | plain: 86.00% | hamster: 62.00% | can: 83.00% | lion: 71.00% | orchid: 92.00% | sweet_pepper: 80.00% | tiger: 65.00% | mushroom: 61.00% | camel: 51.00% | chair: 82.00% | orange: 89.00% | raccoon: 57.00% | mouse: 16.00% | bear: 48.00% | woman: 68.00% | train: 78.00% | squirrel: 28.00% | bed: 74.00% | flatfish: 58.00% | skunk: 72.00%
+2026-11-14 11:07:13,445 [INFO]       [Pseudo-negativos] CE_pn:3.2266 | vazam (margem>0): 54.6% | margem média: +0.0477 | ESS/propostas: 29.3% | logZ IS: -0.328 | logZ GFN: - | perda TB: -
+2026-11-14 11:07:13,445 [INFO]       [Validação] métrica de parada:2.7324 | CE:1.1032 | acc:64.60% | pseudo-neg. fixos: CE 3.2584, vazam 76.8% | melhor época até aqui: 19 | sem melhora há 2 (novo: 2, antigo: 19)
+2026-11-14 11:17:40,409 [INFO]    [Tarefa 2] Época [30/100] -> CE:0.8326 | L_LVQ:0.0002 | Acc treino: 74.00% | AAC acumulado: 40.53% | plain: 92.00% | hamster: 64.00% | can: 84.00% | lion: 70.00% | orchid: 89.00% | sweet_pepper: 75.00% | tiger: 58.00% | mushroom: 70.00% | camel: 60.00% | chair: 89.00% | orange: 91.00% | raccoon: 55.00% | mouse: 27.00% | bear: 51.00% | woman: 68.00% | train: 81.00% | squirrel: 32.00% | bed: 73.00% | flatfish: 58.00% | skunk: 73.00%
+2026-11-14 11:17:40,409 [INFO]       [Pseudo-negativos] CE_pn:3.1264 | vazam (margem>0): 52.0% | margem média: +0.0267 | ESS/propostas: 28.6% | logZ IS: -0.444 | logZ GFN: - | perda TB: -
+2026-11-14 11:17:40,410 [INFO]       [Validação] métrica de parada:2.3651 | CE:1.1227 | acc:66.70% | pseudo-neg. fixos: CE 2.4848, vazam 66.2% | melhor época até aqui: 30 | sem melhora há 0 (novo: 12, antigo: 0)
+2026-11-14 11:28:09,435 [INFO]    [Tarefa 2] Época [40/100] -> CE:0.6749 | L_LVQ:0.0002 | Acc treino: 79.32% | AAC acumulado: 44.15% | plain: 83.00% | hamster: 63.00% | can: 81.00% | lion: 68.00% | orchid: 92.00% | sweet_pepper: 76.00% | tiger: 55.00% | mushroom: 66.00% | camel: 46.00% | chair: 84.00% | orange: 90.00% | raccoon: 66.00% | mouse: 42.00% | bear: 50.00% | woman: 62.00% | train: 78.00% | squirrel: 40.00% | bed: 76.00% | flatfish: 60.00% | skunk: 74.00%
+2026-11-14 11:28:09,435 [INFO]       [Pseudo-negativos] CE_pn:3.0106 | vazam (margem>0): 48.0% | margem média: +0.0051 | ESS/propostas: 27.9% | logZ IS: -0.563 | logZ GFN: - | perda TB: -
+2026-11-14 11:28:09,435 [INFO]       [Validação] métrica de parada:2.0373 | CE:1.1745 | acc:67.00% | pseudo-neg. fixos: CE 1.7256, vazam 43.9% | melhor época até aqui: 38 | sem melhora há 2 (novo: 22, antigo: 2)
+2026-11-14 11:38:37,194 [INFO]    [Tarefa 2] Época [50/100] -> CE:0.5417 | L_LVQ:0.0002 | Acc treino: 83.90% | AAC acumulado: 46.30% | plain: 79.00% | hamster: 62.00% | can: 79.00% | lion: 70.00% | orchid: 90.00% | sweet_pepper: 71.00% | tiger: 57.00% | mushroom: 75.00% | camel: 60.00% | chair: 84.00% | orange: 92.00% | raccoon: 57.00% | mouse: 46.00% | bear: 50.00% | woman: 56.00% | train: 80.00% | squirrel: 49.00% | bed: 74.00% | flatfish: 54.00% | skunk: 73.00%
+2026-11-14 11:38:37,196 [INFO]       [Pseudo-negativos] CE_pn:2.9265 | vazam (margem>0): 43.6% | margem média: -0.0283 | ESS/propostas: 26.9% | logZ IS: -0.781 | logZ GFN: - | perda TB: -
+2026-11-14 11:38:37,196 [INFO]       [Validação] métrica de parada:1.8831 | CE:1.2846 | acc:67.50% | pseudo-neg. fixos: CE 1.1971, vazam 25.6% | melhor época até aqui: 46 | sem melhora há 4 (novo: 32, antigo: 4)
+2026-11-14 11:49:04,983 [INFO]    [Tarefa 2] Época [60/100] -> CE:0.4446 | L_LVQ:0.0002 | Acc treino: 88.08% | AAC acumulado: 47.40% | plain: 84.00% | hamster: 65.00% | can: 80.00% | lion: 64.00% | orchid: 88.00% | sweet_pepper: 71.00% | tiger: 59.00% | mushroom: 65.00% | camel: 50.00% | chair: 87.00% | orange: 91.00% | raccoon: 61.00% | mouse: 46.00% | bear: 50.00% | woman: 63.00% | train: 74.00% | squirrel: 51.00% | bed: 72.00% | flatfish: 60.00% | skunk: 75.00%
+2026-11-14 11:49:04,984 [INFO]       [Pseudo-negativos] CE_pn:2.9625 | vazam (margem>0): 42.8% | margem média: -0.0342 | ESS/propostas: 25.7% | logZ IS: -0.815 | logZ GFN: - | perda TB: -
+2026-11-14 11:49:04,984 [INFO]       [Validação] métrica de parada:1.9102 | CE:1.3462 | acc:65.80% | pseudo-neg. fixos: CE 1.1280, vazam 22.4% | melhor época até aqui: 53 | sem melhora há 1 (novo: 42, antigo: 1)
+2026-11-14 11:59:32,495 [INFO]    [Tarefa 2] Época [70/100] -> CE:0.3776 | L_LVQ:0.0002 | Acc treino: 90.53% | AAC acumulado: 49.23% | plain: 84.00% | hamster: 63.00% | can: 79.00% | lion: 74.00% | orchid: 83.00% | sweet_pepper: 72.00% | tiger: 54.00% | mushroom: 62.00% | camel: 54.00% | chair: 84.00% | orange: 92.00% | raccoon: 56.00% | mouse: 52.00% | bear: 56.00% | woman: 63.00% | train: 73.00% | squirrel: 41.00% | bed: 70.00% | flatfish: 56.00% | skunk: 72.00%
+2026-11-14 11:59:32,496 [INFO]       [Pseudo-negativos] CE_pn:3.0731 | vazam (margem>0): 45.8% | margem média: -0.0169 | ESS/propostas: 25.2% | logZ IS: -0.745 | logZ GFN: - | perda TB: -
+2026-11-14 11:59:32,496 [INFO]       [Validação] métrica de parada:1.9330 | CE:1.4434 | acc:65.40% | pseudo-neg. fixos: CE 0.9793, vazam 13.4% | melhor época até aqui: 64 | sem melhora há 0 (novo: 52, antigo: 0)
+2026-11-14 12:10:00,379 [INFO]    [Tarefa 2] Época [80/100] -> CE:0.3008 | L_LVQ:0.0002 | Acc treino: 93.89% | AAC acumulado: 49.52% | plain: 79.00% | hamster: 67.00% | can: 77.00% | lion: 72.00% | orchid: 86.00% | sweet_pepper: 71.00% | tiger: 50.00% | mushroom: 62.00% | camel: 57.00% | chair: 81.00% | orange: 91.00% | raccoon: 55.00% | mouse: 42.00% | bear: 54.00% | woman: 54.00% | train: 67.00% | squirrel: 47.00% | bed: 65.00% | flatfish: 57.00% | skunk: 74.00%
+2026-11-14 12:10:00,379 [INFO]       [Pseudo-negativos] CE_pn:3.0346 | vazam (margem>0): 44.2% | margem média: -0.0307 | ESS/propostas: 24.6% | logZ IS: -0.817 | logZ GFN: - | perda TB: -
+2026-11-14 12:10:00,379 [INFO]       [Validação] métrica de parada:1.9952 | CE:1.5186 | acc:65.80% | pseudo-neg. fixos: CE 0.9531, vazam 10.7% | melhor época até aqui: 70 | sem melhora há 5 (novo: 62, antigo: 5)
+2026-11-14 12:20:28,477 [INFO]    [Tarefa 2] Época [90/100] -> CE:0.2583 | L_LVQ:0.0002 | Acc treino: 95.38% | AAC acumulado: 50.07% | plain: 78.00% | hamster: 64.00% | can: 78.00% | lion: 74.00% | orchid: 84.00% | sweet_pepper: 70.00% | tiger: 48.00% | mushroom: 66.00% | camel: 51.00% | chair: 89.00% | orange: 91.00% | raccoon: 59.00% | mouse: 50.00% | bear: 53.00% | woman: 49.00% | train: 68.00% | squirrel: 44.00% | bed: 63.00% | flatfish: 55.00% | skunk: 72.00%
+2026-11-14 12:20:28,477 [INFO]       [Pseudo-negativos] CE_pn:3.0323 | vazam (margem>0): 43.8% | margem média: -0.0323 | ESS/propostas: 24.5% | logZ IS: -0.831 | logZ GFN: - | perda TB: -
+2026-11-14 12:20:28,477 [INFO]       [Validação] métrica de parada:2.1009 | CE:1.6311 | acc:63.40% | pseudo-neg. fixos: CE 0.9397, vazam 10.3% | melhor época até aqui: 80 | sem melhora há 1 (novo: 72, antigo: 1)
+2026-11-14 12:30:57,255 [INFO]    [Tarefa 2] Época [100/100] -> CE:0.2279 | L_LVQ:0.0002 | Acc treino: 96.61% | AAC acumulado: 49.82% | plain: 82.00% | hamster: 62.00% | can: 79.00% | lion: 76.00% | orchid: 84.00% | sweet_pepper: 68.00% | tiger: 56.00% | mushroom: 65.00% | camel: 55.00% | chair: 89.00% | orange: 91.00% | raccoon: 53.00% | mouse: 44.00% | bear: 45.00% | woman: 61.00% | train: 62.00% | squirrel: 41.00% | bed: 58.00% | flatfish: 57.00% | skunk: 71.00%
+2026-11-14 12:30:57,256 [INFO]       [Pseudo-negativos] CE_pn:3.0083 | vazam (margem>0): 41.8% | margem média: -0.0432 | ESS/propostas: 24.5% | logZ IS: -0.879 | logZ GFN: - | perda TB: -
+2026-11-14 12:30:57,256 [INFO]       [Validação] métrica de parada:2.1467 | CE:1.6766 | acc:63.50% | pseudo-neg. fixos: CE 0.9403, vazam 10.1% | melhor época até aqui: 91 | sem melhora há 3 (novo: 82, antigo: 3)
+2026-11-14 12:30:57,256 [INFO] [Tarefa 2] Parada antecipada: 100 épocas executadas, melhor época 91 (ambas=2.0870); Adapter e protótipos dessa época restaurados.
+2026-11-14 12:30:57,264 [INFO] [Tarefa 2] Adapter_2 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 49.82%).
+2026-11-14 12:31:02,188 [INFO] [Tarefa 2] Protótipo (FC) de plain substituído (450 imagens de treino).
+2026-11-14 12:31:07,188 [INFO] [Tarefa 2] Protótipo (FC) de hamster substituído (450 imagens de treino).
+2026-11-14 12:31:12,108 [INFO] [Tarefa 2] Protótipo (FC) de can substituído (450 imagens de treino).
+2026-11-14 12:31:17,321 [INFO] [Tarefa 2] Protótipo (FC) de lion substituído (450 imagens de treino).
+2026-11-14 12:31:22,034 [INFO] [Tarefa 2] Protótipo (FC) de orchid substituído (450 imagens de treino).
+2026-11-14 12:31:26,689 [INFO] [Tarefa 2] Protótipo (FC) de sweet_pepper substituído (450 imagens de treino).
+2026-11-14 12:31:31,374 [INFO] [Tarefa 2] Protótipo (FC) de tiger substituído (450 imagens de treino).
+2026-11-14 12:31:37,497 [INFO] [Tarefa 2] Protótipo (FC) de mushroom substituído (450 imagens de treino).
+2026-11-14 12:31:42,158 [INFO] [Tarefa 2] Protótipo (FC) de camel substituído (450 imagens de treino).
+2026-11-14 12:31:46,848 [INFO] [Tarefa 2] Protótipo (FC) de chair substituído (450 imagens de treino).
+2026-11-14 12:31:51,824 [INFO] [Tarefa 2] Protótipo (FC) de orange substituído (450 imagens de treino).
+2026-11-14 12:31:57,131 [INFO] [Tarefa 2] Protótipo (FC) de raccoon substituído (450 imagens de treino).
+2026-11-14 12:32:01,765 [INFO] [Tarefa 2] Protótipo (FC) de mouse substituído (450 imagens de treino).
+2026-11-14 12:32:06,615 [INFO] [Tarefa 2] Protótipo (FC) de bear substituído (450 imagens de treino).
+2026-11-14 12:32:12,301 [INFO] [Tarefa 2] Protótipo (FC) de woman substituído (450 imagens de treino).
+2026-11-14 12:32:17,295 [INFO] [Tarefa 2] Protótipo (FC) de train substituído (450 imagens de treino).
+2026-11-14 12:32:21,863 [INFO] [Tarefa 2] Protótipo (FC) de squirrel substituído (450 imagens de treino).
+2026-11-14 12:32:26,490 [INFO] [Tarefa 2] Protótipo (FC) de bed substituído (450 imagens de treino).
+2026-11-14 12:32:32,138 [INFO] [Tarefa 2] Protótipo (FC) de flatfish substituído (450 imagens de treino).
+2026-11-14 12:32:36,734 [INFO] [Tarefa 2] Protótipo (FC) de skunk substituído (450 imagens de treino).
+2026-11-14 12:32:42,084 [INFO] [Banco] plain: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.6683).
+2026-11-14 12:32:42,102 [INFO] [Banco] hamster: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.7440).
+2026-11-14 12:32:42,120 [INFO] [Banco] can: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6061).
+2026-11-14 12:32:42,138 [INFO] [Banco] lion: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1471).
+2026-11-14 12:32:42,156 [INFO] [Banco] orchid: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.6125).
+2026-11-14 12:32:42,174 [INFO] [Banco] sweet_pepper: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9483).
+2026-11-14 12:32:42,191 [INFO] [Banco] tiger: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5930).
+2026-11-14 12:32:42,208 [INFO] [Banco] mushroom: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6008).
+2026-11-14 12:32:42,225 [INFO] [Banco] camel: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4087).
+2026-11-14 12:32:42,242 [INFO] [Banco] chair: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.4123).
+2026-11-14 12:32:42,259 [INFO] [Banco] orange: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8014).
+2026-11-14 12:32:42,275 [INFO] [Banco] raccoon: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8453).
+2026-11-14 12:32:42,292 [INFO] [Banco] mouse: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5088).
+2026-11-14 12:32:42,309 [INFO] [Banco] bear: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8797).
+2026-11-14 12:32:42,326 [INFO] [Banco] woman: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2353).
+2026-11-14 12:32:42,343 [INFO] [Banco] train: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6238).
+2026-11-14 12:32:42,360 [INFO] [Banco] squirrel: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.0436).
+2026-11-14 12:32:42,377 [INFO] [Banco] bed: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2380).
+2026-11-14 12:32:42,394 [INFO] [Banco] flatfish: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9251).
+2026-11-14 12:32:42,411 [INFO] [Banco] skunk: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.7495).
+2026-11-14 12:32:56,591 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/acc_por_classe_tarefa2_nova_estrategia_2.png
+2026-11-14 12:32:57,014 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/aac_acumulado_tarefa2_nova_estrategia_2.png
+2026-11-14 12:33:30,381 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/tsne_nova_estrategia_2_03_pos_tarefa2.png
+2026-11-14 12:33:30,382 [INFO] ============================================================
+2026-11-14 12:33:30,382 [INFO] === DIAGNÓSTICO A/B/C — fronteira tarefa 1 -> tarefa 2 ===
+2026-11-14 12:33:52,956 [INFO]  > [Fronteira 1->2][Original]  Acc tarefas antigas: 42.20%
+2026-11-14 12:33:52,956 [INFO]  > [Fronteira 1->2][Negação]   Acc tarefas antigas: 36.12%
+2026-11-14 12:33:52,956 [INFO]  > [Fronteira 1->2][Exclusão]  Acc tarefas antigas: 58.38%
+2026-11-14 12:33:52,956 [INFO]  > [Fronteira 1->2][Aleatório] Acc tarefas antigas: 57.85%
+2026-11-14 12:33:52,956 [INFO]  > Interpretação automática: Negação recupera acurácia de forma parecida à aleatória -> há interferência de peso/conteúdo real, mas não distinguível de uma versão genérica não-treinada.
+2026-11-14 12:33:53,517 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/diagnostico_task_arithmetic_nova_estrategia_2_f1_2.png
+2026-11-14 12:33:53,517 [INFO] === DRIFT SEMÂNTICO EXATO (Yu et al., 2020) — após a tarefa 2 ===
+2026-11-14 12:33:58,020 [INFO]  > [Drift após tarefa 2] girl: ||Δ||=0.00000271 (cos_sim=1.00000000)
+2026-11-14 12:34:02,967 [INFO]  > [Drift após tarefa 2] caterpillar: ||Δ||=0.00000249 (cos_sim=1.00000000)
+2026-11-14 12:34:08,223 [INFO]  > [Drift após tarefa 2] lamp: ||Δ||=0.00000209 (cos_sim=1.00000000)
+2026-11-14 12:34:13,444 [INFO]  > [Drift após tarefa 2] tank: ||Δ||=0.00000176 (cos_sim=1.00000000)
+2026-11-14 12:34:18,147 [INFO]  > [Drift após tarefa 2] porcupine: ||Δ||=0.00000302 (cos_sim=1.00000000)
+2026-11-14 12:34:23,080 [INFO]  > [Drift após tarefa 2] poppy: ||Δ||=0.00000208 (cos_sim=1.00000012)
+2026-11-14 12:34:28,376 [INFO]  > [Drift após tarefa 2] snail: ||Δ||=0.00000073 (cos_sim=1.00000000)
+2026-11-14 12:34:33,239 [INFO]  > [Drift após tarefa 2] shark: ||Δ||=0.00000251 (cos_sim=1.00000000)
+2026-11-14 12:34:37,835 [INFO]  > [Drift após tarefa 2] bridge: ||Δ||=0.00000214 (cos_sim=1.00000000)
+2026-11-14 12:34:42,915 [INFO]  > [Drift após tarefa 2] lizard: ||Δ||=0.00000347 (cos_sim=1.00000000)
+2026-11-14 12:34:48,346 [INFO]  > [Drift após tarefa 2] elephant: ||Δ||=0.00000229 (cos_sim=1.00000012)
+2026-11-14 12:34:52,854 [INFO]  > [Drift após tarefa 2] crab: ||Δ||=0.00000273 (cos_sim=1.00000000)
+2026-11-14 12:34:57,734 [INFO]  > [Drift após tarefa 2] snake: ||Δ||=0.00000185 (cos_sim=1.00000000)
+2026-11-14 12:35:02,740 [INFO]  > [Drift após tarefa 2] forest: ||Δ||=0.00000193 (cos_sim=1.00000000)
+2026-11-14 12:35:07,905 [INFO]  > [Drift após tarefa 2] bottle: ||Δ||=0.00000178 (cos_sim=1.00000012)
+2026-11-14 12:35:12,575 [INFO]  > [Drift após tarefa 2] telephone: ||Δ||=0.00000132 (cos_sim=1.00000000)
+2026-11-14 12:35:17,590 [INFO]  > [Drift após tarefa 2] tulip: ||Δ||=0.00000266 (cos_sim=1.00000000)
+2026-11-14 12:35:22,756 [INFO]  > [Drift após tarefa 2] television: ||Δ||=0.00000308 (cos_sim=1.00000000)
+2026-11-14 12:35:27,734 [INFO]  > [Drift após tarefa 2] turtle: ||Δ||=0.00000189 (cos_sim=1.00000012)
+2026-11-14 12:35:32,469 [INFO]  > [Drift após tarefa 2] sea: ||Δ||=0.00000209 (cos_sim=1.00000000)
+2026-11-14 12:35:37,038 [INFO]  > [Drift após tarefa 2] lobster: ||Δ||=0.00000102 (cos_sim=1.00000000)
+2026-11-14 12:35:42,815 [INFO]  > [Drift após tarefa 2] beetle: ||Δ||=0.00000077 (cos_sim=1.00000012)
+2026-11-14 12:35:47,538 [INFO]  > [Drift após tarefa 2] castle: ||Δ||=0.00000136 (cos_sim=1.00000000)
+2026-11-14 12:35:52,551 [INFO]  > [Drift após tarefa 2] bee: ||Δ||=0.00000148 (cos_sim=1.00000000)
+2026-11-14 12:35:57,151 [INFO]  > [Drift após tarefa 2] cockroach: ||Δ||=0.00000075 (cos_sim=1.00000000)
+2026-11-14 12:36:02,575 [INFO]  > [Drift após tarefa 2] chimpanzee: ||Δ||=0.00000129 (cos_sim=1.00000012)
+2026-11-14 12:36:07,281 [INFO]  > [Drift após tarefa 2] crocodile: ||Δ||=0.00000131 (cos_sim=1.00000000)
+2026-11-14 12:36:12,091 [INFO]  > [Drift após tarefa 2] worm: ||Δ||=0.00000048 (cos_sim=1.00000000)
+2026-11-14 12:36:17,310 [INFO]  > [Drift após tarefa 2] streetcar: ||Δ||=0.00000164 (cos_sim=1.00000000)
+2026-11-14 12:36:22,883 [INFO]  > [Drift após tarefa 2] baby: ||Δ||=0.00000102 (cos_sim=1.00000000)
+2026-11-14 12:36:27,682 [INFO]  > [Drift após tarefa 2] wardrobe: ||Δ||=0.00000055 (cos_sim=1.00000012)
+2026-11-14 12:36:32,366 [INFO]  > [Drift após tarefa 2] pear: ||Δ||=0.00000120 (cos_sim=1.00000000)
+2026-11-14 12:36:37,827 [INFO]  > [Drift após tarefa 2] bus: ||Δ||=0.00000132 (cos_sim=1.00000000)
+2026-11-14 12:36:42,465 [INFO]  > [Drift após tarefa 2] dolphin: ||Δ||=0.00000138 (cos_sim=1.00000000)
+2026-11-14 12:36:47,630 [INFO]  > [Drift após tarefa 2] bicycle: ||Δ||=0.00000211 (cos_sim=1.00000000)
+2026-11-14 12:36:52,429 [INFO]  > [Drift após tarefa 2] otter: ||Δ||=0.00000185 (cos_sim=1.00000012)
+2026-11-14 12:36:58,147 [INFO]  > [Drift após tarefa 2] skyscraper: ||Δ||=0.00000118 (cos_sim=1.00000000)
+2026-11-14 12:37:02,670 [INFO]  > [Drift após tarefa 2] man: ||Δ||=0.00000179 (cos_sim=1.00000012)
+2026-11-14 12:37:07,531 [INFO]  > [Drift após tarefa 2] mountain: ||Δ||=0.00000087 (cos_sim=0.99999994)
+2026-11-14 12:37:12,858 [INFO]  > [Drift após tarefa 2] maple_tree: ||Δ||=0.00000145 (cos_sim=1.00000012)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] girl: margem=-0.1680 (próprio=0.5051, concorrente mais forte=woman=0.6731)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] caterpillar: margem=+0.1441 (próprio=0.4346, concorrente mais forte=lizard=0.2905)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] lamp: margem=+0.1902 (próprio=0.4600, concorrente mais forte=bottle=0.2698)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] tank: margem=+0.0794 (próprio=0.5142, concorrente mais forte=train=0.4348)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] porcupine: margem=+0.1081 (próprio=0.4766, concorrente mais forte=squirrel=0.3685)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] poppy: margem=+0.0822 (próprio=0.5384, concorrente mais forte=tulip=0.4562)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] snail: margem=+0.0340 (próprio=0.4420, concorrente mais forte=squirrel=0.4080)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] shark: margem=+0.0174 (próprio=0.5042, concorrente mais forte=dolphin=0.4869)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] bridge: margem=+0.1404 (próprio=0.5061, concorrente mais forte=train=0.3657)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] lizard: margem=+0.0005 (próprio=0.3955, concorrente mais forte=crocodile=0.3949)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] elephant: margem=-0.0307 (próprio=0.5094, concorrente mais forte=bear=0.5401)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] crab: margem=+0.0272 (próprio=0.4578, concorrente mais forte=lobster=0.4306)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] snake: margem=+0.1094 (próprio=0.4570, concorrente mais forte=worm=0.3475)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] forest: margem=+0.2692 (próprio=0.4689, concorrente mais forte=squirrel=0.1997)
+2026-11-14 12:37:22,080 [INFO]  > [Vazamento após tarefa 2] bottle: margem=+0.1785 (próprio=0.5020, concorrente mais forte=lamp=0.3235)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] telephone: margem=+0.1960 (próprio=0.5127, concorrente mais forte=television=0.3167)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] tulip: margem=+0.0536 (próprio=0.5089, concorrente mais forte=orchid=0.4553)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] television: margem=+0.2300 (próprio=0.4841, concorrente mais forte=telephone=0.2541)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] turtle: margem=+0.0783 (próprio=0.4767, concorrente mais forte=mouse=0.3985)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] sea: margem=+0.1432 (próprio=0.5591, concorrente mais forte=plain=0.4159)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] lobster: margem=+0.2000 (próprio=0.5187, concorrente mais forte=crab=0.3187)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] beetle: margem=+0.1724 (próprio=0.6763, concorrente mais forte=cockroach=0.5039)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] castle: margem=+0.2921 (próprio=0.7216, concorrente mais forte=train=0.4296)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] bee: margem=+0.2431 (próprio=0.6178, concorrente mais forte=beetle=0.3747)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] cockroach: margem=+0.1554 (próprio=0.7012, concorrente mais forte=beetle=0.5457)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] chimpanzee: margem=+0.2197 (próprio=0.7358, concorrente mais forte=bear=0.5161)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] crocodile: margem=+0.1521 (próprio=0.6033, concorrente mais forte=squirrel=0.4512)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] worm: margem=+0.2944 (próprio=0.6979, concorrente mais forte=snake=0.4035)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] streetcar: margem=+0.0882 (próprio=0.6398, concorrente mais forte=train=0.5516)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] baby: margem=+0.1567 (próprio=0.6430, concorrente mais forte=man=0.4862)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] wardrobe: margem=+0.3317 (próprio=0.7193, concorrente mais forte=bed=0.3876)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] pear: margem=+0.2758 (próprio=0.6741, concorrente mais forte=orange=0.3982)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] bus: margem=+0.0995 (próprio=0.5850, concorrente mais forte=streetcar=0.4855)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] dolphin: margem=+0.2386 (próprio=0.7058, concorrente mais forte=shark=0.4672)
+2026-11-14 12:37:22,081 [INFO]  > [Vazamento após tarefa 2] bicycle: margem=+0.4025 (próprio=0.6632, concorrente mais forte=streetcar=0.2607)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] otter: margem=+0.1055 (próprio=0.5296, concorrente mais forte=squirrel=0.4240)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] skyscraper: margem=+0.3758 (próprio=0.6996, concorrente mais forte=bridge=0.3238)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] man: margem=-0.0209 (próprio=0.6430, concorrente mais forte=woman=0.6638)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] mountain: margem=+0.2529 (próprio=0.6662, concorrente mais forte=sea=0.4133)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] maple_tree: margem=+0.3001 (próprio=0.6862, concorrente mais forte=forest=0.3861)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] plain: margem=+0.3378 (próprio=0.7434, concorrente mais forte=sea=0.4057)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] hamster: margem=+0.1437 (próprio=0.6765, concorrente mais forte=mouse=0.5329)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] can: margem=+0.3287 (próprio=0.6498, concorrente mais forte=bottle=0.3211)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] lion: margem=+0.2448 (próprio=0.7770, concorrente mais forte=tiger=0.5321)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] orchid: margem=+0.3058 (próprio=0.7834, concorrente mais forte=bee=0.4775)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] sweet_pepper: margem=+0.2433 (próprio=0.6917, concorrente mais forte=pear=0.4484)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] tiger: margem=+0.1784 (próprio=0.6515, concorrente mais forte=squirrel=0.4731)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] mushroom: margem=+0.2336 (próprio=0.6516, concorrente mais forte=squirrel=0.4179)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] camel: margem=+0.1738 (próprio=0.6558, concorrente mais forte=lion=0.4820)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] chair: margem=+0.2647 (próprio=0.7928, concorrente mais forte=bed=0.5281)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] orange: margem=+0.2233 (próprio=0.8465, concorrente mais forte=pear=0.6231)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] raccoon: margem=+0.1823 (próprio=0.5557, concorrente mais forte=bear=0.3734)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] mouse: margem=+0.1492 (próprio=0.6081, concorrente mais forte=squirrel=0.4589)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] bear: margem=+0.1753 (próprio=0.6176, concorrente mais forte=squirrel=0.4422)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] woman: margem=+0.1092 (próprio=0.6511, concorrente mais forte=man=0.5419)
+2026-11-14 12:37:22,082 [INFO]  > [Vazamento após tarefa 2] train: margem=+0.2614 (próprio=0.6932, concorrente mais forte=streetcar=0.4318)
+2026-11-14 12:37:22,083 [INFO]  > [Vazamento após tarefa 2] squirrel: margem=+0.1503 (próprio=0.6474, concorrente mais forte=mouse=0.4971)
+2026-11-14 12:37:22,083 [INFO]  > [Vazamento após tarefa 2] bed: margem=+0.2182 (próprio=0.6511, concorrente mais forte=chair=0.4329)
+2026-11-14 12:37:22,083 [INFO]  > [Vazamento após tarefa 2] flatfish: margem=+0.1941 (próprio=0.6244, concorrente mais forte=mouse=0.4303)
+2026-11-14 12:37:22,083 [INFO]  > [Vazamento após tarefa 2] skunk: margem=+0.2530 (próprio=0.7037, concorrente mais forte=squirrel=0.4506)
+2026-11-14 12:37:23,393 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/margem_vazamento_nova_estrategia_2_apos_tarefa2.png
+2026-11-14 12:37:32,348 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 2 ===
+2026-11-14 12:37:32,348 [INFO]    Acurácia CIL ................  49.97%
+2026-11-14 12:37:32,348 [INFO]    Vazamento (Lambda) ..........  38.47%
+2026-11-14 12:37:32,348 [INFO]    Vazamento balanceado ........  38.47%
+2026-11-14 12:37:32,348 [INFO]    Erro dentro da task (E_WP) ..  11.57%
+2026-11-14 12:37:32,348 [INFO]    Parcela do erro por vazamento  76.88%
+2026-11-14 12:37:32,349 [INFO]    Acurácia com oráculo de task   73.93%
+2026-11-14 12:37:32,349 [INFO]    Teto de ganho ...............  23.97 p.p.
+2026-11-14 12:37:32,349 [INFO]    Índice de direção D .........   6.327
+2026-11-14 12:37:32,349 [INFO]    Spearman(L, j-i) recência ...   0.971
+2026-11-14 12:37:32,349 [INFO]    Spearman(L, S) semântica ....  -0.371
+2026-11-14 12:37:32,349 [INFO]      parcial, controlando j-i ..   0.000
+2026-11-14 12:37:32,349 [INFO]    Vazamento após normalização .  32.47%
+2026-11-14 12:37:32,349 [INFO]    Parcela atribuível a escala .  15.60%
+2026-11-14 12:37:32,349 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-14 12:37:32,349 [INFO]      k = -2: 0.018
+2026-11-14 12:37:32,349 [INFO]      k = -1: 0.070
+2026-11-14 12:37:32,349 [INFO]      k = +1: 0.264
+2026-11-14 12:37:32,349 [INFO]      k = +2: 0.469
+2026-11-14 12:37:32,349 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-14 12:37:32,349 [INFO]      0.292 0.239 0.469
+2026-11-14 12:37:32,350 [INFO]      0.029 0.682 0.288
+2026-11-14 12:37:32,350 [INFO]      0.018 0.110 0.872
+2026-11-14 12:37:41,090 [INFO] [Tarefa 2] Acurácia no teste acumulado após a tarefa: 49.97%
+2026-11-14 12:37:45,862 [INFO] [Tarefa 3] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-14 12:37:45,862 [INFO] [Tarefa 3] Snapshots de θ_init (Adapter_3 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-14 12:37:45,868 [INFO] === Tarefa 3 (tractor, bowl, sunflower, possum, dinosaur, rose, trout, oak_tree, whale, cloud, rocket, palm_tree, willow_tree, road, keyboard, leopard, cattle, apple, clock, seal): treinando Adapter_3 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-14 12:37:45,869 [INFO] [Tarefa 3] Pseudo-negativos ATIVOS: modo=is, 48 por lote, lambda_pn=0.5, classes antigas=['girl', 'caterpillar', 'lamp', 'tank', 'porcupine', 'poppy', 'snail', 'shark', 'bridge', 'lizard', 'elephant', 'crab', 'snake', 'forest', 'bottle', 'telephone', 'tulip', 'television', 'turtle', 'sea', 'lobster', 'beetle', 'castle', 'bee', 'cockroach', 'chimpanzee', 'crocodile', 'worm', 'streetcar', 'baby', 'wardrobe', 'pear', 'bus', 'dolphin', 'bicycle', 'otter', 'skyscraper', 'man', 'mountain', 'maple_tree', 'plain', 'hamster', 'can', 'lion', 'orchid', 'sweet_pepper', 'tiger', 'mushroom', 'camel', 'chair', 'orange', 'raccoon', 'mouse', 'bear', 'woman', 'train', 'squirrel', 'bed', 'flatfish', 'skunk']
+2026-11-14 12:51:52,520 [INFO]    [Tarefa 3] Época [10/100] -> CE:1.0888 | L_LVQ:0.0002 | Acc treino: 66.41% | AAC acumulado: 35.55% | tractor: 74.00% | bowl: 65.00% | sunflower: 80.00% | possum: 55.00% | dinosaur: 43.00% | rose: 77.00% | trout: 57.00% | oak_tree: 77.00% | whale: 72.00% | cloud: 81.00% | rocket: 81.00% | palm_tree: 76.00% | willow_tree: 42.00% | road: 83.00% | keyboard: 89.00% | leopard: 68.00% | cattle: 58.00% | apple: 89.00% | clock: 73.00% | seal: 58.00%
+2026-11-14 12:51:52,520 [INFO]       [Pseudo-negativos] CE_pn:6.2147 | vazam (margem>0): 80.0% | margem média: +0.2819 | ESS/propostas: 15.9% | logZ IS: 0.446 | logZ GFN: - | perda TB: -
+2026-11-14 12:51:52,520 [INFO]       [Validação] métrica de parada:2.9306 | CE:1.0561 | acc:67.20% | pseudo-neg. fixos: CE 3.7491, vazam 76.4% | melhor época até aqui: 6 | sem melhora há 0 (novo: 0, antigo: 4)
+2026-11-14 13:05:55,985 [INFO]    [Tarefa 3] Época [20/100] -> CE:0.9974 | L_LVQ:0.0002 | Acc treino: 68.60% | AAC acumulado: 37.29% | tractor: 79.00% | bowl: 71.00% | sunflower: 87.00% | possum: 55.00% | dinosaur: 53.00% | rose: 74.00% | trout: 64.00% | oak_tree: 79.00% | whale: 78.00% | cloud: 85.00% | rocket: 87.00% | palm_tree: 81.00% | willow_tree: 32.00% | road: 84.00% | keyboard: 84.00% | leopard: 65.00% | cattle: 54.00% | apple: 87.00% | clock: 77.00% | seal: 55.00%
+2026-11-14 13:05:55,985 [INFO]       [Pseudo-negativos] CE_pn:6.1417 | vazam (margem>0): 79.0% | margem média: +0.2628 | ESS/propostas: 16.3% | logZ IS: 0.337 | logZ GFN: - | perda TB: -
+2026-11-14 13:05:55,985 [INFO]       [Validação] métrica de parada:2.5718 | CE:0.9745 | acc:70.20% | pseudo-neg. fixos: CE 3.1947, vazam 69.2% | melhor época até aqui: 20 | sem melhora há 1 (novo: 1, antigo: 14)
+2026-11-14 13:19:59,618 [INFO]    [Tarefa 3] Época [30/100] -> CE:0.8011 | L_LVQ:0.0002 | Acc treino: 75.49% | AAC acumulado: 38.46% | tractor: 76.00% | bowl: 75.00% | sunflower: 89.00% | possum: 57.00% | dinosaur: 52.00% | rose: 86.00% | trout: 64.00% | oak_tree: 82.00% | whale: 79.00% | cloud: 83.00% | rocket: 89.00% | palm_tree: 81.00% | willow_tree: 43.00% | road: 91.00% | keyboard: 85.00% | leopard: 71.00% | cattle: 66.00% | apple: 86.00% | clock: 74.00% | seal: 56.00%
+2026-11-14 13:19:59,618 [INFO]       [Pseudo-negativos] CE_pn:6.0846 | vazam (margem>0): 79.2% | margem média: +0.2639 | ESS/propostas: 15.8% | logZ IS: 0.384 | logZ GFN: - | perda TB: -
+2026-11-14 13:19:59,618 [INFO]       [Validação] métrica de parada:2.2924 | CE:0.9283 | acc:72.80% | pseudo-neg. fixos: CE 2.7283, vazam 59.2% | melhor época até aqui: 28 | sem melhora há 0 (novo: 0, antigo: 2)
+2026-11-14 13:34:02,119 [INFO]    [Tarefa 3] Época [40/100] -> CE:0.6372 | L_LVQ:0.0002 | Acc treino: 81.20% | AAC acumulado: 42.41% | tractor: 73.00% | bowl: 75.00% | sunflower: 85.00% | possum: 49.00% | dinosaur: 52.00% | rose: 77.00% | trout: 69.00% | oak_tree: 87.00% | whale: 85.00% | cloud: 86.00% | rocket: 85.00% | palm_tree: 77.00% | willow_tree: 41.00% | road: 90.00% | keyboard: 84.00% | leopard: 68.00% | cattle: 64.00% | apple: 89.00% | clock: 67.00% | seal: 63.00%
+2026-11-14 13:34:02,119 [INFO]       [Pseudo-negativos] CE_pn:5.3046 | vazam (margem>0): 68.3% | margem média: +0.1496 | ESS/propostas: 17.0% | logZ IS: -0.145 | logZ GFN: - | perda TB: -
+2026-11-14 13:34:02,119 [INFO]       [Validação] métrica de parada:1.8962 | CE:1.0250 | acc:72.80% | pseudo-neg. fixos: CE 1.7426, vazam 31.9% | melhor época até aqui: 40 | sem melhora há 0 (novo: 10, antigo: 0)
+2026-11-14 13:48:03,532 [INFO]    [Tarefa 3] Época [50/100] -> CE:0.5436 | L_LVQ:0.0002 | Acc treino: 84.44% | AAC acumulado: 43.52% | tractor: 68.00% | bowl: 77.00% | sunflower: 85.00% | possum: 46.00% | dinosaur: 53.00% | rose: 78.00% | trout: 61.00% | oak_tree: 71.00% | whale: 84.00% | cloud: 84.00% | rocket: 86.00% | palm_tree: 82.00% | willow_tree: 54.00% | road: 87.00% | keyboard: 83.00% | leopard: 73.00% | cattle: 62.00% | apple: 85.00% | clock: 75.00% | seal: 54.00%
+2026-11-14 13:48:03,532 [INFO]       [Pseudo-negativos] CE_pn:5.5494 | vazam (margem>0): 70.8% | margem média: +0.1730 | ESS/propostas: 16.4% | logZ IS: -0.096 | logZ GFN: - | perda TB: -
+2026-11-14 13:48:03,532 [INFO]       [Validação] métrica de parada:1.8822 | CE:1.0672 | acc:72.00% | pseudo-neg. fixos: CE 1.6301, vazam 26.5% | melhor época até aqui: 50 | sem melhora há 2 (novo: 20, antigo: 2)
+2026-11-14 14:02:04,485 [INFO]    [Tarefa 3] Época [60/100] -> CE:0.4617 | L_LVQ:0.0002 | Acc treino: 87.72% | AAC acumulado: 42.92% | tractor: 76.00% | bowl: 66.00% | sunflower: 88.00% | possum: 48.00% | dinosaur: 52.00% | rose: 79.00% | trout: 65.00% | oak_tree: 78.00% | whale: 79.00% | cloud: 86.00% | rocket: 90.00% | palm_tree: 85.00% | willow_tree: 44.00% | road: 88.00% | keyboard: 86.00% | leopard: 68.00% | cattle: 59.00% | apple: 85.00% | clock: 70.00% | seal: 63.00%
+2026-11-14 14:02:04,485 [INFO]       [Pseudo-negativos] CE_pn:5.5712 | vazam (margem>0): 71.6% | margem média: +0.1826 | ESS/propostas: 16.0% | logZ IS: -0.040 | logZ GFN: - | perda TB: -
+2026-11-14 14:02:04,486 [INFO]       [Validação] métrica de parada:1.9010 | CE:1.0668 | acc:71.60% | pseudo-neg. fixos: CE 1.6683, vazam 28.6% | melhor época até aqui: 50 | sem melhora há 2 (novo: 30, antigo: 2)
+2026-11-14 14:16:03,170 [INFO]    [Tarefa 3] Época [70/100] -> CE:0.4098 | L_LVQ:0.0002 | Acc treino: 89.50% | AAC acumulado: 44.41% | tractor: 66.00% | bowl: 68.00% | sunflower: 82.00% | possum: 53.00% | dinosaur: 58.00% | rose: 82.00% | trout: 64.00% | oak_tree: 72.00% | whale: 84.00% | cloud: 86.00% | rocket: 86.00% | palm_tree: 83.00% | willow_tree: 57.00% | road: 89.00% | keyboard: 85.00% | leopard: 67.00% | cattle: 56.00% | apple: 86.00% | clock: 67.00% | seal: 55.00%
+2026-11-14 14:16:03,170 [INFO]       [Pseudo-negativos] CE_pn:5.3332 | vazam (margem>0): 67.1% | margem média: +0.1350 | ESS/propostas: 16.1% | logZ IS: -0.247 | logZ GFN: - | perda TB: -
+2026-11-14 14:16:03,170 [INFO]       [Validação] métrica de parada:1.9908 | CE:1.2342 | acc:70.70% | pseudo-neg. fixos: CE 1.5132, vazam 20.9% | melhor época até aqui: 60 | sem melhora há 1 (novo: 40, antigo: 1)
+2026-11-14 14:30:03,257 [INFO]    [Tarefa 3] Época [80/100] -> CE:0.3509 | L_LVQ:0.0002 | Acc treino: 92.11% | AAC acumulado: 44.69% | tractor: 72.00% | bowl: 73.00% | sunflower: 89.00% | possum: 44.00% | dinosaur: 53.00% | rose: 72.00% | trout: 64.00% | oak_tree: 78.00% | whale: 82.00% | cloud: 82.00% | rocket: 87.00% | palm_tree: 84.00% | willow_tree: 46.00% | road: 88.00% | keyboard: 85.00% | leopard: 67.00% | cattle: 59.00% | apple: 83.00% | clock: 70.00% | seal: 57.00%
+2026-11-14 14:30:03,257 [INFO]       [Pseudo-negativos] CE_pn:5.6491 | vazam (margem>0): 70.4% | margem média: +0.1731 | ESS/propostas: 15.6% | logZ IS: -0.129 | logZ GFN: - | perda TB: -
+2026-11-14 14:30:03,257 [INFO]       [Validação] métrica de parada:1.9892 | CE:1.2145 | acc:71.10% | pseudo-neg. fixos: CE 1.5494, vazam 22.6% | melhor época até aqui: 72 | sem melhora há 2 (novo: 50, antigo: 2)
+2026-11-14 14:44:05,116 [INFO]    [Tarefa 3] Época [90/100] -> CE:0.3270 | L_LVQ:0.0002 | Acc treino: 92.60% | AAC acumulado: 45.58% | tractor: 71.00% | bowl: 72.00% | sunflower: 88.00% | possum: 40.00% | dinosaur: 54.00% | rose: 73.00% | trout: 60.00% | oak_tree: 76.00% | whale: 79.00% | cloud: 79.00% | rocket: 78.00% | palm_tree: 84.00% | willow_tree: 54.00% | road: 88.00% | keyboard: 83.00% | leopard: 61.00% | cattle: 58.00% | apple: 87.00% | clock: 66.00% | seal: 51.00%
+2026-11-14 14:44:05,117 [INFO]       [Pseudo-negativos] CE_pn:5.5529 | vazam (margem>0): 70.5% | margem média: +0.1736 | ESS/propostas: 15.5% | logZ IS: -0.103 | logZ GFN: - | perda TB: -
+2026-11-14 14:44:05,117 [INFO]       [Validação] métrica de parada:2.0707 | CE:1.3422 | acc:70.00% | pseudo-neg. fixos: CE 1.4569, vazam 17.0% | melhor época até aqui: 80 | sem melhora há 0 (novo: 60, antigo: 0)
+2026-11-14 14:58:32,653 [INFO]    [Tarefa 3] Época [100/100] -> CE:0.3118 | L_LVQ:0.0002 | Acc treino: 93.47% | AAC acumulado: 45.65% | tractor: 59.00% | bowl: 67.00% | sunflower: 81.00% | possum: 37.00% | dinosaur: 52.00% | rose: 80.00% | trout: 58.00% | oak_tree: 73.00% | whale: 80.00% | cloud: 80.00% | rocket: 83.00% | palm_tree: 85.00% | willow_tree: 59.00% | road: 85.00% | keyboard: 84.00% | leopard: 66.00% | cattle: 58.00% | apple: 87.00% | clock: 65.00% | seal: 50.00%
+2026-11-14 14:58:32,653 [INFO]       [Pseudo-negativos] CE_pn:5.4754 | vazam (margem>0): 67.4% | margem média: +0.1418 | ESS/propostas: 14.9% | logZ IS: -0.281 | logZ GFN: - | perda TB: -
+2026-11-14 14:58:32,653 [INFO]       [Validação] métrica de parada:2.1367 | CE:1.4144 | acc:68.80% | pseudo-neg. fixos: CE 1.4446, vazam 17.2% | melhor época até aqui: 93 | sem melhora há 0 (novo: 70, antigo: 0)
+2026-11-14 14:58:32,653 [INFO] [Tarefa 3] Parada antecipada: 100 épocas executadas, melhor época 93 (ambas=2.0468); Adapter e protótipos dessa época restaurados.
+2026-11-14 14:58:32,661 [INFO] [Tarefa 3] Adapter_3 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 45.65%).
+2026-11-14 14:58:37,729 [INFO] [Tarefa 3] Protótipo (FC) de tractor substituído (450 imagens de treino).
+2026-11-14 14:58:42,312 [INFO] [Tarefa 3] Protótipo (FC) de bowl substituído (450 imagens de treino).
+2026-11-14 14:58:47,106 [INFO] [Tarefa 3] Protótipo (FC) de sunflower substituído (450 imagens de treino).
+2026-11-14 14:58:52,864 [INFO] [Tarefa 3] Protótipo (FC) de possum substituído (450 imagens de treino).
+2026-11-14 14:58:57,966 [INFO] [Tarefa 3] Protótipo (FC) de dinosaur substituído (450 imagens de treino).
+2026-11-14 14:59:03,262 [INFO] [Tarefa 3] Protótipo (FC) de rose substituído (450 imagens de treino).
+2026-11-14 14:59:08,460 [INFO] [Tarefa 3] Protótipo (FC) de trout substituído (450 imagens de treino).
+2026-11-14 14:59:13,945 [INFO] [Tarefa 3] Protótipo (FC) de oak_tree substituído (450 imagens de treino).
+2026-11-14 14:59:19,221 [INFO] [Tarefa 3] Protótipo (FC) de whale substituído (450 imagens de treino).
+2026-11-14 14:59:26,367 [INFO] [Tarefa 3] Protótipo (FC) de cloud substituído (450 imagens de treino).
+2026-11-14 14:59:33,782 [INFO] [Tarefa 3] Protótipo (FC) de rocket substituído (450 imagens de treino).
+2026-11-14 14:59:41,373 [INFO] [Tarefa 3] Protótipo (FC) de palm_tree substituído (450 imagens de treino).
+2026-11-14 14:59:48,640 [INFO] [Tarefa 3] Protótipo (FC) de willow_tree substituído (450 imagens de treino).
+2026-11-14 14:59:56,101 [INFO] [Tarefa 3] Protótipo (FC) de road substituído (450 imagens de treino).
+2026-11-14 15:00:03,519 [INFO] [Tarefa 3] Protótipo (FC) de keyboard substituído (450 imagens de treino).
+2026-11-14 15:00:10,992 [INFO] [Tarefa 3] Protótipo (FC) de leopard substituído (450 imagens de treino).
+2026-11-14 15:00:18,256 [INFO] [Tarefa 3] Protótipo (FC) de cattle substituído (450 imagens de treino).
+2026-11-14 15:00:25,638 [INFO] [Tarefa 3] Protótipo (FC) de apple substituído (450 imagens de treino).
+2026-11-14 15:00:32,907 [INFO] [Tarefa 3] Protótipo (FC) de clock substituído (450 imagens de treino).
+2026-11-14 15:00:40,225 [INFO] [Tarefa 3] Protótipo (FC) de seal substituído (450 imagens de treino).
+2026-11-14 15:00:48,335 [INFO] [Banco] tractor: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2296).
+2026-11-14 15:00:48,354 [INFO] [Banco] bowl: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1299).
+2026-11-14 15:00:48,372 [INFO] [Banco] sunflower: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5904).
+2026-11-14 15:00:48,390 [INFO] [Banco] possum: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1365).
+2026-11-14 15:00:48,408 [INFO] [Banco] dinosaur: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1593).
+2026-11-14 15:00:48,426 [INFO] [Banco] rose: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.9814).
+2026-11-14 15:00:48,451 [INFO] [Banco] trout: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8261).
+2026-11-14 15:00:48,485 [INFO] [Banco] oak_tree: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 0.9682).
+2026-11-14 15:00:48,504 [INFO] [Banco] whale: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8889).
+2026-11-14 15:00:48,522 [INFO] [Banco] cloud: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.5592).
+2026-11-14 15:00:48,543 [INFO] [Banco] rocket: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9171).
+2026-11-14 15:00:48,561 [INFO] [Banco] palm_tree: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.4396).
+2026-11-14 15:00:48,579 [INFO] [Banco] willow_tree: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.3712).
+2026-11-14 15:00:48,596 [INFO] [Banco] road: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.0785).
+2026-11-14 15:00:48,613 [INFO] [Banco] keyboard: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6955).
+2026-11-14 15:00:48,630 [INFO] [Banco] leopard: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5738).
+2026-11-14 15:00:48,647 [INFO] [Banco] cattle: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1060).
+2026-11-14 15:00:48,664 [INFO] [Banco] apple: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.0175).
+2026-11-14 15:00:48,682 [INFO] [Banco] clock: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.7953).
+2026-11-14 15:00:48,700 [INFO] [Banco] seal: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9555).
+2026-11-14 15:01:13,516 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/acc_por_classe_tarefa3_nova_estrategia_2.png
+2026-11-14 15:01:14,247 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/aac_acumulado_tarefa3_nova_estrategia_2.png
+2026-11-14 15:02:59,751 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/tsne_nova_estrategia_2_04_pos_tarefa3.png
+2026-11-14 15:02:59,751 [INFO] ============================================================
+2026-11-14 15:02:59,751 [INFO] === DIAGNÓSTICO A/B/C — fronteira tarefa 2 -> tarefa 3 ===
+2026-11-14 15:04:01,336 [INFO]  > [Fronteira 2->3][Original]  Acc tarefas antigas: 36.57%
+2026-11-14 15:04:01,337 [INFO]  > [Fronteira 2->3][Negação]   Acc tarefas antigas: 28.95%
+2026-11-14 15:04:01,337 [INFO]  > [Fronteira 2->3][Exclusão]  Acc tarefas antigas: 49.97%
+2026-11-14 15:04:01,337 [INFO]  > [Fronteira 2->3][Aleatório] Acc tarefas antigas: 49.75%
+2026-11-14 15:04:01,337 [INFO]  > Interpretação automática: Negação recupera acurácia de forma parecida à aleatória -> há interferência de peso/conteúdo real, mas não distinguível de uma versão genérica não-treinada.
+2026-11-14 15:04:02,334 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/diagnostico_task_arithmetic_nova_estrategia_2_f2_3.png
+2026-11-14 15:04:02,334 [INFO] === DRIFT SEMÂNTICO EXATO (Yu et al., 2020) — após a tarefa 3 ===
+2026-11-14 15:04:09,584 [INFO]  > [Drift após tarefa 3] girl: ||Δ||=0.00000395 (cos_sim=1.00000012)
+2026-11-14 15:04:17,009 [INFO]  > [Drift após tarefa 3] caterpillar: ||Δ||=0.00000260 (cos_sim=1.00000000)
+2026-11-14 15:04:24,318 [INFO]  > [Drift após tarefa 3] lamp: ||Δ||=0.00000202 (cos_sim=1.00000000)
+2026-11-14 15:04:31,491 [INFO]  > [Drift após tarefa 3] tank: ||Δ||=0.00000193 (cos_sim=1.00000000)
+2026-11-14 15:04:39,059 [INFO]  > [Drift após tarefa 3] porcupine: ||Δ||=0.00000170 (cos_sim=1.00000000)
+2026-11-14 15:04:46,530 [INFO]  > [Drift após tarefa 3] poppy: ||Δ||=0.00000213 (cos_sim=1.00000012)
+2026-11-14 15:04:53,948 [INFO]  > [Drift após tarefa 3] snail: ||Δ||=0.00000068 (cos_sim=1.00000000)
+2026-11-14 15:05:01,192 [INFO]  > [Drift após tarefa 3] shark: ||Δ||=0.00000297 (cos_sim=1.00000000)
+2026-11-14 15:05:08,656 [INFO]  > [Drift após tarefa 3] bridge: ||Δ||=0.00000152 (cos_sim=1.00000012)
+2026-11-14 15:05:16,181 [INFO]  > [Drift após tarefa 3] lizard: ||Δ||=0.00000246 (cos_sim=1.00000000)
+2026-11-14 15:05:23,765 [INFO]  > [Drift após tarefa 3] elephant: ||Δ||=0.00000239 (cos_sim=1.00000000)
+2026-11-14 15:05:31,124 [INFO]  > [Drift após tarefa 3] crab: ||Δ||=0.00000247 (cos_sim=1.00000000)
+2026-11-14 15:05:38,564 [INFO]  > [Drift após tarefa 3] snake: ||Δ||=0.00000270 (cos_sim=1.00000000)
+2026-11-14 15:05:46,159 [INFO]  > [Drift após tarefa 3] forest: ||Δ||=0.00000123 (cos_sim=0.99999994)
+2026-11-14 15:05:53,447 [INFO]  > [Drift após tarefa 3] bottle: ||Δ||=0.00000288 (cos_sim=1.00000000)
+2026-11-14 15:06:00,751 [INFO]  > [Drift após tarefa 3] telephone: ||Δ||=0.00000144 (cos_sim=1.00000000)
+2026-11-14 15:06:08,287 [INFO]  > [Drift após tarefa 3] tulip: ||Δ||=0.00000112 (cos_sim=1.00000012)
+2026-11-14 15:06:15,925 [INFO]  > [Drift após tarefa 3] television: ||Δ||=0.00000312 (cos_sim=1.00000000)
+2026-11-14 15:06:23,317 [INFO]  > [Drift após tarefa 3] turtle: ||Δ||=0.00000117 (cos_sim=1.00000012)
+2026-11-14 15:06:30,760 [INFO]  > [Drift após tarefa 3] sea: ||Δ||=0.00000211 (cos_sim=1.00000000)
+2026-11-14 15:06:37,980 [INFO]  > [Drift após tarefa 3] lobster: ||Δ||=0.00000124 (cos_sim=1.00000000)
+2026-11-14 15:06:45,489 [INFO]  > [Drift após tarefa 3] beetle: ||Δ||=0.00000113 (cos_sim=1.00000024)
+2026-11-14 15:06:52,780 [INFO]  > [Drift após tarefa 3] castle: ||Δ||=0.00000064 (cos_sim=1.00000000)
+2026-11-14 15:07:00,220 [INFO]  > [Drift após tarefa 3] bee: ||Δ||=0.00000167 (cos_sim=1.00000000)
+2026-11-14 15:07:07,623 [INFO]  > [Drift após tarefa 3] cockroach: ||Δ||=0.00000030 (cos_sim=1.00000000)
+2026-11-14 15:07:15,097 [INFO]  > [Drift após tarefa 3] chimpanzee: ||Δ||=0.00000107 (cos_sim=1.00000012)
+2026-11-14 15:07:22,351 [INFO]  > [Drift após tarefa 3] crocodile: ||Δ||=0.00000062 (cos_sim=1.00000000)
+2026-11-14 15:07:29,681 [INFO]  > [Drift após tarefa 3] worm: ||Δ||=0.00000106 (cos_sim=1.00000000)
+2026-11-14 15:07:37,023 [INFO]  > [Drift após tarefa 3] streetcar: ||Δ||=0.00000152 (cos_sim=1.00000000)
+2026-11-14 15:07:44,389 [INFO]  > [Drift após tarefa 3] baby: ||Δ||=0.00000120 (cos_sim=1.00000000)
+2026-11-14 15:07:51,911 [INFO]  > [Drift após tarefa 3] wardrobe: ||Δ||=0.00000057 (cos_sim=1.00000012)
+2026-11-14 15:07:59,265 [INFO]  > [Drift após tarefa 3] pear: ||Δ||=0.00000120 (cos_sim=1.00000000)
+2026-11-14 15:08:06,648 [INFO]  > [Drift após tarefa 3] bus: ||Δ||=0.00000090 (cos_sim=1.00000000)
+2026-11-14 15:08:14,240 [INFO]  > [Drift após tarefa 3] dolphin: ||Δ||=0.00000117 (cos_sim=1.00000000)
+2026-11-14 15:08:21,602 [INFO]  > [Drift após tarefa 3] bicycle: ||Δ||=0.00000120 (cos_sim=1.00000012)
+2026-11-14 15:08:29,119 [INFO]  > [Drift após tarefa 3] otter: ||Δ||=0.00000151 (cos_sim=1.00000000)
+2026-11-14 15:08:36,574 [INFO]  > [Drift após tarefa 3] skyscraper: ||Δ||=0.00000103 (cos_sim=1.00000000)
+2026-11-14 15:08:44,085 [INFO]  > [Drift após tarefa 3] man: ||Δ||=0.00000107 (cos_sim=1.00000000)
+2026-11-14 15:08:51,567 [INFO]  > [Drift após tarefa 3] mountain: ||Δ||=0.00000173 (cos_sim=0.99999988)
+2026-11-14 15:08:59,028 [INFO]  > [Drift após tarefa 3] maple_tree: ||Δ||=0.00000172 (cos_sim=1.00000012)
+2026-11-14 15:09:06,462 [INFO]  > [Drift após tarefa 3] plain: ||Δ||=0.00000076 (cos_sim=1.00000012)
+2026-11-14 15:09:13,950 [INFO]  > [Drift após tarefa 3] hamster: ||Δ||=0.00000118 (cos_sim=1.00000000)
+2026-11-14 15:09:21,351 [INFO]  > [Drift após tarefa 3] can: ||Δ||=0.00000026 (cos_sim=1.00000012)
+2026-11-14 15:09:28,781 [INFO]  > [Drift após tarefa 3] lion: ||Δ||=0.00000193 (cos_sim=1.00000000)
+2026-11-14 15:09:36,204 [INFO]  > [Drift após tarefa 3] orchid: ||Δ||=0.00000087 (cos_sim=1.00000000)
+2026-11-14 15:09:43,958 [INFO]  > [Drift após tarefa 3] sweet_pepper: ||Δ||=0.00000117 (cos_sim=1.00000000)
+2026-11-14 15:09:51,585 [INFO]  > [Drift após tarefa 3] tiger: ||Δ||=0.00000137 (cos_sim=1.00000012)
+2026-11-14 15:09:59,093 [INFO]  > [Drift após tarefa 3] mushroom: ||Δ||=0.00000156 (cos_sim=1.00000012)
+2026-11-14 15:10:06,626 [INFO]  > [Drift após tarefa 3] camel: ||Δ||=0.00000137 (cos_sim=1.00000000)
+2026-11-14 15:10:14,133 [INFO]  > [Drift após tarefa 3] chair: ||Δ||=0.00000042 (cos_sim=1.00000000)
+2026-11-14 15:10:21,543 [INFO]  > [Drift após tarefa 3] orange: ||Δ||=0.00000064 (cos_sim=1.00000012)
+2026-11-14 15:10:28,956 [INFO]  > [Drift após tarefa 3] raccoon: ||Δ||=0.00000124 (cos_sim=1.00000000)
+2026-11-14 15:10:36,445 [INFO]  > [Drift após tarefa 3] mouse: ||Δ||=0.00000121 (cos_sim=1.00000000)
+2026-11-14 15:10:43,922 [INFO]  > [Drift após tarefa 3] bear: ||Δ||=0.00000165 (cos_sim=1.00000024)
+2026-11-14 15:10:51,289 [INFO]  > [Drift após tarefa 3] woman: ||Δ||=0.00000210 (cos_sim=1.00000000)
+2026-11-14 15:10:58,643 [INFO]  > [Drift após tarefa 3] train: ||Δ||=0.00000093 (cos_sim=1.00000000)
+2026-11-14 15:11:06,104 [INFO]  > [Drift após tarefa 3] squirrel: ||Δ||=0.00000114 (cos_sim=1.00000012)
+2026-11-14 15:11:13,521 [INFO]  > [Drift após tarefa 3] bed: ||Δ||=0.00000029 (cos_sim=1.00000000)
+2026-11-14 15:11:21,125 [INFO]  > [Drift após tarefa 3] flatfish: ||Δ||=0.00000089 (cos_sim=1.00000000)
+2026-11-14 15:11:28,605 [INFO]  > [Drift após tarefa 3] skunk: ||Δ||=0.00000130 (cos_sim=1.00000000)
+2026-11-14 15:11:50,729 [INFO]  > [Vazamento após tarefa 3] girl: margem=-0.1680 (próprio=0.5051, concorrente mais forte=woman=0.6731)
+2026-11-14 15:11:50,729 [INFO]  > [Vazamento após tarefa 3] caterpillar: margem=+0.0620 (próprio=0.4346, concorrente mais forte=dinosaur=0.3727)
+2026-11-14 15:11:50,729 [INFO]  > [Vazamento após tarefa 3] lamp: margem=+0.1604 (próprio=0.4600, concorrente mais forte=whale=0.2996)
+2026-11-14 15:11:50,729 [INFO]  > [Vazamento após tarefa 3] tank: margem=-0.0710 (próprio=0.5142, concorrente mais forte=tractor=0.5852)
+2026-11-14 15:11:50,729 [INFO]  > [Vazamento após tarefa 3] porcupine: margem=-0.0381 (próprio=0.4766, concorrente mais forte=possum=0.5146)
+2026-11-14 15:11:50,729 [INFO]  > [Vazamento após tarefa 3] poppy: margem=-0.0095 (próprio=0.5384, concorrente mais forte=rose=0.5480)
+2026-11-14 15:11:50,729 [INFO]  > [Vazamento após tarefa 3] snail: margem=-0.0144 (próprio=0.4420, concorrente mais forte=seal=0.4564)
+2026-11-14 15:11:50,730 [INFO]  > [Vazamento após tarefa 3] shark: margem=-0.1067 (próprio=0.5042, concorrente mais forte=whale=0.6109)
+2026-11-14 15:11:50,730 [INFO]  > [Vazamento após tarefa 3] bridge: margem=+0.1404 (próprio=0.5061, concorrente mais forte=train=0.3657)
+2026-11-14 15:11:50,730 [INFO]  > [Vazamento após tarefa 3] lizard: margem=-0.0556 (próprio=0.3955, concorrente mais forte=seal=0.4511)
+2026-11-14 15:11:50,730 [INFO]  > [Vazamento após tarefa 3] elephant: margem=-0.1692 (próprio=0.5094, concorrente mais forte=cattle=0.6786)
+2026-11-14 15:11:50,730 [INFO]  > [Vazamento após tarefa 3] crab: margem=+0.0272 (próprio=0.4578, concorrente mais forte=lobster=0.4306)
+2026-11-14 15:11:50,730 [INFO]  > [Vazamento após tarefa 3] snake: margem=+0.1094 (próprio=0.4570, concorrente mais forte=worm=0.3475)
+2026-11-14 15:11:50,730 [INFO]  > [Vazamento após tarefa 3] forest: margem=-0.0370 (próprio=0.4689, concorrente mais forte=willow_tree=0.5059)
+2026-11-14 15:11:50,730 [INFO]  > [Vazamento após tarefa 3] bottle: margem=+0.1785 (próprio=0.5020, concorrente mais forte=lamp=0.3235)
+2026-11-14 15:11:50,730 [INFO]  > [Vazamento após tarefa 3] telephone: margem=+0.1960 (próprio=0.5127, concorrente mais forte=television=0.3167)
+2026-11-14 15:11:50,731 [INFO]  > [Vazamento após tarefa 3] tulip: margem=-0.0486 (próprio=0.5089, concorrente mais forte=rose=0.5575)
+2026-11-14 15:11:50,731 [INFO]  > [Vazamento após tarefa 3] television: margem=+0.2300 (próprio=0.4841, concorrente mais forte=telephone=0.2541)
+2026-11-14 15:11:50,731 [INFO]  > [Vazamento após tarefa 3] turtle: margem=-0.0790 (próprio=0.4767, concorrente mais forte=seal=0.5557)
+2026-11-14 15:11:50,731 [INFO]  > [Vazamento após tarefa 3] sea: margem=+0.0120 (próprio=0.5591, concorrente mais forte=cloud=0.5470)
+2026-11-14 15:11:50,731 [INFO]  > [Vazamento após tarefa 3] lobster: margem=+0.1326 (próprio=0.5187, concorrente mais forte=dinosaur=0.3861)
+2026-11-14 15:11:50,731 [INFO]  > [Vazamento após tarefa 3] beetle: margem=+0.1724 (próprio=0.6763, concorrente mais forte=cockroach=0.5039)
+2026-11-14 15:11:50,731 [INFO]  > [Vazamento após tarefa 3] castle: margem=+0.2819 (próprio=0.7216, concorrente mais forte=tractor=0.4397)
+2026-11-14 15:11:50,731 [INFO]  > [Vazamento após tarefa 3] bee: margem=+0.2431 (próprio=0.6178, concorrente mais forte=beetle=0.3747)
+2026-11-14 15:11:50,731 [INFO]  > [Vazamento após tarefa 3] cockroach: margem=+0.1554 (próprio=0.7012, concorrente mais forte=beetle=0.5457)
+2026-11-14 15:11:50,731 [INFO]  > [Vazamento após tarefa 3] chimpanzee: margem=+0.1947 (próprio=0.7358, concorrente mais forte=seal=0.5411)
+2026-11-14 15:11:50,732 [INFO]  > [Vazamento após tarefa 3] crocodile: margem=+0.0289 (próprio=0.6033, concorrente mais forte=seal=0.5744)
+2026-11-14 15:11:50,732 [INFO]  > [Vazamento após tarefa 3] worm: margem=+0.2944 (próprio=0.6979, concorrente mais forte=snake=0.4035)
+2026-11-14 15:11:50,732 [INFO]  > [Vazamento após tarefa 3] streetcar: margem=+0.0882 (próprio=0.6398, concorrente mais forte=train=0.5516)
+2026-11-14 15:11:50,732 [INFO]  > [Vazamento após tarefa 3] baby: margem=+0.1567 (próprio=0.6430, concorrente mais forte=man=0.4862)
+2026-11-14 15:11:50,732 [INFO]  > [Vazamento após tarefa 3] wardrobe: margem=+0.3317 (próprio=0.7193, concorrente mais forte=bed=0.3876)
+2026-11-14 15:11:50,732 [INFO]  > [Vazamento após tarefa 3] pear: margem=+0.1447 (próprio=0.6741, concorrente mais forte=apple=0.5294)
+2026-11-14 15:11:50,732 [INFO]  > [Vazamento após tarefa 3] bus: margem=+0.0995 (próprio=0.5850, concorrente mais forte=streetcar=0.4855)
+2026-11-14 15:11:50,732 [INFO]  > [Vazamento após tarefa 3] dolphin: margem=-0.0194 (próprio=0.7058, concorrente mais forte=whale=0.7251)
+2026-11-14 15:11:50,732 [INFO]  > [Vazamento após tarefa 3] bicycle: margem=+0.2285 (próprio=0.6632, concorrente mais forte=tractor=0.4347)
+2026-11-14 15:11:50,732 [INFO]  > [Vazamento após tarefa 3] otter: margem=-0.1338 (próprio=0.5296, concorrente mais forte=seal=0.6633)
+2026-11-14 15:11:50,733 [INFO]  > [Vazamento após tarefa 3] skyscraper: margem=+0.3425 (próprio=0.6996, concorrente mais forte=rocket=0.3571)
+2026-11-14 15:11:50,733 [INFO]  > [Vazamento após tarefa 3] man: margem=-0.0209 (próprio=0.6430, concorrente mais forte=woman=0.6638)
+2026-11-14 15:11:50,733 [INFO]  > [Vazamento após tarefa 3] mountain: margem=+0.1601 (próprio=0.6662, concorrente mais forte=cloud=0.5061)
+2026-11-14 15:11:50,733 [INFO]  > [Vazamento após tarefa 3] maple_tree: margem=-0.0511 (próprio=0.6862, concorrente mais forte=willow_tree=0.7373)
+2026-11-14 15:11:50,733 [INFO]  > [Vazamento após tarefa 3] plain: margem=+0.2982 (próprio=0.7434, concorrente mais forte=willow_tree=0.4452)
+2026-11-14 15:11:50,733 [INFO]  > [Vazamento após tarefa 3] hamster: margem=+0.1437 (próprio=0.6765, concorrente mais forte=mouse=0.5329)
+2026-11-14 15:11:50,733 [INFO]  > [Vazamento após tarefa 3] can: margem=+0.2494 (próprio=0.6498, concorrente mais forte=bowl=0.4005)
+2026-11-14 15:11:50,733 [INFO]  > [Vazamento após tarefa 3] lion: margem=+0.1367 (próprio=0.7770, concorrente mais forte=leopard=0.6403)
+2026-11-14 15:11:50,733 [INFO]  > [Vazamento após tarefa 3] orchid: margem=+0.1918 (próprio=0.7834, concorrente mais forte=rose=0.5915)
+2026-11-14 15:11:50,733 [INFO]  > [Vazamento após tarefa 3] sweet_pepper: margem=+0.1798 (próprio=0.6917, concorrente mais forte=apple=0.5119)
+2026-11-14 15:11:50,734 [INFO]  > [Vazamento após tarefa 3] tiger: margem=+0.0866 (próprio=0.6515, concorrente mais forte=leopard=0.5648)
+2026-11-14 15:11:50,734 [INFO]  > [Vazamento após tarefa 3] mushroom: margem=+0.2277 (próprio=0.6516, concorrente mais forte=possum=0.4238)
+2026-11-14 15:11:50,734 [INFO]  > [Vazamento após tarefa 3] camel: margem=+0.0218 (próprio=0.6558, concorrente mais forte=cattle=0.6340)
+2026-11-14 15:11:50,734 [INFO]  > [Vazamento após tarefa 3] chair: margem=+0.2647 (próprio=0.7928, concorrente mais forte=bed=0.5281)
+2026-11-14 15:11:50,734 [INFO]  > [Vazamento após tarefa 3] orange: margem=+0.2233 (próprio=0.8465, concorrente mais forte=pear=0.6231)
+2026-11-14 15:11:50,734 [INFO]  > [Vazamento após tarefa 3] raccoon: margem=-0.0363 (próprio=0.5557, concorrente mais forte=possum=0.5921)
+2026-11-14 15:11:50,734 [INFO]  > [Vazamento após tarefa 3] mouse: margem=+0.0577 (próprio=0.6081, concorrente mais forte=possum=0.5504)
+2026-11-14 15:11:50,734 [INFO]  > [Vazamento após tarefa 3] bear: margem=-0.0336 (próprio=0.6176, concorrente mais forte=seal=0.6511)
+2026-11-14 15:11:50,734 [INFO]  > [Vazamento após tarefa 3] woman: margem=+0.1092 (próprio=0.6511, concorrente mais forte=man=0.5419)
+2026-11-14 15:11:50,735 [INFO]  > [Vazamento após tarefa 3] train: margem=+0.2549 (próprio=0.6932, concorrente mais forte=tractor=0.4383)
+2026-11-14 15:11:50,735 [INFO]  > [Vazamento após tarefa 3] squirrel: margem=+0.0412 (próprio=0.6474, concorrente mais forte=seal=0.6062)
+2026-11-14 15:11:50,735 [INFO]  > [Vazamento após tarefa 3] bed: margem=+0.2182 (próprio=0.6511, concorrente mais forte=chair=0.4329)
+2026-11-14 15:11:50,735 [INFO]  > [Vazamento após tarefa 3] flatfish: margem=+0.1895 (próprio=0.6244, concorrente mais forte=seal=0.4348)
+2026-11-14 15:11:50,735 [INFO]  > [Vazamento após tarefa 3] skunk: margem=+0.1422 (próprio=0.7037, concorrente mais forte=seal=0.5614)
+2026-11-14 15:11:50,735 [INFO]  > [Vazamento após tarefa 3] tractor: margem=+0.2947 (próprio=0.7603, concorrente mais forte=cattle=0.4656)
+2026-11-14 15:11:50,735 [INFO]  > [Vazamento após tarefa 3] bowl: margem=+0.2709 (próprio=0.7390, concorrente mais forte=clock=0.4682)
+2026-11-14 15:11:50,735 [INFO]  > [Vazamento após tarefa 3] sunflower: margem=+0.3480 (próprio=0.8182, concorrente mais forte=bee=0.4701)
+2026-11-14 15:11:50,735 [INFO]  > [Vazamento após tarefa 3] possum: margem=+0.1062 (próprio=0.7015, concorrente mais forte=seal=0.5952)
+2026-11-14 15:11:50,735 [INFO]  > [Vazamento após tarefa 3] dinosaur: margem=+0.2004 (próprio=0.6801, concorrente mais forte=trout=0.4797)
+2026-11-14 15:11:50,736 [INFO]  > [Vazamento após tarefa 3] rose: margem=+0.2404 (próprio=0.7630, concorrente mais forte=orchid=0.5226)
+2026-11-14 15:11:50,736 [INFO]  > [Vazamento após tarefa 3] trout: margem=+0.1980 (próprio=0.7458, concorrente mais forte=dinosaur=0.5478)
+2026-11-14 15:11:50,736 [INFO]  > [Vazamento após tarefa 3] oak_tree: margem=+0.0673 (próprio=0.8818, concorrente mais forte=willow_tree=0.8146)
+2026-11-14 15:11:50,736 [INFO]  > [Vazamento após tarefa 3] whale: margem=+0.1951 (próprio=0.8327, concorrente mais forte=seal=0.6376)
+2026-11-14 15:11:50,736 [INFO]  > [Vazamento após tarefa 3] cloud: margem=+0.3200 (próprio=0.8074, concorrente mais forte=whale=0.4874)
+2026-11-14 15:11:50,736 [INFO]  > [Vazamento após tarefa 3] rocket: margem=+0.3000 (próprio=0.7941, concorrente mais forte=whale=0.4941)
+2026-11-14 15:11:50,736 [INFO]  > [Vazamento após tarefa 3] palm_tree: margem=+0.2568 (próprio=0.8147, concorrente mais forte=willow_tree=0.5579)
+2026-11-14 15:11:50,736 [INFO]  > [Vazamento após tarefa 3] willow_tree: margem=+0.0775 (próprio=0.7500, concorrente mais forte=oak_tree=0.6725)
+2026-11-14 15:11:50,736 [INFO]  > [Vazamento após tarefa 3] road: margem=+0.3133 (próprio=0.8220, concorrente mais forte=oak_tree=0.5086)
+2026-11-14 15:11:50,736 [INFO]  > [Vazamento após tarefa 3] keyboard: margem=+0.5960 (próprio=0.7681, concorrente mais forte=beetle=0.1721)
+2026-11-14 15:11:50,736 [INFO]  > [Vazamento após tarefa 3] leopard: margem=+0.1766 (próprio=0.7538, concorrente mais forte=possum=0.5772)
+2026-11-14 15:11:50,737 [INFO]  > [Vazamento após tarefa 3] cattle: margem=+0.2114 (próprio=0.7604, concorrente mais forte=dinosaur=0.5490)
+2026-11-14 15:11:50,737 [INFO]  > [Vazamento após tarefa 3] apple: margem=+0.2363 (próprio=0.8849, concorrente mais forte=pear=0.6486)
+2026-11-14 15:11:50,737 [INFO]  > [Vazamento após tarefa 3] clock: margem=+0.2469 (próprio=0.6894, concorrente mais forte=bowl=0.4425)
+2026-11-14 15:11:50,737 [INFO]  > [Vazamento após tarefa 3] seal: margem=+0.1475 (próprio=0.7366, concorrente mais forte=possum=0.5891)
+2026-11-14 15:11:53,279 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/margem_vazamento_nova_estrategia_2_apos_tarefa3.png
+2026-11-14 15:12:15,176 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 3 ===
+2026-11-14 15:12:15,176 [INFO]    Acurácia CIL ................  45.25%
+2026-11-14 15:12:15,176 [INFO]    Vazamento (Lambda) ..........  46.55%
+2026-11-14 15:12:15,176 [INFO]    Vazamento balanceado ........  46.55%
+2026-11-14 15:12:15,177 [INFO]    Erro dentro da task (E_WP) ..   8.20%
+2026-11-14 15:12:15,177 [INFO]    Parcela do erro por vazamento  85.02%
+2026-11-14 15:12:15,177 [INFO]    Acurácia com oráculo de task   74.98%
+2026-11-14 15:12:15,177 [INFO]    Teto de ganho ...............  29.73 p.p.
+2026-11-14 15:12:15,177 [INFO]    Índice de direção D .........   7.783
+2026-11-14 15:12:15,177 [INFO]    Spearman(L, j-i) recência ...   0.936
+2026-11-14 15:12:15,177 [INFO]    Spearman(L, S) semântica ....  -0.308
+2026-11-14 15:12:15,177 [INFO]      parcial, controlando j-i ..  -0.547
+2026-11-14 15:12:15,177 [INFO]    Vazamento após normalização .  39.32%
+2026-11-14 15:12:15,177 [INFO]    Parcela atribuível a escala .  15.52%
+2026-11-14 15:12:15,177 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-14 15:12:15,177 [INFO]      k = -3: 0.009
+2026-11-14 15:12:15,178 [INFO]      k = -2: 0.023
+2026-11-14 15:12:15,178 [INFO]      k = -1: 0.052
+2026-11-14 15:12:15,178 [INFO]      k = +1: 0.200
+2026-11-14 15:12:15,178 [INFO]      k = +2: 0.289
+2026-11-14 15:12:15,178 [INFO]      k = +3: 0.470
+2026-11-14 15:12:15,178 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-14 15:12:15,178 [INFO]      0.157 0.120 0.253 0.470
+2026-11-14 15:12:15,178 [INFO]      0.011 0.488 0.175 0.326
+2026-11-14 15:12:15,178 [INFO]      0.008 0.056 0.630 0.306
+2026-11-14 15:12:15,178 [INFO]      0.009 0.038 0.090 0.862
+2026-11-14 15:12:37,096 [INFO] [Tarefa 3] Acurácia no teste acumulado após a tarefa: 45.25%
+2026-11-14 15:12:45,159 [INFO] [Tarefa 4] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-14 15:12:45,159 [INFO] [Tarefa 4] Snapshots de θ_init (Adapter_4 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-14 15:12:45,171 [INFO] === Tarefa 4 (rabbit, plate, shrew, pine_tree, couch, house, motorcycle, table, fox, cup, beaver, boy, butterfly, spider, wolf, lawn_mower, kangaroo, ray, aquarium_fish, pickup_truck): treinando Adapter_4 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-14 15:12:45,171 [INFO] [Tarefa 4] Pseudo-negativos ATIVOS: modo=is, 48 por lote, lambda_pn=0.5, classes antigas=['girl', 'caterpillar', 'lamp', 'tank', 'porcupine', 'poppy', 'snail', 'shark', 'bridge', 'lizard', 'elephant', 'crab', 'snake', 'forest', 'bottle', 'telephone', 'tulip', 'television', 'turtle', 'sea', 'lobster', 'beetle', 'castle', 'bee', 'cockroach', 'chimpanzee', 'crocodile', 'worm', 'streetcar', 'baby', 'wardrobe', 'pear', 'bus', 'dolphin', 'bicycle', 'otter', 'skyscraper', 'man', 'mountain', 'maple_tree', 'plain', 'hamster', 'can', 'lion', 'orchid', 'sweet_pepper', 'tiger', 'mushroom', 'camel', 'chair', 'orange', 'raccoon', 'mouse', 'bear', 'woman', 'train', 'squirrel', 'bed', 'flatfish', 'skunk', 'tractor', 'bowl', 'sunflower', 'possum', 'dinosaur', 'rose', 'trout', 'oak_tree', 'whale', 'cloud', 'rocket', 'palm_tree', 'willow_tree', 'road', 'keyboard', 'leopard', 'cattle', 'apple', 'clock', 'seal']
+2026-11-14 15:36:46,826 [INFO]    [Tarefa 4] Época [10/100] -> CE:1.3459 | L_LVQ:0.0002 | Acc treino: 59.96% | AAC acumulado: 34.08% | rabbit: 22.00% | plate: 83.00% | shrew: 28.00% | pine_tree: 65.00% | couch: 51.00% | house: 75.00% | motorcycle: 79.00% | table: 51.00% | fox: 53.00% | cup: 81.00% | beaver: 33.00% | boy: 49.00% | butterfly: 50.00% | spider: 45.00% | wolf: 58.00% | lawn_mower: 67.00% | kangaroo: 44.00% | ray: 69.00% | aquarium_fish: 59.00% | pickup_truck: 70.00%
+2026-11-14 15:36:46,826 [INFO]       [Pseudo-negativos] CE_pn:4.9647 | vazam (margem>0): 59.1% | margem média: +0.0677 | ESS/propostas: 19.2% | logZ IS: -0.512 | logZ GFN: - | perda TB: -
+2026-11-14 15:36:46,826 [INFO]       [Validação] métrica de parada:2.2577 | CE:1.3915 | acc:58.90% | pseudo-neg. fixos: CE 1.7323, vazam 24.9% | melhor época até aqui: 10 | sem melhora há 0 (novo: 0, antigo: 2)
+2026-11-14 16:02:35,425 [INFO]    [Tarefa 4] Época [20/100] -> CE:1.1027 | L_LVQ:0.0002 | Acc treino: 67.52% | AAC acumulado: 36.19% | rabbit: 19.00% | plate: 86.00% | shrew: 29.00% | pine_tree: 53.00% | couch: 49.00% | house: 70.00% | motorcycle: 87.00% | table: 44.00% | fox: 54.00% | cup: 80.00% | beaver: 43.00% | boy: 56.00% | butterfly: 59.00% | spider: 49.00% | wolf: 50.00% | lawn_mower: 66.00% | kangaroo: 33.00% | ray: 60.00% | aquarium_fish: 70.00% | pickup_truck: 64.00%
+2026-11-14 16:02:35,425 [INFO]       [Pseudo-negativos] CE_pn:5.1375 | vazam (margem>0): 61.8% | margem média: +0.0866 | ESS/propostas: 18.8% | logZ IS: -0.421 | logZ GFN: - | perda TB: -
+2026-11-14 16:02:35,425 [INFO]       [Validação] métrica de parada:2.3471 | CE:1.5457 | acc:56.30% | pseudo-neg. fixos: CE 1.6029, vazam 18.6% | melhor época até aqui: 14 | sem melhora há 5 (novo: 6, antigo: 5)
+2026-11-14 16:16:22,957 [INFO]    [Tarefa 4] Época [25/100] -> CE:1.0497 | L_LVQ:0.0002 | Acc treino: 69.22% | AAC acumulado: 33.29% | rabbit: 39.00% | plate: 88.00% | shrew: 42.00% | pine_tree: 72.00% | couch: 44.00% | house: 67.00% | motorcycle: 79.00% | table: 53.00% | fox: 59.00% | cup: 84.00% | beaver: 36.00% | boy: 45.00% | butterfly: 49.00% | spider: 46.00% | wolf: 55.00% | lawn_mower: 71.00% | kangaroo: 41.00% | ray: 70.00% | aquarium_fish: 73.00% | pickup_truck: 64.00%
+2026-11-14 16:16:22,957 [INFO]       [Pseudo-negativos] CE_pn:5.4094 | vazam (margem>0): 68.2% | margem média: +0.1391 | ESS/propostas: 17.4% | logZ IS: -0.223 | logZ GFN: - | perda TB: -
+2026-11-14 16:16:22,957 [INFO]       [Validação] métrica de parada:2.3645 | CE:1.5027 | acc:60.30% | pseudo-neg. fixos: CE 1.7237, vazam 30.1% | melhor época até aqui: 16 | sem melhora há 10 (novo: 11, antigo: 10)
+2026-11-14 16:16:22,958 [INFO] [Tarefa 4] PARADA ANTECIPADA na época 25: ambas sem melhora > 0.001 há 10 épocas (melhor época: 16).
+2026-11-14 16:16:22,958 [INFO] [Tarefa 4] Parada antecipada: 25 épocas executadas, melhor época 16 (ambas=2.2299); Adapter e protótipos dessa época restaurados.
+2026-11-14 16:16:22,970 [INFO] [Tarefa 4] Adapter_4 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 33.29%).
+2026-11-14 16:16:30,363 [INFO] [Tarefa 4] Protótipo (FC) de rabbit substituído (450 imagens de treino).
+2026-11-14 16:16:37,498 [INFO] [Tarefa 4] Protótipo (FC) de plate substituído (450 imagens de treino).
+2026-11-14 16:16:45,053 [INFO] [Tarefa 4] Protótipo (FC) de shrew substituído (450 imagens de treino).
+2026-11-14 16:16:52,496 [INFO] [Tarefa 4] Protótipo (FC) de pine_tree substituído (450 imagens de treino).
+2026-11-14 16:16:58,281 [INFO] [Tarefa 4] Protótipo (FC) de couch substituído (450 imagens de treino).
+2026-11-14 16:17:04,212 [INFO] [Tarefa 4] Protótipo (FC) de house substituído (450 imagens de treino).
+2026-11-14 16:17:10,266 [INFO] [Tarefa 4] Protótipo (FC) de motorcycle substituído (450 imagens de treino).
+2026-11-14 16:17:15,520 [INFO] [Tarefa 4] Protótipo (FC) de table substituído (450 imagens de treino).
+2026-11-14 16:17:20,598 [INFO] [Tarefa 4] Protótipo (FC) de fox substituído (450 imagens de treino).
+2026-11-14 16:17:26,002 [INFO] [Tarefa 4] Protótipo (FC) de cup substituído (450 imagens de treino).
+2026-11-14 16:17:31,436 [INFO] [Tarefa 4] Protótipo (FC) de beaver substituído (450 imagens de treino).
+2026-11-14 16:17:36,325 [INFO] [Tarefa 4] Protótipo (FC) de boy substituído (450 imagens de treino).
+2026-11-14 16:17:41,320 [INFO] [Tarefa 4] Protótipo (FC) de butterfly substituído (450 imagens de treino).
+2026-11-14 16:17:46,904 [INFO] [Tarefa 4] Protótipo (FC) de spider substituído (450 imagens de treino).
+2026-11-14 16:17:53,293 [INFO] [Tarefa 4] Protótipo (FC) de wolf substituído (450 imagens de treino).
+2026-11-14 16:17:58,400 [INFO] [Tarefa 4] Protótipo (FC) de lawn_mower substituído (450 imagens de treino).
+2026-11-14 16:18:04,753 [INFO] [Tarefa 4] Protótipo (FC) de kangaroo substituído (450 imagens de treino).
+2026-11-14 16:18:12,063 [INFO] [Tarefa 4] Protótipo (FC) de ray substituído (450 imagens de treino).
+2026-11-14 16:18:19,213 [INFO] [Tarefa 4] Protótipo (FC) de aquarium_fish substituído (450 imagens de treino).
+2026-11-14 16:18:26,329 [INFO] [Tarefa 4] Protótipo (FC) de pickup_truck substituído (450 imagens de treino).
+2026-11-14 16:18:34,132 [INFO] [Banco] rabbit: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9942).
+2026-11-14 16:18:34,150 [INFO] [Banco] plate: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5774).
+2026-11-14 16:18:34,168 [INFO] [Banco] shrew: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8704).
+2026-11-14 16:18:34,186 [INFO] [Banco] pine_tree: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.4898).
+2026-11-14 16:18:34,204 [INFO] [Banco] couch: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5428).
+2026-11-14 16:18:34,222 [INFO] [Banco] house: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.7444).
+2026-11-14 16:18:34,247 [INFO] [Banco] motorcycle: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2769).
+2026-11-14 16:18:34,265 [INFO] [Banco] table: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8179).
+2026-11-14 16:18:34,283 [INFO] [Banco] fox: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9310).
+2026-11-14 16:18:34,301 [INFO] [Banco] cup: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9754).
+2026-11-14 16:18:34,322 [INFO] [Banco] beaver: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.2557).
+2026-11-14 16:18:34,339 [INFO] [Banco] boy: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2158).
+2026-11-14 16:18:34,357 [INFO] [Banco] butterfly: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6227).
+2026-11-14 16:18:34,374 [INFO] [Banco] spider: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5125).
+2026-11-14 16:18:34,391 [INFO] [Banco] wolf: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3163).
+2026-11-14 16:18:34,408 [INFO] [Banco] lawn_mower: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9089).
+2026-11-14 16:18:34,425 [INFO] [Banco] kangaroo: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.2348).
+2026-11-14 16:18:34,443 [INFO] [Banco] ray: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6749).
+2026-11-14 16:18:34,460 [INFO] [Banco] aquarium_fish: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8410).
+2026-11-14 16:18:34,477 [INFO] [Banco] pickup_truck: 450 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.1491).
+2026-11-14 16:19:04,224 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/acc_por_classe_tarefa4_nova_estrategia_2.png
+2026-11-14 16:19:04,974 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/aac_acumulado_tarefa4_nova_estrategia_2.png
+2026-11-14 16:20:55,980 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/tsne_nova_estrategia_2_05_pos_tarefa4.png
+2026-11-14 16:20:55,981 [INFO] ============================================================
+2026-11-14 16:20:55,981 [INFO] === DIAGNÓSTICO A/B/C — fronteira tarefa 3 -> tarefa 4 ===
+2026-11-14 16:22:31,436 [INFO]  > [Fronteira 3->4][Original]  Acc tarefas antigas: 26.69%
+2026-11-14 16:22:31,437 [INFO]  > [Fronteira 3->4][Negação]   Acc tarefas antigas: 45.25%
+2026-11-14 16:22:31,437 [INFO]  > [Fronteira 3->4][Exclusão]  Acc tarefas antigas: 45.25%
+2026-11-14 16:22:31,437 [INFO]  > [Fronteira 3->4][Aleatório] Acc tarefas antigas: 44.82%
+2026-11-14 16:22:31,437 [INFO]  > Interpretação automática: Negação, Exclusão e versão aleatória convergem para o mesmo patamar -> o vazamento é produto do TREINO da tarefa nova, não de uma direção 'anti' aprendida pela negação.
+2026-11-14 16:22:32,459 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/diagnostico_task_arithmetic_nova_estrategia_2_f3_4.png
+2026-11-14 16:22:32,460 [INFO] === DRIFT SEMÂNTICO EXATO (Yu et al., 2020) — após a tarefa 4 ===
+2026-11-14 16:22:39,517 [INFO]  > [Drift após tarefa 4] girl: ||Δ||=0.00000246 (cos_sim=1.00000000)
+2026-11-14 16:22:46,812 [INFO]  > [Drift após tarefa 4] caterpillar: ||Δ||=0.00000135 (cos_sim=1.00000000)
+2026-11-14 16:22:53,851 [INFO]  > [Drift após tarefa 4] lamp: ||Δ||=0.00000174 (cos_sim=1.00000000)
+2026-11-14 16:23:01,096 [INFO]  > [Drift após tarefa 4] tank: ||Δ||=0.00000139 (cos_sim=1.00000000)
+2026-11-14 16:23:08,621 [INFO]  > [Drift após tarefa 4] porcupine: ||Δ||=0.00000217 (cos_sim=1.00000000)
+2026-11-14 16:23:15,752 [INFO]  > [Drift após tarefa 4] poppy: ||Δ||=0.00000156 (cos_sim=1.00000000)
+2026-11-14 16:23:21,903 [INFO]  > [Drift após tarefa 4] snail: ||Δ||=0.00000025 (cos_sim=1.00000000)
+2026-11-14 16:23:29,378 [INFO]  > [Drift após tarefa 4] shark: ||Δ||=0.00000282 (cos_sim=1.00000000)
+2026-11-14 16:23:36,897 [INFO]  > [Drift após tarefa 4] bridge: ||Δ||=0.00000151 (cos_sim=1.00000012)
+2026-11-14 16:23:44,464 [INFO]  > [Drift após tarefa 4] lizard: ||Δ||=0.00000284 (cos_sim=1.00000000)
+2026-11-14 16:23:52,024 [INFO]  > [Drift após tarefa 4] elephant: ||Δ||=0.00000160 (cos_sim=1.00000000)
+2026-11-14 16:23:59,418 [INFO]  > [Drift após tarefa 4] crab: ||Δ||=0.00000106 (cos_sim=1.00000000)
+2026-11-14 16:24:06,758 [INFO]  > [Drift após tarefa 4] snake: ||Δ||=0.00000187 (cos_sim=1.00000000)
+2026-11-14 16:24:14,279 [INFO]  > [Drift após tarefa 4] forest: ||Δ||=0.00000180 (cos_sim=1.00000000)
+2026-11-14 16:24:21,699 [INFO]  > [Drift após tarefa 4] bottle: ||Δ||=0.00000217 (cos_sim=1.00000000)
+2026-11-14 16:24:29,149 [INFO]  > [Drift após tarefa 4] telephone: ||Δ||=0.00000026 (cos_sim=1.00000000)
+2026-11-14 16:24:36,463 [INFO]  > [Drift após tarefa 4] tulip: ||Δ||=0.00000181 (cos_sim=1.00000012)
+2026-11-14 16:24:44,052 [INFO]  > [Drift após tarefa 4] television: ||Δ||=0.00000329 (cos_sim=1.00000000)
+2026-11-14 16:24:51,539 [INFO]  > [Drift após tarefa 4] turtle: ||Δ||=0.00000098 (cos_sim=1.00000012)
+2026-11-14 16:24:58,971 [INFO]  > [Drift após tarefa 4] sea: ||Δ||=0.00000248 (cos_sim=1.00000012)
+2026-11-14 16:25:06,291 [INFO]  > [Drift após tarefa 4] lobster: ||Δ||=0.00000100 (cos_sim=1.00000000)
+2026-11-14 16:25:13,796 [INFO]  > [Drift após tarefa 4] beetle: ||Δ||=0.00000076 (cos_sim=1.00000000)
+2026-11-14 16:25:21,067 [INFO]  > [Drift após tarefa 4] castle: ||Δ||=0.00000181 (cos_sim=1.00000000)
+2026-11-14 16:25:28,407 [INFO]  > [Drift após tarefa 4] bee: ||Δ||=0.00000155 (cos_sim=1.00000000)
+2026-11-14 16:25:35,638 [INFO]  > [Drift após tarefa 4] cockroach: ||Δ||=0.00000026 (cos_sim=1.00000000)
+2026-11-14 16:25:42,990 [INFO]  > [Drift após tarefa 4] chimpanzee: ||Δ||=0.00000093 (cos_sim=1.00000000)
+2026-11-14 16:25:50,148 [INFO]  > [Drift após tarefa 4] crocodile: ||Δ||=0.00000142 (cos_sim=1.00000000)
+2026-11-14 16:25:57,604 [INFO]  > [Drift após tarefa 4] worm: ||Δ||=0.00000125 (cos_sim=1.00000000)
+2026-11-14 16:26:04,985 [INFO]  > [Drift após tarefa 4] streetcar: ||Δ||=0.00000099 (cos_sim=1.00000012)
+2026-11-14 16:26:12,244 [INFO]  > [Drift após tarefa 4] baby: ||Δ||=0.00000121 (cos_sim=1.00000000)
+2026-11-14 16:26:19,599 [INFO]  > [Drift após tarefa 4] wardrobe: ||Δ||=0.00000113 (cos_sim=1.00000000)
+2026-11-14 16:26:27,044 [INFO]  > [Drift após tarefa 4] pear: ||Δ||=0.00000147 (cos_sim=1.00000000)
+2026-11-14 16:26:34,443 [INFO]  > [Drift após tarefa 4] bus: ||Δ||=0.00000117 (cos_sim=1.00000000)
+2026-11-14 16:26:41,722 [INFO]  > [Drift após tarefa 4] dolphin: ||Δ||=0.00000106 (cos_sim=1.00000000)
+2026-11-14 16:26:49,053 [INFO]  > [Drift após tarefa 4] bicycle: ||Δ||=0.00000176 (cos_sim=1.00000000)
+2026-11-14 16:26:56,642 [INFO]  > [Drift após tarefa 4] otter: ||Δ||=0.00000150 (cos_sim=1.00000012)
+2026-11-14 16:27:04,042 [INFO]  > [Drift após tarefa 4] skyscraper: ||Δ||=0.00000100 (cos_sim=0.99999994)
+2026-11-14 16:27:11,296 [INFO]  > [Drift após tarefa 4] man: ||Δ||=0.00000112 (cos_sim=1.00000012)
+2026-11-14 16:27:18,678 [INFO]  > [Drift após tarefa 4] mountain: ||Δ||=0.00000088 (cos_sim=1.00000000)
+2026-11-14 16:27:26,131 [INFO]  > [Drift após tarefa 4] maple_tree: ||Δ||=0.00000125 (cos_sim=1.00000000)
+2026-11-14 16:27:33,486 [INFO]  > [Drift após tarefa 4] plain: ||Δ||=0.00000067 (cos_sim=1.00000000)
+2026-11-14 16:27:40,800 [INFO]  > [Drift após tarefa 4] hamster: ||Δ||=0.00000119 (cos_sim=1.00000000)
+2026-11-14 16:27:48,357 [INFO]  > [Drift após tarefa 4] can: ||Δ||=0.00000027 (cos_sim=1.00000012)
+2026-11-14 16:27:55,701 [INFO]  > [Drift após tarefa 4] lion: ||Δ||=0.00000079 (cos_sim=1.00000012)
+2026-11-14 16:28:03,197 [INFO]  > [Drift após tarefa 4] orchid: ||Δ||=0.00000075 (cos_sim=1.00000000)
+2026-11-14 16:28:10,592 [INFO]  > [Drift após tarefa 4] sweet_pepper: ||Δ||=0.00000045 (cos_sim=1.00000000)
+2026-11-14 16:28:18,132 [INFO]  > [Drift após tarefa 4] tiger: ||Δ||=0.00000112 (cos_sim=1.00000000)
+2026-11-14 16:28:25,487 [INFO]  > [Drift após tarefa 4] mushroom: ||Δ||=0.00000057 (cos_sim=1.00000012)
+2026-11-14 16:28:32,931 [INFO]  > [Drift após tarefa 4] camel: ||Δ||=0.00000140 (cos_sim=1.00000000)
+2026-11-14 16:28:40,245 [INFO]  > [Drift após tarefa 4] chair: ||Δ||=0.00000064 (cos_sim=1.00000000)
+2026-11-14 16:28:47,670 [INFO]  > [Drift após tarefa 4] orange: ||Δ||=0.00000086 (cos_sim=1.00000000)
+2026-11-14 16:28:55,066 [INFO]  > [Drift após tarefa 4] raccoon: ||Δ||=0.00000164 (cos_sim=1.00000000)
+2026-11-14 16:29:02,217 [INFO]  > [Drift após tarefa 4] mouse: ||Δ||=0.00000117 (cos_sim=1.00000012)
+2026-11-14 16:29:09,571 [INFO]  > [Drift após tarefa 4] bear: ||Δ||=0.00000132 (cos_sim=1.00000012)
+2026-11-14 16:29:16,903 [INFO]  > [Drift após tarefa 4] woman: ||Δ||=0.00000209 (cos_sim=1.00000000)
+2026-11-14 16:29:24,064 [INFO]  > [Drift após tarefa 4] train: ||Δ||=0.00000085 (cos_sim=1.00000000)
+2026-11-14 16:29:31,381 [INFO]  > [Drift após tarefa 4] squirrel: ||Δ||=0.00000099 (cos_sim=1.00000000)
+2026-11-14 16:29:38,824 [INFO]  > [Drift após tarefa 4] bed: ||Δ||=0.00000067 (cos_sim=0.99999994)
+2026-11-14 16:29:46,336 [INFO]  > [Drift após tarefa 4] flatfish: ||Δ||=0.00000117 (cos_sim=1.00000012)
+2026-11-14 16:29:53,872 [INFO]  > [Drift após tarefa 4] skunk: ||Δ||=0.00000145 (cos_sim=1.00000012)
+2026-11-14 16:30:01,378 [INFO]  > [Drift após tarefa 4] tractor: ||Δ||=0.00000088 (cos_sim=1.00000000)
+2026-11-14 16:30:08,615 [INFO]  > [Drift após tarefa 4] bowl: ||Δ||=0.00000151 (cos_sim=1.00000000)
+2026-11-14 16:30:15,945 [INFO]  > [Drift após tarefa 4] sunflower: ||Δ||=0.00000079 (cos_sim=1.00000012)
+2026-11-14 16:30:23,367 [INFO]  > [Drift após tarefa 4] possum: ||Δ||=0.00000060 (cos_sim=1.00000012)
+2026-11-14 16:30:30,805 [INFO]  > [Drift após tarefa 4] dinosaur: ||Δ||=0.00000114 (cos_sim=0.99999994)
+2026-11-14 16:30:38,249 [INFO]  > [Drift após tarefa 4] rose: ||Δ||=0.00000054 (cos_sim=1.00000000)
+2026-11-14 16:30:45,778 [INFO]  > [Drift após tarefa 4] trout: ||Δ||=0.00000074 (cos_sim=1.00000012)
+2026-11-14 16:30:53,258 [INFO]  > [Drift após tarefa 4] oak_tree: ||Δ||=0.00000183 (cos_sim=1.00000000)
+2026-11-14 16:31:00,738 [INFO]  > [Drift após tarefa 4] whale: ||Δ||=0.00000077 (cos_sim=1.00000000)
+2026-11-14 16:31:08,111 [INFO]  > [Drift após tarefa 4] cloud: ||Δ||=0.00000058 (cos_sim=1.00000000)
+2026-11-14 16:31:15,808 [INFO]  > [Drift após tarefa 4] rocket: ||Δ||=0.00000064 (cos_sim=1.00000000)
+2026-11-14 16:31:23,169 [INFO]  > [Drift após tarefa 4] palm_tree: ||Δ||=0.00000095 (cos_sim=1.00000000)
+2026-11-14 16:31:30,680 [INFO]  > [Drift após tarefa 4] willow_tree: ||Δ||=0.00000164 (cos_sim=1.00000000)
+2026-11-14 16:31:38,119 [INFO]  > [Drift após tarefa 4] road: ||Δ||=0.00000027 (cos_sim=1.00000000)
+2026-11-14 16:31:45,581 [INFO]  > [Drift após tarefa 4] keyboard: ||Δ||=0.00000083 (cos_sim=1.00000000)
+2026-11-14 16:31:53,054 [INFO]  > [Drift após tarefa 4] leopard: ||Δ||=0.00000111 (cos_sim=1.00000012)
+2026-11-14 16:32:00,371 [INFO]  > [Drift após tarefa 4] cattle: ||Δ||=0.00000038 (cos_sim=1.00000012)
+2026-11-14 16:32:08,045 [INFO]  > [Drift após tarefa 4] apple: ||Δ||=0.00000049 (cos_sim=1.00000000)
+2026-11-14 16:32:15,363 [INFO]  > [Drift após tarefa 4] clock: ||Δ||=0.00000079 (cos_sim=1.00000012)
+2026-11-14 16:32:23,015 [INFO]  > [Drift após tarefa 4] seal: ||Δ||=0.00000110 (cos_sim=1.00000000)
+2026-11-14 16:32:54,936 [INFO]  > [Vazamento após tarefa 4] girl: margem=-0.3012 (próprio=0.5051, concorrente mais forte=boy=0.8063)
+2026-11-14 16:32:54,936 [INFO]  > [Vazamento após tarefa 4] caterpillar: margem=-0.2321 (próprio=0.4346, concorrente mais forte=spider=0.6667)
+2026-11-14 16:32:54,936 [INFO]  > [Vazamento após tarefa 4] lamp: margem=-0.2362 (próprio=0.4600, concorrente mais forte=table=0.6962)
+2026-11-14 16:32:54,936 [INFO]  > [Vazamento após tarefa 4] tank: margem=-0.2179 (próprio=0.5142, concorrente mais forte=house=0.7320)
+2026-11-14 16:32:54,936 [INFO]  > [Vazamento após tarefa 4] porcupine: margem=-0.2485 (próprio=0.4766, concorrente mais forte=beaver=0.7251)
+2026-11-14 16:32:54,936 [INFO]  > [Vazamento após tarefa 4] poppy: margem=-0.0647 (próprio=0.5384, concorrente mais forte=butterfly=0.6031)
+2026-11-14 16:32:54,937 [INFO]  > [Vazamento após tarefa 4] snail: margem=-0.2389 (próprio=0.4420, concorrente mais forte=shrew=0.6809)
+2026-11-14 16:32:54,937 [INFO]  > [Vazamento após tarefa 4] shark: margem=-0.2510 (próprio=0.5042, concorrente mais forte=ray=0.7552)
+2026-11-14 16:32:54,937 [INFO]  > [Vazamento após tarefa 4] bridge: margem=-0.2146 (próprio=0.5061, concorrente mais forte=house=0.7207)
+2026-11-14 16:32:54,937 [INFO]  > [Vazamento após tarefa 4] lizard: margem=-0.2613 (próprio=0.3955, concorrente mais forte=shrew=0.6568)
+2026-11-14 16:32:54,937 [INFO]  > [Vazamento após tarefa 4] elephant: margem=-0.2440 (próprio=0.5094, concorrente mais forte=kangaroo=0.7534)
+2026-11-14 16:32:54,937 [INFO]  > [Vazamento após tarefa 4] crab: margem=-0.2143 (próprio=0.4578, concorrente mais forte=butterfly=0.6721)
+2026-11-14 16:32:54,937 [INFO]  > [Vazamento após tarefa 4] snake: margem=-0.1041 (próprio=0.4570, concorrente mais forte=spider=0.5611)
+2026-11-14 16:32:54,937 [INFO]  > [Vazamento após tarefa 4] forest: margem=-0.2602 (próprio=0.4689, concorrente mais forte=pine_tree=0.7291)
+2026-11-14 16:32:54,937 [INFO]  > [Vazamento após tarefa 4] bottle: margem=-0.0981 (próprio=0.5020, concorrente mais forte=table=0.6001)
+2026-11-14 16:32:54,937 [INFO]  > [Vazamento após tarefa 4] telephone: margem=-0.0597 (próprio=0.5127, concorrente mais forte=couch=0.5724)
+2026-11-14 16:32:54,938 [INFO]  > [Vazamento após tarefa 4] tulip: margem=-0.1559 (próprio=0.5089, concorrente mais forte=butterfly=0.6648)
+2026-11-14 16:32:54,938 [INFO]  > [Vazamento após tarefa 4] television: margem=-0.0987 (próprio=0.4841, concorrente mais forte=couch=0.5828)
+2026-11-14 16:32:54,938 [INFO]  > [Vazamento após tarefa 4] turtle: margem=-0.2751 (próprio=0.4767, concorrente mais forte=shrew=0.7518)
+2026-11-14 16:32:54,938 [INFO]  > [Vazamento após tarefa 4] sea: margem=+0.0120 (próprio=0.5591, concorrente mais forte=cloud=0.5470)
+2026-11-14 16:32:54,938 [INFO]  > [Vazamento após tarefa 4] lobster: margem=-0.1097 (próprio=0.5187, concorrente mais forte=butterfly=0.6284)
+2026-11-14 16:32:54,938 [INFO]  > [Vazamento após tarefa 4] beetle: margem=-0.0634 (próprio=0.6763, concorrente mais forte=spider=0.7396)
+2026-11-14 16:32:54,938 [INFO]  > [Vazamento após tarefa 4] castle: margem=-0.1200 (próprio=0.7216, concorrente mais forte=house=0.8416)
+2026-11-14 16:32:54,938 [INFO]  > [Vazamento após tarefa 4] bee: margem=-0.0951 (próprio=0.6178, concorrente mais forte=butterfly=0.7129)
+2026-11-14 16:32:54,938 [INFO]  > [Vazamento após tarefa 4] cockroach: margem=-0.0420 (próprio=0.7012, concorrente mais forte=spider=0.7432)
+2026-11-14 16:32:54,938 [INFO]  > [Vazamento após tarefa 4] chimpanzee: margem=+0.0638 (próprio=0.7358, concorrente mais forte=beaver=0.6720)
+2026-11-14 16:32:54,938 [INFO]  > [Vazamento após tarefa 4] crocodile: margem=-0.1609 (próprio=0.6033, concorrente mais forte=shrew=0.7642)
+2026-11-14 16:32:54,938 [INFO]  > [Vazamento após tarefa 4] worm: margem=+0.0857 (próprio=0.6979, concorrente mais forte=plate=0.6122)
+2026-11-14 16:32:54,939 [INFO]  > [Vazamento após tarefa 4] streetcar: margem=-0.0781 (próprio=0.6398, concorrente mais forte=house=0.7179)
+2026-11-14 16:32:54,939 [INFO]  > [Vazamento após tarefa 4] baby: margem=-0.0840 (próprio=0.6430, concorrente mais forte=boy=0.7270)
+2026-11-14 16:32:54,939 [INFO]  > [Vazamento após tarefa 4] wardrobe: margem=+0.0363 (próprio=0.7193, concorrente mais forte=couch=0.6830)
+2026-11-14 16:32:54,939 [INFO]  > [Vazamento após tarefa 4] pear: margem=+0.1447 (próprio=0.6741, concorrente mais forte=apple=0.5294)
+2026-11-14 16:32:54,939 [INFO]  > [Vazamento após tarefa 4] bus: margem=-0.1773 (próprio=0.5850, concorrente mais forte=pickup_truck=0.7624)
+2026-11-14 16:32:54,939 [INFO]  > [Vazamento após tarefa 4] dolphin: margem=-0.0664 (próprio=0.7058, concorrente mais forte=ray=0.7721)
+2026-11-14 16:32:54,939 [INFO]  > [Vazamento após tarefa 4] bicycle: margem=-0.0546 (próprio=0.6632, concorrente mais forte=motorcycle=0.7178)
+2026-11-14 16:32:54,939 [INFO]  > [Vazamento após tarefa 4] otter: margem=-0.2626 (próprio=0.5296, concorrente mais forte=shrew=0.7922)
+2026-11-14 16:32:54,939 [INFO]  > [Vazamento após tarefa 4] skyscraper: margem=+0.1188 (próprio=0.6996, concorrente mais forte=house=0.5808)
+2026-11-14 16:32:54,939 [INFO]  > [Vazamento após tarefa 4] man: margem=-0.1306 (próprio=0.6430, concorrente mais forte=boy=0.7736)
+2026-11-14 16:32:54,939 [INFO]  > [Vazamento após tarefa 4] mountain: margem=-0.0317 (próprio=0.6662, concorrente mais forte=pine_tree=0.6979)
+2026-11-14 16:32:54,940 [INFO]  > [Vazamento após tarefa 4] maple_tree: margem=-0.1180 (próprio=0.6862, concorrente mais forte=pine_tree=0.8042)
+2026-11-14 16:32:54,940 [INFO]  > [Vazamento após tarefa 4] plain: margem=+0.2003 (próprio=0.7434, concorrente mais forte=pine_tree=0.5432)
+2026-11-14 16:32:54,940 [INFO]  > [Vazamento após tarefa 4] hamster: margem=+0.0209 (próprio=0.6765, concorrente mais forte=rabbit=0.6556)
+2026-11-14 16:32:54,940 [INFO]  > [Vazamento após tarefa 4] can: margem=+0.0627 (próprio=0.6498, concorrente mais forte=cup=0.5871)
+2026-11-14 16:32:54,940 [INFO]  > [Vazamento após tarefa 4] lion: margem=-0.0396 (próprio=0.7770, concorrente mais forte=fox=0.8166)
+2026-11-14 16:32:54,940 [INFO]  > [Vazamento após tarefa 4] orchid: margem=+0.0579 (próprio=0.7834, concorrente mais forte=butterfly=0.7255)
+2026-11-14 16:32:54,940 [INFO]  > [Vazamento após tarefa 4] sweet_pepper: margem=+0.1798 (próprio=0.6917, concorrente mais forte=apple=0.5119)
+2026-11-14 16:32:54,940 [INFO]  > [Vazamento após tarefa 4] tiger: margem=-0.1327 (próprio=0.6515, concorrente mais forte=fox=0.7842)
+2026-11-14 16:32:54,940 [INFO]  > [Vazamento após tarefa 4] mushroom: margem=-0.0279 (próprio=0.6516, concorrente mais forte=shrew=0.6795)
+2026-11-14 16:32:54,940 [INFO]  > [Vazamento após tarefa 4] camel: margem=-0.1152 (próprio=0.6558, concorrente mais forte=kangaroo=0.7710)
+2026-11-14 16:32:54,941 [INFO]  > [Vazamento após tarefa 4] chair: margem=+0.0381 (próprio=0.7928, concorrente mais forte=table=0.7548)
+2026-11-14 16:32:54,941 [INFO]  > [Vazamento após tarefa 4] orange: margem=+0.2233 (próprio=0.8465, concorrente mais forte=pear=0.6231)
+2026-11-14 16:32:54,941 [INFO]  > [Vazamento após tarefa 4] raccoon: margem=-0.1821 (próprio=0.5557, concorrente mais forte=wolf=0.7379)
+2026-11-14 16:32:54,941 [INFO]  > [Vazamento após tarefa 4] mouse: margem=-0.1472 (próprio=0.6081, concorrente mais forte=shrew=0.7553)
+2026-11-14 16:32:54,941 [INFO]  > [Vazamento após tarefa 4] bear: margem=-0.1906 (próprio=0.6176, concorrente mais forte=beaver=0.8081)
+2026-11-14 16:32:54,941 [INFO]  > [Vazamento após tarefa 4] woman: margem=-0.0806 (próprio=0.6511, concorrente mais forte=boy=0.7317)
+2026-11-14 16:32:54,941 [INFO]  > [Vazamento após tarefa 4] train: margem=-0.0102 (próprio=0.6932, concorrente mais forte=house=0.7034)
+2026-11-14 16:32:54,941 [INFO]  > [Vazamento após tarefa 4] squirrel: margem=-0.1548 (próprio=0.6474, concorrente mais forte=shrew=0.8022)
+2026-11-14 16:32:54,941 [INFO]  > [Vazamento após tarefa 4] bed: margem=-0.1070 (próprio=0.6511, concorrente mais forte=couch=0.7580)
+2026-11-14 16:32:54,941 [INFO]  > [Vazamento após tarefa 4] flatfish: margem=-0.0030 (próprio=0.6244, concorrente mais forte=rabbit=0.6273)
+2026-11-14 16:32:54,941 [INFO]  > [Vazamento após tarefa 4] skunk: margem=-0.0649 (próprio=0.7037, concorrente mais forte=rabbit=0.7685)
+2026-11-14 16:32:54,942 [INFO]  > [Vazamento após tarefa 4] tractor: margem=+0.0240 (próprio=0.7603, concorrente mais forte=house=0.7363)
+2026-11-14 16:32:54,942 [INFO]  > [Vazamento após tarefa 4] bowl: margem=-0.0470 (próprio=0.7390, concorrente mais forte=plate=0.7860)
+2026-11-14 16:32:54,942 [INFO]  > [Vazamento após tarefa 4] sunflower: margem=+0.2570 (próprio=0.8182, concorrente mais forte=spider=0.5612)
+2026-11-14 16:32:54,942 [INFO]  > [Vazamento após tarefa 4] possum: margem=-0.0537 (próprio=0.7015, concorrente mais forte=shrew=0.7552)
+2026-11-14 16:32:54,942 [INFO]  > [Vazamento após tarefa 4] dinosaur: margem=-0.0662 (próprio=0.6801, concorrente mais forte=rabbit=0.7464)
+2026-11-14 16:32:54,942 [INFO]  > [Vazamento após tarefa 4] rose: margem=+0.1446 (próprio=0.7630, concorrente mais forte=butterfly=0.6184)
+2026-11-14 16:32:54,942 [INFO]  > [Vazamento após tarefa 4] trout: margem=+0.0477 (próprio=0.7458, concorrente mais forte=rabbit=0.6982)
+2026-11-14 16:32:54,942 [INFO]  > [Vazamento após tarefa 4] oak_tree: margem=-0.0327 (próprio=0.8818, concorrente mais forte=pine_tree=0.9146)
+2026-11-14 16:32:54,942 [INFO]  > [Vazamento após tarefa 4] whale: margem=+0.1111 (próprio=0.8327, concorrente mais forte=ray=0.7216)
+2026-11-14 16:32:54,942 [INFO]  > [Vazamento após tarefa 4] cloud: margem=+0.1809 (próprio=0.8074, concorrente mais forte=pine_tree=0.6265)
+2026-11-14 16:32:54,943 [INFO]  > [Vazamento após tarefa 4] rocket: margem=+0.2191 (próprio=0.7941, concorrente mais forte=table=0.5750)
+2026-11-14 16:32:54,943 [INFO]  > [Vazamento após tarefa 4] palm_tree: margem=+0.0302 (próprio=0.8147, concorrente mais forte=pine_tree=0.7845)
+2026-11-14 16:32:54,943 [INFO]  > [Vazamento após tarefa 4] willow_tree: margem=-0.0261 (próprio=0.7500, concorrente mais forte=pine_tree=0.7761)
+2026-11-14 16:32:54,943 [INFO]  > [Vazamento após tarefa 4] road: margem=+0.1737 (próprio=0.8220, concorrente mais forte=pine_tree=0.6483)
+2026-11-14 16:32:54,943 [INFO]  > [Vazamento após tarefa 4] keyboard: margem=+0.3440 (próprio=0.7681, concorrente mais forte=couch=0.4241)
+2026-11-14 16:32:54,943 [INFO]  > [Vazamento após tarefa 4] leopard: margem=-0.0070 (próprio=0.7538, concorrente mais forte=shrew=0.7608)
+2026-11-14 16:32:54,943 [INFO]  > [Vazamento após tarefa 4] cattle: margem=-0.0151 (próprio=0.7604, concorrente mais forte=kangaroo=0.7754)
+2026-11-14 16:32:54,943 [INFO]  > [Vazamento após tarefa 4] apple: margem=+0.2363 (próprio=0.8849, concorrente mais forte=pear=0.6486)
+2026-11-14 16:32:54,943 [INFO]  > [Vazamento após tarefa 4] clock: margem=-0.0634 (próprio=0.6894, concorrente mais forte=plate=0.7528)
+2026-11-14 16:32:54,943 [INFO]  > [Vazamento após tarefa 4] seal: margem=-0.0125 (próprio=0.7366, concorrente mais forte=shrew=0.7491)
+2026-11-14 16:32:54,944 [INFO]  > [Vazamento após tarefa 4] rabbit: margem=+0.0338 (próprio=0.8017, concorrente mais forte=kangaroo=0.7679)
+2026-11-14 16:32:54,944 [INFO]  > [Vazamento após tarefa 4] plate: margem=+0.1497 (próprio=0.8904, concorrente mais forte=cup=0.7407)
+2026-11-14 16:32:54,944 [INFO]  > [Vazamento após tarefa 4] shrew: margem=+0.0136 (próprio=0.8311, concorrente mais forte=beaver=0.8175)
+2026-11-14 16:32:54,944 [INFO]  > [Vazamento após tarefa 4] pine_tree: margem=+0.0996 (próprio=0.8541, concorrente mais forte=house=0.7545)
+2026-11-14 16:32:54,944 [INFO]  > [Vazamento após tarefa 4] couch: margem=+0.1376 (próprio=0.7202, concorrente mais forte=table=0.5826)
+2026-11-14 16:32:54,944 [INFO]  > [Vazamento após tarefa 4] house: margem=+0.1313 (próprio=0.8280, concorrente mais forte=pine_tree=0.6967)
+2026-11-14 16:32:54,944 [INFO]  > [Vazamento após tarefa 4] motorcycle: margem=+0.0913 (próprio=0.9040, concorrente mais forte=lawn_mower=0.8127)
+2026-11-14 16:32:54,944 [INFO]  > [Vazamento após tarefa 4] table: margem=+0.1023 (próprio=0.7950, concorrente mais forte=cup=0.6926)
+2026-11-14 16:32:54,944 [INFO]  > [Vazamento após tarefa 4] fox: margem=+0.0385 (próprio=0.8518, concorrente mais forte=kangaroo=0.8133)
+2026-11-14 16:32:54,944 [INFO]  > [Vazamento após tarefa 4] cup: margem=+0.1089 (próprio=0.8654, concorrente mais forte=table=0.7565)
+2026-11-14 16:32:54,945 [INFO]  > [Vazamento após tarefa 4] beaver: margem=+0.0160 (próprio=0.8455, concorrente mais forte=shrew=0.8295)
+2026-11-14 16:32:54,945 [INFO]  > [Vazamento após tarefa 4] boy: margem=+0.1878 (próprio=0.7993, concorrente mais forte=woman=0.6114)
+2026-11-14 16:32:54,945 [INFO]  > [Vazamento após tarefa 4] butterfly: margem=+0.0898 (próprio=0.7993, concorrente mais forte=aquarium_fish=0.7095)
+2026-11-14 16:32:54,945 [INFO]  > [Vazamento após tarefa 4] spider: margem=+0.1077 (próprio=0.7634, concorrente mais forte=butterfly=0.6557)
+2026-11-14 16:32:54,945 [INFO]  > [Vazamento após tarefa 4] wolf: margem=+0.0325 (próprio=0.8647, concorrente mais forte=kangaroo=0.8323)
+2026-11-14 16:32:54,945 [INFO]  > [Vazamento após tarefa 4] lawn_mower: margem=+0.1298 (próprio=0.8463, concorrente mais forte=motorcycle=0.7165)
+2026-11-14 16:32:54,945 [INFO]  > [Vazamento após tarefa 4] kangaroo: margem=+0.0208 (próprio=0.8468, concorrente mais forte=fox=0.8260)
+2026-11-14 16:32:54,945 [INFO]  > [Vazamento após tarefa 4] ray: margem=+0.1154 (próprio=0.8468, concorrente mais forte=shrew=0.7314)
+2026-11-14 16:32:54,945 [INFO]  > [Vazamento após tarefa 4] aquarium_fish: margem=+0.0579 (próprio=0.8283, concorrente mais forte=butterfly=0.7705)
+2026-11-14 16:32:54,946 [INFO]  > [Vazamento após tarefa 4] pickup_truck: margem=+0.1169 (próprio=0.8476, concorrente mais forte=house=0.7307)
+2026-11-14 16:32:57,621 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/margem_vazamento_nova_estrategia_2_apos_tarefa4.png
+2026-11-14 16:33:29,985 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 4 ===
+2026-11-14 16:33:29,985 [INFO]    Acurácia CIL ................  33.50%
+2026-11-14 16:33:29,985 [INFO]    Vazamento (Lambda) ..........  59.22%
+2026-11-14 16:33:29,985 [INFO]    Vazamento balanceado ........  59.22%
+2026-11-14 16:33:29,985 [INFO]    Erro dentro da task (E_WP) ..   7.28%
+2026-11-14 16:33:29,985 [INFO]    Parcela do erro por vazamento  89.05%
+2026-11-14 16:33:29,985 [INFO]    Acurácia com oráculo de task   73.28%
+2026-11-14 16:33:29,985 [INFO]    Teto de ganho ...............  39.78 p.p.
+2026-11-14 16:33:29,986 [INFO]    Índice de direção D .........  16.945
+2026-11-14 16:33:29,986 [INFO]    Spearman(L, j-i) recência ...   0.884
+2026-11-14 16:33:29,986 [INFO]    Spearman(L, S) semântica ....  -0.013
+2026-11-14 16:33:29,986 [INFO]      parcial, controlando j-i ..   0.131
+2026-11-14 16:33:29,986 [INFO]    Vazamento após normalização .  47.03%
+2026-11-14 16:33:29,986 [INFO]    Parcela atribuível a escala .  20.58%
+2026-11-14 16:33:29,986 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-14 16:33:29,986 [INFO]      k = -4: 0.001
+2026-11-14 16:33:29,986 [INFO]      k = -3: 0.006
+2026-11-14 16:33:29,986 [INFO]      k = -2: 0.016
+2026-11-14 16:33:29,986 [INFO]      k = -1: 0.026
+2026-11-14 16:33:29,986 [INFO]      k = +1: 0.155
+2026-11-14 16:33:29,986 [INFO]      k = +2: 0.241
+2026-11-14 16:33:29,986 [INFO]      k = +3: 0.374
+2026-11-14 16:33:29,986 [INFO]      k = +4: 0.707
+2026-11-14 16:33:29,986 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-14 16:33:29,987 [INFO]      0.052 0.032 0.059 0.150 0.707
+2026-11-14 16:33:29,987 [INFO]      0.002 0.226 0.061 0.114 0.598
+2026-11-14 16:33:29,987 [INFO]      0.002 0.014 0.340 0.094 0.550
+2026-11-14 16:33:29,987 [INFO]      0.002 0.009 0.029 0.529 0.431
+2026-11-14 16:33:29,987 [INFO]      0.001 0.011 0.037 0.059 0.892
+2026-11-14 16:34:01,929 [INFO] [Tarefa 4] Acurácia no teste acumulado após a tarefa: 33.50%
+2026-11-14 16:34:01,929 [INFO] ============================================================
+2026-11-14 16:34:01,929 [INFO] === RESULTADO FINAL (5 Adapters + LVQ, score combinado) ===
+2026-11-14 16:34:40,320 [INFO]  > Acc tarefa 0 (girl, caterpillar, lamp, tank, porcupine, poppy, snail, shark, bridge, lizard, elephant, crab, snake, forest, bottle, telephone, tulip, television, turtle, sea): 4.90%
+2026-11-14 16:34:46,687 [INFO]  > Acc tarefa 1 (lobster, beetle, castle, bee, cockroach, chimpanzee, crocodile, worm, streetcar, baby, wardrobe, pear, bus, dolphin, bicycle, otter, skyscraper, man, mountain, maple_tree): 21.60%
+2026-11-14 16:34:53,169 [INFO]  > Acc tarefa 2 (plain, hamster, can, lion, orchid, sweet_pepper, tiger, mushroom, camel, chair, orange, raccoon, mouse, bear, woman, train, squirrel, bed, flatfish, skunk): 31.15%
+2026-11-14 16:34:59,586 [INFO]  > Acc tarefa 3 (tractor, bowl, sunflower, possum, dinosaur, rose, trout, oak_tree, whale, cloud, rocket, palm_tree, willow_tree, road, keyboard, leopard, cattle, apple, clock, seal): 49.10%
+2026-11-14 16:35:05,871 [INFO]  > Acc tarefa 4 (rabbit, plate, shrew, pine_tree, couch, house, motorcycle, table, fox, cup, beaver, boy, butterfly, spider, wolf, lawn_mower, kangaroo, ray, aquarium_fish, pickup_truck): 60.75%
+2026-11-14 16:35:05,871 [INFO]  > AAC (5 tarefas): 33.50%
+2026-11-14 16:36:17,353 [INFO]  > AAC incremental (média das acurácias após cada tarefa): 52.37%
+2026-11-14 16:36:19,864 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/matriz_confusao_nova_estrategia_2.png
+2026-11-14 16:36:22,638 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/mapa_calor_similaridade_nova_estrategia_2.png
+2026-11-14 16:36:22,644 [INFO]  > [Vazamento final] girl: margem=-0.3012 (próprio=0.5051, concorrente mais forte=boy=0.8063)
+2026-11-14 16:36:22,644 [INFO]  > [Vazamento final] caterpillar: margem=-0.2321 (próprio=0.4346, concorrente mais forte=spider=0.6667)
+2026-11-14 16:36:22,645 [INFO]  > [Vazamento final] lamp: margem=-0.2362 (próprio=0.4600, concorrente mais forte=table=0.6962)
+2026-11-14 16:36:22,645 [INFO]  > [Vazamento final] tank: margem=-0.2179 (próprio=0.5142, concorrente mais forte=house=0.7320)
+2026-11-14 16:36:22,645 [INFO]  > [Vazamento final] porcupine: margem=-0.2485 (próprio=0.4766, concorrente mais forte=beaver=0.7251)
+2026-11-14 16:36:22,645 [INFO]  > [Vazamento final] poppy: margem=-0.0647 (próprio=0.5384, concorrente mais forte=butterfly=0.6031)
+2026-11-14 16:36:22,645 [INFO]  > [Vazamento final] snail: margem=-0.2389 (próprio=0.4420, concorrente mais forte=shrew=0.6809)
+2026-11-14 16:36:22,645 [INFO]  > [Vazamento final] shark: margem=-0.2510 (próprio=0.5042, concorrente mais forte=ray=0.7552)
+2026-11-14 16:36:22,645 [INFO]  > [Vazamento final] bridge: margem=-0.2146 (próprio=0.5061, concorrente mais forte=house=0.7207)
+2026-11-14 16:36:22,645 [INFO]  > [Vazamento final] lizard: margem=-0.2613 (próprio=0.3955, concorrente mais forte=shrew=0.6568)
+2026-11-14 16:36:22,646 [INFO]  > [Vazamento final] elephant: margem=-0.2440 (próprio=0.5094, concorrente mais forte=kangaroo=0.7534)
+2026-11-14 16:36:22,646 [INFO]  > [Vazamento final] crab: margem=-0.2143 (próprio=0.4578, concorrente mais forte=butterfly=0.6721)
+2026-11-14 16:36:22,646 [INFO]  > [Vazamento final] snake: margem=-0.1041 (próprio=0.4570, concorrente mais forte=spider=0.5611)
+2026-11-14 16:36:22,646 [INFO]  > [Vazamento final] forest: margem=-0.2602 (próprio=0.4689, concorrente mais forte=pine_tree=0.7291)
+2026-11-14 16:36:22,646 [INFO]  > [Vazamento final] bottle: margem=-0.0981 (próprio=0.5020, concorrente mais forte=table=0.6001)
+2026-11-14 16:36:22,646 [INFO]  > [Vazamento final] telephone: margem=-0.0597 (próprio=0.5127, concorrente mais forte=couch=0.5724)
+2026-11-14 16:36:22,646 [INFO]  > [Vazamento final] tulip: margem=-0.1559 (próprio=0.5089, concorrente mais forte=butterfly=0.6648)
+2026-11-14 16:36:22,646 [INFO]  > [Vazamento final] television: margem=-0.0987 (próprio=0.4841, concorrente mais forte=couch=0.5828)
+2026-11-14 16:36:22,646 [INFO]  > [Vazamento final] turtle: margem=-0.2751 (próprio=0.4767, concorrente mais forte=shrew=0.7518)
+2026-11-14 16:36:22,647 [INFO]  > [Vazamento final] sea: margem=+0.0120 (próprio=0.5591, concorrente mais forte=cloud=0.5470)
+2026-11-14 16:36:22,647 [INFO]  > [Vazamento final] lobster: margem=-0.1097 (próprio=0.5187, concorrente mais forte=butterfly=0.6284)
+2026-11-14 16:36:22,647 [INFO]  > [Vazamento final] beetle: margem=-0.0634 (próprio=0.6763, concorrente mais forte=spider=0.7396)
+2026-11-14 16:36:22,647 [INFO]  > [Vazamento final] castle: margem=-0.1200 (próprio=0.7216, concorrente mais forte=house=0.8416)
+2026-11-14 16:36:22,647 [INFO]  > [Vazamento final] bee: margem=-0.0951 (próprio=0.6178, concorrente mais forte=butterfly=0.7129)
+2026-11-14 16:36:22,647 [INFO]  > [Vazamento final] cockroach: margem=-0.0420 (próprio=0.7012, concorrente mais forte=spider=0.7432)
+2026-11-14 16:36:22,647 [INFO]  > [Vazamento final] chimpanzee: margem=+0.0638 (próprio=0.7358, concorrente mais forte=beaver=0.6720)
+2026-11-14 16:36:22,647 [INFO]  > [Vazamento final] crocodile: margem=-0.1609 (próprio=0.6033, concorrente mais forte=shrew=0.7642)
+2026-11-14 16:36:22,647 [INFO]  > [Vazamento final] worm: margem=+0.0857 (próprio=0.6979, concorrente mais forte=plate=0.6122)
+2026-11-14 16:36:22,647 [INFO]  > [Vazamento final] streetcar: margem=-0.0781 (próprio=0.6398, concorrente mais forte=house=0.7179)
+2026-11-14 16:36:22,647 [INFO]  > [Vazamento final] baby: margem=-0.0840 (próprio=0.6430, concorrente mais forte=boy=0.7270)
+2026-11-14 16:36:22,648 [INFO]  > [Vazamento final] wardrobe: margem=+0.0363 (próprio=0.7193, concorrente mais forte=couch=0.6830)
+2026-11-14 16:36:22,648 [INFO]  > [Vazamento final] pear: margem=+0.1447 (próprio=0.6741, concorrente mais forte=apple=0.5294)
+2026-11-14 16:36:22,648 [INFO]  > [Vazamento final] bus: margem=-0.1773 (próprio=0.5850, concorrente mais forte=pickup_truck=0.7624)
+2026-11-14 16:36:22,648 [INFO]  > [Vazamento final] dolphin: margem=-0.0664 (próprio=0.7058, concorrente mais forte=ray=0.7721)
+2026-11-14 16:36:22,648 [INFO]  > [Vazamento final] bicycle: margem=-0.0546 (próprio=0.6632, concorrente mais forte=motorcycle=0.7178)
+2026-11-14 16:36:22,648 [INFO]  > [Vazamento final] otter: margem=-0.2626 (próprio=0.5296, concorrente mais forte=shrew=0.7922)
+2026-11-14 16:36:22,648 [INFO]  > [Vazamento final] skyscraper: margem=+0.1188 (próprio=0.6996, concorrente mais forte=house=0.5808)
+2026-11-14 16:36:22,648 [INFO]  > [Vazamento final] man: margem=-0.1306 (próprio=0.6430, concorrente mais forte=boy=0.7736)
+2026-11-14 16:36:22,648 [INFO]  > [Vazamento final] mountain: margem=-0.0317 (próprio=0.6662, concorrente mais forte=pine_tree=0.6979)
+2026-11-14 16:36:22,648 [INFO]  > [Vazamento final] maple_tree: margem=-0.1180 (próprio=0.6862, concorrente mais forte=pine_tree=0.8042)
+2026-11-14 16:36:22,649 [INFO]  > [Vazamento final] plain: margem=+0.2003 (próprio=0.7434, concorrente mais forte=pine_tree=0.5432)
+2026-11-14 16:36:22,649 [INFO]  > [Vazamento final] hamster: margem=+0.0209 (próprio=0.6765, concorrente mais forte=rabbit=0.6556)
+2026-11-14 16:36:22,649 [INFO]  > [Vazamento final] can: margem=+0.0627 (próprio=0.6498, concorrente mais forte=cup=0.5871)
+2026-11-14 16:36:22,649 [INFO]  > [Vazamento final] lion: margem=-0.0396 (próprio=0.7770, concorrente mais forte=fox=0.8166)
+2026-11-14 16:36:22,649 [INFO]  > [Vazamento final] orchid: margem=+0.0579 (próprio=0.7834, concorrente mais forte=butterfly=0.7255)
+2026-11-14 16:36:22,649 [INFO]  > [Vazamento final] sweet_pepper: margem=+0.1798 (próprio=0.6917, concorrente mais forte=apple=0.5119)
+2026-11-14 16:36:22,649 [INFO]  > [Vazamento final] tiger: margem=-0.1327 (próprio=0.6515, concorrente mais forte=fox=0.7842)
+2026-11-14 16:36:22,649 [INFO]  > [Vazamento final] mushroom: margem=-0.0279 (próprio=0.6516, concorrente mais forte=shrew=0.6795)
+2026-11-14 16:36:22,649 [INFO]  > [Vazamento final] camel: margem=-0.1152 (próprio=0.6558, concorrente mais forte=kangaroo=0.7710)
+2026-11-14 16:36:22,650 [INFO]  > [Vazamento final] chair: margem=+0.0381 (próprio=0.7928, concorrente mais forte=table=0.7548)
+2026-11-14 16:36:22,650 [INFO]  > [Vazamento final] orange: margem=+0.2233 (próprio=0.8465, concorrente mais forte=pear=0.6231)
+2026-11-14 16:36:22,650 [INFO]  > [Vazamento final] raccoon: margem=-0.1821 (próprio=0.5557, concorrente mais forte=wolf=0.7379)
+2026-11-14 16:36:22,650 [INFO]  > [Vazamento final] mouse: margem=-0.1472 (próprio=0.6081, concorrente mais forte=shrew=0.7553)
+2026-11-14 16:36:22,650 [INFO]  > [Vazamento final] bear: margem=-0.1906 (próprio=0.6176, concorrente mais forte=beaver=0.8081)
+2026-11-14 16:36:22,650 [INFO]  > [Vazamento final] woman: margem=-0.0806 (próprio=0.6511, concorrente mais forte=boy=0.7317)
+2026-11-14 16:36:22,650 [INFO]  > [Vazamento final] train: margem=-0.0102 (próprio=0.6932, concorrente mais forte=house=0.7034)
+2026-11-14 16:36:22,650 [INFO]  > [Vazamento final] squirrel: margem=-0.1548 (próprio=0.6474, concorrente mais forte=shrew=0.8022)
+2026-11-14 16:36:22,650 [INFO]  > [Vazamento final] bed: margem=-0.1070 (próprio=0.6511, concorrente mais forte=couch=0.7580)
+2026-11-14 16:36:22,651 [INFO]  > [Vazamento final] flatfish: margem=-0.0030 (próprio=0.6244, concorrente mais forte=rabbit=0.6273)
+2026-11-14 16:36:22,651 [INFO]  > [Vazamento final] skunk: margem=-0.0649 (próprio=0.7037, concorrente mais forte=rabbit=0.7685)
+2026-11-14 16:36:22,651 [INFO]  > [Vazamento final] tractor: margem=+0.0240 (próprio=0.7603, concorrente mais forte=house=0.7363)
+2026-11-14 16:36:22,651 [INFO]  > [Vazamento final] bowl: margem=-0.0470 (próprio=0.7390, concorrente mais forte=plate=0.7860)
+2026-11-14 16:36:22,651 [INFO]  > [Vazamento final] sunflower: margem=+0.2570 (próprio=0.8182, concorrente mais forte=spider=0.5612)
+2026-11-14 16:36:22,651 [INFO]  > [Vazamento final] possum: margem=-0.0537 (próprio=0.7015, concorrente mais forte=shrew=0.7552)
+2026-11-14 16:36:22,651 [INFO]  > [Vazamento final] dinosaur: margem=-0.0662 (próprio=0.6801, concorrente mais forte=rabbit=0.7464)
+2026-11-14 16:36:22,651 [INFO]  > [Vazamento final] rose: margem=+0.1446 (próprio=0.7630, concorrente mais forte=butterfly=0.6184)
+2026-11-14 16:36:22,651 [INFO]  > [Vazamento final] trout: margem=+0.0477 (próprio=0.7458, concorrente mais forte=rabbit=0.6982)
+2026-11-14 16:36:22,651 [INFO]  > [Vazamento final] oak_tree: margem=-0.0327 (próprio=0.8818, concorrente mais forte=pine_tree=0.9146)
+2026-11-14 16:36:22,652 [INFO]  > [Vazamento final] whale: margem=+0.1111 (próprio=0.8327, concorrente mais forte=ray=0.7216)
+2026-11-14 16:36:22,652 [INFO]  > [Vazamento final] cloud: margem=+0.1809 (próprio=0.8074, concorrente mais forte=pine_tree=0.6265)
+2026-11-14 16:36:22,652 [INFO]  > [Vazamento final] rocket: margem=+0.2191 (próprio=0.7941, concorrente mais forte=table=0.5750)
+2026-11-14 16:36:22,653 [INFO]  > [Vazamento final] palm_tree: margem=+0.0302 (próprio=0.8147, concorrente mais forte=pine_tree=0.7845)
+2026-11-14 16:36:22,653 [INFO]  > [Vazamento final] willow_tree: margem=-0.0261 (próprio=0.7500, concorrente mais forte=pine_tree=0.7761)
+2026-11-14 16:36:22,653 [INFO]  > [Vazamento final] road: margem=+0.1737 (próprio=0.8220, concorrente mais forte=pine_tree=0.6483)
+2026-11-14 16:36:22,653 [INFO]  > [Vazamento final] keyboard: margem=+0.3440 (próprio=0.7681, concorrente mais forte=couch=0.4241)
+2026-11-14 16:36:22,653 [INFO]  > [Vazamento final] leopard: margem=-0.0070 (próprio=0.7538, concorrente mais forte=shrew=0.7608)
+2026-11-14 16:36:22,653 [INFO]  > [Vazamento final] cattle: margem=-0.0151 (próprio=0.7604, concorrente mais forte=kangaroo=0.7754)
+2026-11-14 16:36:22,654 [INFO]  > [Vazamento final] apple: margem=+0.2363 (próprio=0.8849, concorrente mais forte=pear=0.6486)
+2026-11-14 16:36:22,654 [INFO]  > [Vazamento final] clock: margem=-0.0634 (próprio=0.6894, concorrente mais forte=plate=0.7528)
+2026-11-14 16:36:22,654 [INFO]  > [Vazamento final] seal: margem=-0.0125 (próprio=0.7366, concorrente mais forte=shrew=0.7491)
+2026-11-14 16:36:22,654 [INFO]  > [Vazamento final] rabbit: margem=+0.0338 (próprio=0.8017, concorrente mais forte=kangaroo=0.7679)
+2026-11-14 16:36:22,654 [INFO]  > [Vazamento final] plate: margem=+0.1497 (próprio=0.8904, concorrente mais forte=cup=0.7407)
+2026-11-14 16:36:22,654 [INFO]  > [Vazamento final] shrew: margem=+0.0136 (próprio=0.8311, concorrente mais forte=beaver=0.8175)
+2026-11-14 16:36:22,654 [INFO]  > [Vazamento final] pine_tree: margem=+0.0996 (próprio=0.8541, concorrente mais forte=house=0.7545)
+2026-11-14 16:36:22,654 [INFO]  > [Vazamento final] couch: margem=+0.1376 (próprio=0.7202, concorrente mais forte=table=0.5826)
+2026-11-14 16:36:22,654 [INFO]  > [Vazamento final] house: margem=+0.1313 (próprio=0.8280, concorrente mais forte=pine_tree=0.6967)
+2026-11-14 16:36:22,655 [INFO]  > [Vazamento final] motorcycle: margem=+0.0913 (próprio=0.9040, concorrente mais forte=lawn_mower=0.8127)
+2026-11-14 16:36:22,655 [INFO]  > [Vazamento final] table: margem=+0.1023 (próprio=0.7950, concorrente mais forte=cup=0.6926)
+2026-11-14 16:36:22,655 [INFO]  > [Vazamento final] fox: margem=+0.0385 (próprio=0.8518, concorrente mais forte=kangaroo=0.8133)
+2026-11-14 16:36:22,655 [INFO]  > [Vazamento final] cup: margem=+0.1089 (próprio=0.8654, concorrente mais forte=table=0.7565)
+2026-11-14 16:36:22,655 [INFO]  > [Vazamento final] beaver: margem=+0.0160 (próprio=0.8455, concorrente mais forte=shrew=0.8295)
+2026-11-14 16:36:22,655 [INFO]  > [Vazamento final] boy: margem=+0.1878 (próprio=0.7993, concorrente mais forte=woman=0.6114)
+2026-11-14 16:36:22,655 [INFO]  > [Vazamento final] butterfly: margem=+0.0898 (próprio=0.7993, concorrente mais forte=aquarium_fish=0.7095)
+2026-11-14 16:36:22,656 [INFO]  > [Vazamento final] spider: margem=+0.1077 (próprio=0.7634, concorrente mais forte=butterfly=0.6557)
+2026-11-14 16:36:22,656 [INFO]  > [Vazamento final] wolf: margem=+0.0325 (próprio=0.8647, concorrente mais forte=kangaroo=0.8323)
+2026-11-14 16:36:22,656 [INFO]  > [Vazamento final] lawn_mower: margem=+0.1298 (próprio=0.8463, concorrente mais forte=motorcycle=0.7165)
+2026-11-14 16:36:22,656 [INFO]  > [Vazamento final] kangaroo: margem=+0.0208 (próprio=0.8468, concorrente mais forte=fox=0.8260)
+2026-11-14 16:36:22,656 [INFO]  > [Vazamento final] ray: margem=+0.1154 (próprio=0.8468, concorrente mais forte=shrew=0.7314)
+2026-11-14 16:36:22,656 [INFO]  > [Vazamento final] aquarium_fish: margem=+0.0579 (próprio=0.8283, concorrente mais forte=butterfly=0.7705)
+2026-11-14 16:36:22,656 [INFO]  > [Vazamento final] pickup_truck: margem=+0.1169 (próprio=0.8476, concorrente mais forte=house=0.7307)
+2026-11-14 16:36:25,542 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/margem_vazamento_nova_estrategia_2_final.png
+2026-11-14 16:36:27,604 [INFO]  [Gráfico] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/figures_cil/experimento_seed1996_20261114_094842/drift_semantico_nova_estrategia_2.png
+2026-11-14 16:37:00,117 [INFO] === MÉTRICAS DE VAZAMENTO — final ===
+2026-11-14 16:37:00,117 [INFO]    Acurácia CIL ................  33.50%
+2026-11-14 16:37:00,117 [INFO]    Vazamento (Lambda) ..........  59.22%
+2026-11-14 16:37:00,117 [INFO]    Vazamento balanceado ........  59.22%
+2026-11-14 16:37:00,117 [INFO]    Erro dentro da task (E_WP) ..   7.28%
+2026-11-14 16:37:00,117 [INFO]    Parcela do erro por vazamento  89.05%
+2026-11-14 16:37:00,117 [INFO]    Acurácia com oráculo de task   73.28%
+2026-11-14 16:37:00,117 [INFO]    Teto de ganho ...............  39.78 p.p.
+2026-11-14 16:37:00,117 [INFO]    Índice de direção D .........  16.945
+2026-11-14 16:37:00,118 [INFO]    Spearman(L, j-i) recência ...   0.884
+2026-11-14 16:37:00,118 [INFO]    Spearman(L, S) semântica ....  -0.013
+2026-11-14 16:37:00,118 [INFO]      parcial, controlando j-i ..   0.131
+2026-11-14 16:37:00,131 [INFO]    Vazamento após normalização .  47.03%
+2026-11-14 16:37:00,131 [INFO]    Parcela atribuível a escala .  20.58%
+2026-11-14 16:37:00,132 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-14 16:37:00,132 [INFO]      k = -4: 0.001
+2026-11-14 16:37:00,132 [INFO]      k = -3: 0.006
+2026-11-14 16:37:00,132 [INFO]      k = -2: 0.016
+2026-11-14 16:37:00,132 [INFO]      k = -1: 0.026
+2026-11-14 16:37:00,132 [INFO]      k = +1: 0.155
+2026-11-14 16:37:00,132 [INFO]      k = +2: 0.241
+2026-11-14 16:37:00,132 [INFO]      k = +3: 0.374
+2026-11-14 16:37:00,132 [INFO]      k = +4: 0.707
+2026-11-14 16:37:00,132 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-14 16:37:00,132 [INFO]      0.052 0.032 0.059 0.150 0.707
+2026-11-14 16:37:00,132 [INFO]      0.002 0.226 0.061 0.114 0.598
+2026-11-14 16:37:00,132 [INFO]      0.002 0.014 0.340 0.094 0.550
+2026-11-14 16:37:00,132 [INFO]      0.002 0.009 0.029 0.529 0.431
+2026-11-14 16:37:00,132 [INFO]      0.001 0.011 0.037 0.059 0.892
+2026-11-14 16:37:00,335 [INFO]  [Checkpoint] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/checkpoints/checkpoint_experimento_seed1996_20261114_094842.pt
+2026-11-14 16:37:00,519 [INFO]  [JSON] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/results/results_experimento_seed1996_20261114_094842.json
+Files already downloaded and verified
+Files already downloaded and verified

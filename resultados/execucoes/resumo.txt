@@ -3,3 +3,16 @@ config_ncm_seed1993 | OK | 0h46min | AAC (5 tarefas): 41.25% | vazamento 47.12%
 config_baseline_seed1993 | OK | 3h45min | AAC (5 tarefas): 23.91% | vazamento 69.65%
 config_experimento_seed1993 | OK | 5h15min | AAC (5 tarefas): 32.16% | vazamento 60.09%
 config_gauss_seed1993 | OK | 3h58min | AAC (5 tarefas): 30.49% | vazamento 61.23%
+Execução de 14/11/2026 23:59:59 — bateria 2 3 4
+config_ncm_seed1994 | OK | 0h38min | AAC (5 tarefas): 41.20% | vazamento 46.95%
+config_baseline_seed1994 | OK | 3h30min | AAC (5 tarefas): 23.78% | vazamento 69.10%
+config_experimento_seed1994 | OK | 3h47min | AAC (5 tarefas): 25.88% | vazamento 66.63%
+config_gauss_seed1994 | OK | 2h42min | AAC (5 tarefas): 26.95% | vazamento 64.67%
+config_ncm_seed1995 | OK | 0h36min | AAC (5 tarefas): 41.28% | vazamento 46.65%
+config_baseline_seed1995 | OK | 3h26min | AAC (5 tarefas): 23.72% | vazamento 69.86%
+config_experimento_seed1995 | OK | 6h3min | AAC (5 tarefas): 30.81% | vazamento 61.54%
+config_gauss_seed1995 | OK | 4h49min | AAC (5 tarefas): 30.92% | vazamento 60.80%
+config_ncm_seed1996 | OK | 0h39min | AAC (5 tarefas): 41.25% | vazamento 48.01%
+config_baseline_seed1996 | OK | 3h42min | AAC (5 tarefas): 24.63% | vazamento 69.29%
+config_experimento_seed1996 | OK | 6h48min | AAC (5 tarefas): 33.50% | vazamento 59.22%
+config_gauss_seed1996 | OK | 7h22min | AAC (5 tarefas): 34.26% | vazamento 58.76%
