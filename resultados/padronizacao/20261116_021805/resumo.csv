@@ -1,0 +1,29 @@
+config;versao;n_seeds;acc_final_media;aac_incremental_media;vazamento_media;erro_dentro_da_tarefa_media;acc_oraculo_media;acc_final_desvio;aac_incremental_desvio;vazamento_desvio;erro_dentro_da_tarefa_desvio;acc_oraculo_desvio;acc_T0_media;acc_T1_media;acc_T2_media;acc_T3_media;acc_T4_media
+ncm;original;4;41.242;50.679;47.188;11.570;65.450;0.033;1.164;0.583;0.582;0.536;41.388;40.188;40.913;43.987;39.738
+ncm;padronizada;4;40.693;50.360;47.873;11.435;65.450;0.144;1.204;0.907;0.787;0.536;45.575;37.975;37.875;41.225;40.812
+ncm;centrada;4;40.877;50.397;47.640;11.482;65.450;0.205;1.192;0.876;0.692;0.536;45.550;38.013;38.013;41.575;41.237
+baseline;original;4;24.012;41.274;69.472;6.515;72.323;0.419;1.040;0.338;0.436;0.790;0.000;2.250;13.213;39.525;65.075
+baseline;padronizada;4;40.603;54.500;52.523;6.875;72.323;0.803;0.956;1.270;0.560;0.790;43.163;39.312;39.237;41.125;40.175
+baseline;centrada;4;38.468;53.658;54.513;7.020;72.323;1.222;1.051;1.527;0.641;0.790;42.300;40.163;36.750;36.550;36.575
+gauss;original;4;30.655;48.141;61.367;7.978;71.255;2.986;3.095;2.449;0.667;1.352;3.250;15.787;27.263;44.100;62.875
+gauss;padronizada;4;43.410;56.265;47.560;9.030;71.255;1.311;1.640;0.932;0.602;1.352;51.863;40.925;42.200;40.775;41.288
+gauss;centrada;4;42.240;55.847;48.812;8.947;71.255;1.765;1.731;1.413;0.677;1.352;49.587;41.238;41.750;39.725;38.900
+experimento;original;4;30.587;48.912;61.870;7.542;71.675;3.321;2.317;3.311;0.205;1.193;2.425;15.488;29.075;43.287;62.662
+experimento;padronizada;4;43.525;56.352;47.808;8.668;71.675;1.113;1.760;1.210;0.619;1.193;52.550;41.163;41.500;41.150;41.262
+experimento;centrada;4;42.745;56.131;48.555;8.700;71.675;1.664;1.719;1.809;0.686;1.193;50.587;41.538;41.763;40.238;39.600
+
+comparacao;metrica;diferenca_media;seeds_a_favor;diferencas_por_seed
+baseline(padronizada) - baseline(original);acc_final;+16.590;4/4;+17.69 +15.86 +16.94 +15.87
+baseline(padronizada) - baseline(original);aac_incremental;+13.226;4/4;+13.17 +13.74 +13.36 +12.63
+gauss(padronizada) - gauss(original);acc_final;+12.755;4/4;+12.69 +14.81 +12.86 +10.66
+gauss(padronizada) - gauss(original);aac_incremental;+8.124;4/4;+9.38 +9.12 +8.40 +5.60
+experimento(padronizada) - experimento(original);acc_final;+12.938;4/4;+11.55 +16.26 +12.58 +11.36
+experimento(padronizada) - experimento(original);aac_incremental;+7.440;4/4;+6.15 +9.85 +7.95 +5.81
+gauss(padronizada) - ncm(original);acc_final;+2.168;4/4;+1.95 +0.56 +2.50 +3.66
+gauss(padronizada) - ncm(original);aac_incremental;+5.585;4/4;+5.20 +5.30 +5.06 +6.78
+experimento(padronizada) - ncm(original);acc_final;+2.283;4/4;+2.46 +0.94 +2.13 +3.60
+experimento(padronizada) - ncm(original);aac_incremental;+5.673;4/4;+5.06 +5.48 +5.20 +6.94
+experimento(padronizada) - gauss(padronizada);acc_final;+0.115;2/4;+0.51 +0.38 -0.37 -0.06
+experimento(padronizada) - gauss(padronizada);aac_incremental;+0.087;3/4;-0.14 +0.18 +0.14 +0.17
+gauss(padronizada) - baseline(padronizada);acc_final;+2.807;4/4;+1.59 +2.12 +3.11 +4.41
+gauss(padronizada) - baseline(padronizada);aac_incremental;+1.764;4/4;+0.95 +1.80 +1.48 +2.83
