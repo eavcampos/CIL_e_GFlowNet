@@ -179,6 +179,7 @@ comparação usa a execução mais recente de cada (config, seed).
 | `pseudo_negativos_cil.py` | banco de gaussianas, margem, amostradores `gauss`, `is`, `gfn` |
 | `metricas_vazamento.py` | métricas de vazamento |
 | `comparar_resultados.py` | comparação pareada entre braços e `resumo.csv` |
+| `avaliar_padronizacao.py` | avalia, a partir dos checkpoints e sem treinar, o efeito de padronizar as notas de cada Adapter (média e desvio do treino da tarefa) na acurácia e no vazamento |
 | `rodar_experimentos.sh` | baterias por seed |
 | `config_ncm.json`, `config_baseline.json`, `config_gauss.json`, `config_experimento.json` | os quatro configs do estudo |
 | `cil_nova_estrategia_1.py`, `config.json` | Estratégia 1 (referência anterior), inalterada |
