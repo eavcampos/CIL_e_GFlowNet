@@ -1,0 +1,21 @@
+{
+    "dataset": {
+        "nome": "omnibenchmark",
+        "raiz": "../../my_data/omnibenchmark",
+        "pasta_treino": "train",
+        "pasta_teste": "test",
+        "resize": [
+            224,
+            224
+        ],
+        "recorte_central": true,
+        "nota": "300 classes."
+    },
+    "tarefas": {
+        "classes_por_tarefa": 30,
+        "num_tasks": "auto",
+        "ordem_classes": "aleatoria",
+        "nota": "classes_por_tarefa define o tamanho de cada tarefa; num_tasks = 'auto' usa todas as classes do dataset (protocolo B0 IncX). Para usar só parte das classes, ponha um número em num_tasks. ordem_classes: 'aleatoria' (sorteada pela seed) ou 'original'."
+    },
+    "avaliacao_extra": []
+}

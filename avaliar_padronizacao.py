@@ -18,6 +18,7 @@ vazamento; o erro dentro da tarefa (com o oráculo) fica igual.
 Uso (na pasta do projeto, com o mesmo Python das execuções):
     python avaliar_padronizacao.py
     python avaliar_padronizacao.py --checkpoints resultados/checkpoints --saida resultados/padronizacao
+    python avaliar_padronizacao.py --perfil imagenet_r     # execuções feitas com perfis/imagenet_r.json
 
 Saída: resultados/padronizacao/<data_hora>/
     por_execucao.csv  -> uma linha por (config, seed, versão das notas)
@@ -26,6 +27,7 @@ e um resumo no terminal. Leva poucos minutos por checkpoint (só avaliação no 
 """
 import argparse
 import csv
+import json
 import glob
 import os
 import re
@@ -43,7 +45,7 @@ PASTA = os.path.dirname(os.path.abspath(__file__))
 IMAGENET_MEAN = (0.485, 0.456, 0.406)
 IMAGENET_STD = (0.229, 0.224, 0.225)
 DEVICE = torch.device("cuda" if torch.cuda.is_available() else "cpu")
-ORDEM = ["ncm", "baseline", "gauss", "experimento"]
+ORDEM = ["ncm", "baseline", "gauss", "experimento", "margem_padronizada"]
 
 
 class Adapter(nn.Module):
@@ -78,22 +80,54 @@ def resolver(caminho):
 _CACHE_TESTE = {}
 
 
-def conjunto_teste(cfg_dataset):
-    nome = cfg_dataset["nome"].strip().lower()
+def construir_transform(cfg_dataset):
+    """Igual a cil_nova_estrategia_2.py."""
     resize = tuple(cfg_dataset.get("resize", [64, 64]))
-    chave = (nome, resize)
+    if cfg_dataset.get("recorte_central", False):
+        passos = [transforms.Resize(int(round(max(resize) / 0.875))), transforms.CenterCrop(resize)]
+    else:
+        passos = [transforms.Resize(resize)]
+    return transforms.Compose(passos + [transforms.ToTensor(), transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD)])
+
+
+def conjunto_teste(cfg_dataset):
+    """Conjunto de teste com os rótulos ORIGINAIS do dataset (o checkpoint traz o mapa para o
+    espaço CIL). Reproduz a lógica de carregar_dataset_base de cil_nova_estrategia_2.py."""
+    nome = cfg_dataset["nome"].strip().lower()
+    chave = json.dumps(cfg_dataset, sort_keys=True)
     if chave in _CACHE_TESTE:
         return _CACHE_TESTE[chave]
-    tf = transforms.Compose([transforms.Resize(resize), transforms.ToTensor(),
-                             transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD)])
-    if nome == "cifar100":
-        ds = torchvision.datasets.CIFAR100(root=resolver(cfg_dataset.get("raiz_cifar", "../data")), train=False,
-                                           download=False, transform=tf)
-    elif nome == "cifar10":
-        ds = torchvision.datasets.CIFAR10(root=resolver(cfg_dataset.get("raiz_cifar", "../data")), train=False,
-                                          download=False, transform=tf)
+    tf = construir_transform(cfg_dataset)
+    if nome in ("cifar10", "cifar100"):
+        raiz = resolver(cfg_dataset.get("raiz", cfg_dataset.get("raiz_cifar", "../data")))
+        classe = torchvision.datasets.CIFAR10 if nome == "cifar10" else torchvision.datasets.CIFAR100
+        ds = classe(root=raiz, train=False, download=False, transform=tf)
     else:
-        raise SystemExit(f"Dataset {nome!r} não suportado por este script (só cifar10/cifar100).")
+        padrao = cfg_dataset.get("raiz_omnibenchmark") if nome == "omnibenchmark" else None
+        raiz = resolver(cfg_dataset.get("raiz", padrao or f"../../my_data/{nome}"))
+        if cfg_dataset.get("pasta_unica") is not None:
+            base = torchvision.datasets.ImageFolder(os.path.join(raiz, cfg_dataset["pasta_unica"]), transform=tf)
+            rng = np.random.RandomState(int(cfg_dataset.get("seed_divisao", 0)))
+            fr = float(cfg_dataset.get("fracao_teste", 0.2))
+            por_classe, teste = {}, []
+            for a in base.samples:
+                por_classe.setdefault(a[1], []).append(a)
+            for r in sorted(por_classe):
+                lista = por_classe[r]
+                ordem = rng.permutation(len(lista))
+                n_teste = max(1, int(round(fr * len(lista))))
+                teste += [lista[i] for i in ordem[:n_teste]]
+            base.samples = base.imgs = teste
+            base.targets = [r for _, r in teste]
+            ds = base
+        else:
+            nomes_treino = torchvision.datasets.ImageFolder(
+                os.path.join(raiz, cfg_dataset.get("pasta_treino", "train"))).classes
+            ds = torchvision.datasets.ImageFolder(os.path.join(raiz, cfg_dataset.get("pasta_teste", "test")),
+                                                  transform=tf)
+            idx = {n: i for i, n in enumerate(nomes_treino)}
+            ds.samples = [(c, idx[ds.classes[r]]) for c, r in ds.samples]
+            ds.imgs, ds.targets = ds.samples, [r for _, r in ds.samples]
     _CACHE_TESTE[chave] = ds
     return ds
 
@@ -171,6 +205,14 @@ def metricas(S, y, cpt, n_tarefas):
             "acc_apos_tarefa": apos}
 
 
+def papel(nome_config):
+    """'gauss_imagenet_r' -> ('gauss', '_imagenet_r'); 'gauss' -> ('gauss', '')."""
+    for b in ORDEM:
+        if nome_config == b or nome_config.startswith(b + "_"):
+            return b, nome_config[len(b):]
+    return None, None
+
+
 def mais_recentes(pasta):
     """{(config, seed): caminho} com o checkpoint mais recente de cada combinação."""
     achados = {}
@@ -188,12 +230,20 @@ def main():
     ap = argparse.ArgumentParser(description=__doc__.split("\n")[1])
     ap.add_argument("--checkpoints", default=os.path.join(PASTA, "resultados", "checkpoints"))
     ap.add_argument("--saida", default=os.path.join(PASTA, "resultados", "padronizacao"))
+    ap.add_argument("--perfil", dest="grupo", default="",
+                    help="avalia as execuções feitas com esse perfil de dataset (ex.: imagenet_r); "
+                         "vazio = execuções sem perfil (CIFAR-100 dos configs)")
     args = ap.parse_args()
 
-    ckpts = mais_recentes(args.checkpoints)
-    ckpts = {k: v for k, v in ckpts.items() if k[0] in ORDEM}
+    ap_grupo = args.grupo
+    ckpts = {}
+    for (cfg_nome, seed), caminho in mais_recentes(args.checkpoints).items():
+        braco, grupo = papel(cfg_nome)
+        if braco is not None and grupo.strip("_") == ap_grupo:
+            ckpts[(braco, seed)] = caminho
     if not ckpts:
-        raise SystemExit(f"Nenhum checkpoint de {ORDEM} em {os.path.abspath(args.checkpoints)}")
+        raise SystemExit(f"Nenhum checkpoint de {ORDEM}{' com perfil ' + ap_grupo if ap_grupo else ''} em "
+                         f"{os.path.abspath(args.checkpoints)}")
     print(f"Dispositivo: {DEVICE}. {len(ckpts)} checkpoints: "
           + ", ".join(f"{c}/{s}" for c, s in sorted(ckpts, key=lambda k: (ORDEM.index(k[0]), k[1]))))
 
@@ -207,8 +257,9 @@ def main():
         ds = conjunto_teste(ck["configuracao"]["dataset"])
         phi, y_orig = phi_do_teste(backbone, ds)
         mapa = ck["mapa_original_para_cil"]
-        y = np.array([mapa[int(v)] for v in y_orig])
-        S, cpt = notas(ck, phi)
+        manter = np.array([int(v) in mapa for v in y_orig])   # classes fora das tarefas (num_tasks parcial)
+        y = np.array([mapa[int(v)] for v in y_orig[manter]])
+        S, cpt = notas(ck, phi[torch.from_numpy(manter)])
         n_tarefas = S.shape[1] // cpt
         stats = ck["estatisticas_score_por_tarefa"]
         for versao, matriz in [("original", S), ("padronizada", padronizar(S, cpt, stats, "zscore")),
@@ -220,7 +271,7 @@ def main():
               f"vazamento {o['vazamento']:6.2f} -> {p['vazamento']:6.2f} | "
               f"AAC incremental {o['aac_incremental']:6.2f} -> {p['aac_incremental']:6.2f}")
 
-    pasta = os.path.join(args.saida, f"{datetime.now():%Y%m%d_%H%M%S}")
+    pasta = os.path.join(args.saida, f"{datetime.now():%Y%m%d_%H%M%S}" + (f"_{ap_grupo}" if ap_grupo else ""))
     os.makedirs(pasta, exist_ok=True)
     chaves = ["acc_final", "aac_incremental", "vazamento", "erro_dentro_da_tarefa", "acc_oraculo"]
     n_t = len(linhas[0]["acc_por_tarefa"])

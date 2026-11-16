@@ -85,6 +85,7 @@ partição de classes sorteada) em resultados/checkpoints/, para permitir reaval
 sem retreinar.
 """
 import os
+import re
 import sys
 import json
 import math
@@ -110,7 +111,7 @@ import matplotlib.cm as cm
 # [Estratégia 2]
 from pseudo_negativos_cil import (BancoGaussianas, GeradorPseudoNegativos, coletar_phi_por_classe,
                                   scores_combinados, margem_vazamento)
-from metricas_vazamento import leakage_metrics
+from metricas_vazamento import leakage_metrics, normalize_by_task
 
 # ============================================================================
 # 0. LINHA DE COMANDO + CONFIGURAÇÃO
@@ -125,11 +126,22 @@ def carregar_configuracao():
     parser.add_argument("--seed", type=int, default=None,
                          help="Sobrescreve config['seed'] (conveniência para rodar as 4 seeds planejadas "
                               "sem editar o JSON a cada execução)")
+    parser.add_argument("--perfil", default=None,
+                         help="Perfil de dataset (ex.: perfis/imagenet_r.json). Substitui os blocos "
+                              "'dataset', 'tarefas' e 'avaliacao_extra' do config, para rodar os mesmos braços "
+                              "em outro dataset sem duplicar configs. O nome do perfil entra no nome das saídas.")
     args, _ = parser.parse_known_args()
     with open(args.config, "r", encoding="utf-8") as f:
         cfg = json.load(f)
     if args.seed is not None:
         cfg["seed"] = args.seed
+    if args.perfil:
+        with open(args.perfil, "r", encoding="utf-8") as f:
+            perfil = json.load(f)
+        for bloco in ("dataset", "tarefas", "avaliacao_extra"):
+            if bloco in perfil:
+                cfg[bloco] = perfil[bloco]
+        cfg["_perfil"] = os.path.splitext(os.path.basename(args.perfil))[0]
     cfg["_arquivo_config"] = os.path.abspath(args.config)   # [Estratégia 2] nomeia as saídas
     return cfg
 
@@ -141,9 +153,17 @@ CFG_TREINO = CFG["treino"]
 CFG_OTIMIZADOR = CFG["otimizador"]
 
 SEED = int(CFG["seed"])
-NUM_TASKS = int(CFG_TAREFAS["num_tasks"])
 CLASSES_POR_TAREFA = int(CFG_TAREFAS["classes_por_tarefa"])
+# num_tasks: número inteiro, ou "auto"/null = todas as classes do dataset divididas em tarefas de
+# classes_por_tarefa (protocolo "B0 IncX" da literatura). Com "auto", o valor real só é conhecido
+# depois de carregar o dataset (ver resolver_num_tarefas em executar_experimento).
+_NT = CFG_TAREFAS.get("num_tasks", "auto")
+NUM_TASKS = 0 if _NT in (None, "auto") else int(_NT)
 NUM_CLASSES_TOTAIS = NUM_TASKS * CLASSES_POR_TAREFA
+# ordem_classes: "aleatoria" (sorteada pela seed; padrão) ou "original" (ordem dos índices do dataset)
+ORDEM_CLASSES = str(CFG_TAREFAS.get("ordem_classes", "aleatoria")).lower()
+if ORDEM_CLASSES not in ("aleatoria", "original"):
+    raise ValueError("tarefas.ordem_classes deve ser 'aleatoria' ou 'original'")
 
 BATCH_SIZE = int(CFG_TREINO.get("batch_size", 48))
 EPOCHS_POR_TAREFA = int(CFG_TREINO.get("epochs_por_tarefa", 100))
@@ -192,6 +212,20 @@ if PA_METRICA not in ("val_ce", "val_ce_mais_pn", "ambas"):
 if PA_ATIVO and not (0.0 < PA_FRACAO_VAL < 0.5):
     raise ValueError("parada_antecipada.fracao_validacao deve estar entre 0 e 0.5")
 
+# [Velocidade] cache_phi: calcula phi = backbone(imagem) UMA vez (o backbone é congelado e não há aumento
+# de dados, então phi é igual em todas as épocas) e treina os Adapters direto sobre phi. Mesmo resultado,
+# muito mais rápido. cache_phi_em_disco: guarda phi em resultados/cache_phi/ para as outras execuções
+# do mesmo dataset reaproveitarem.
+CACHE_PHI = bool(CFG_TREINO.get("cache_phi", False))
+CACHE_PHI_DISCO = bool(CFG_TREINO.get("cache_phi_em_disco", True))
+# [Padronização] padronizar_notas: além das notas originais, reporta tudo com as notas padronizadas
+# ((nota - media_k) / desvio_k, com media_k e desvio_k da nota vencedora no TREINO da tarefa k). Com true,
+# a versão padronizada é a principal ("versao_principal" no JSON).
+PADRONIZAR_NOTAS = bool(CFG_TREINO.get("padronizar_notas", False))
+# [Velocidade] avaliar_teste_a_cada: avaliação no teste durante o treino (só para os gráficos) a cada N
+# épocas, e sempre na 1ª, na última e na de parada. 1 = toda época (comportamento antigo).
+AVAL_TESTE_A_CADA = max(1, int(CFG_TREINO.get("avaliar_teste_a_cada", 1)))
+
 if INIT_CLASSES_NOVAS not in ("aleatorio", "media_phi"):
     raise ValueError(f"treino.init_classes_novas inválido: {INIT_CLASSES_NOVAS} (use 'aleatorio' ou 'media_phi')")
 
@@ -209,6 +243,9 @@ timestamp = datetime.now().strftime("%Y%m%d_%H%M%S")
 NOME_CONFIG = os.path.splitext(os.path.basename(CFG.get("_arquivo_config", "config")))[0]
 if NOME_CONFIG.startswith("config_"):
     NOME_CONFIG = NOME_CONFIG[len("config_"):]
+if CFG.get("_perfil"):
+    # ex.: "gauss_imagenet_r"; o comparar_resultados.py agrupa por esse sufixo (um grupo por dataset)
+    NOME_CONFIG = f"{NOME_CONFIG}_{CFG['_perfil']}"
 ID_EXECUCAO = f"{NOME_CONFIG}_seed{SEED}_{timestamp}"
 
 # [Estratégia 2] Diretórios de saída: DENTRO do projeto, em CIL_e_GFlowNet/resultados/, qualquer
@@ -247,7 +284,7 @@ def set_seed(seed):
 set_seed(SEED)
 logging.info(f"[Reprodutibilidade] Seed={SEED} (random, numpy, torch, cudnn determinístico). "
              f"Esta mesma seed também controla o sorteio das classes por tarefa.")
-logging.info(f"[Configuração] dataset={CFG_DATASET['nome']} | num_tasks={NUM_TASKS} | "
+logging.info(f"[Configuração] dataset={CFG_DATASET['nome']} | num_tasks={NUM_TASKS or 'auto'} | "
              f"classes_por_tarefa={CLASSES_POR_TAREFA} | batch_size={BATCH_SIZE} | "
              f"otimizador={CFG_OTIMIZADOR.get('tipo', 'SGD')} | device={DEVICE} | "
              f"pseudo_negativos={PN_MODO}")
@@ -257,69 +294,194 @@ logging.info(f"[Configuração] dataset={CFG_DATASET['nome']} | num_tasks={NUM_T
 # 2. DATASET (plugável: cifar10 / cifar100 / omnibenchmark) + PARTIÇÃO DE
 #    TAREFAS POR SORTEIO (seed definida no config.json)
 # ============================================================================
-def carregar_dataset_base(cfg_dataset):
-    """Retorna (train_set, test_set), ambos expondo .targets (lista de
-    inteiros) e .classes (lista de nomes), interface comum a
-    torchvision.datasets.CIFAR10/CIFAR100 e torchvision.datasets.ImageFolder
-    -- permite que todo o restante do pipeline seja agnóstico ao dataset."""
-    nome = cfg_dataset["nome"].strip().lower()
+# Catálogo dos datasets previstos. "classes" é o número esperado nas versões usadas em
+# SimpleCIL/APER e EASE (Zhou et al.); serve só para conferência: o número real vem das pastas.
+CATALOGO_DATASETS = {
+    "cifar10":       {"tipo": "torchvision", "classes": 10},
+    "cifar100":      {"tipo": "torchvision", "classes": 100},
+    "imagenet_r":    {"tipo": "pastas", "classes": 200},
+    "imagenet_a":    {"tipo": "pastas", "classes": 200},
+    "objectnet":     {"tipo": "pastas", "classes": 200},
+    "omnibenchmark": {"tipo": "pastas", "classes": 300},
+    "vtab":          {"tipo": "pastas", "classes": 50},
+    "pastas":        {"tipo": "pastas", "classes": None},   # qualquer dataset em pastas
+}
+
+
+def resolver_caminho(caminho):
+    """Caminhos relativos do config são resolvidos a partir da PASTA DO SCRIPT (não da pasta de onde o
+    comando é executado), para "../../my_data" sempre apontar para o mesmo lugar."""
+    caminho = os.path.expanduser(caminho)
+    return caminho if os.path.isabs(caminho) else os.path.normpath(os.path.join(SCRIPT_DIR, caminho))
+
+
+def construir_transform(cfg_dataset):
+    """Redimensiona e normaliza (sem aumento de dados: o mesmo phi a cada época). Com
+    recorte_central = true: redimensiona o lado menor para resize/0.875 e recorta o centro
+    (padrão ImageNet para imagens não quadradas); com false: redimensiona direto para resize."""
     resize = tuple(cfg_dataset.get("resize", [64, 64]))
-
-    # [Estratégia 2] caminhos relativos do config são resolvidos a partir da PASTA DO SCRIPT
-    # (não da pasta de onde o comando é executado), para "../../my_data" sempre apontar para o
-    # mesmo lugar. Barras "/" funcionam também no Windows.
-    def _resolver(caminho):
-        caminho = os.path.expanduser(caminho)
-        return caminho if os.path.isabs(caminho) else os.path.normpath(os.path.join(SCRIPT_DIR, caminho))
-
-    cfg_dataset = dict(cfg_dataset)
-    for chave in ("raiz_cifar", "raiz_omnibenchmark"):
-        if chave in cfg_dataset:
-            cfg_dataset[chave] = _resolver(cfg_dataset[chave])
-    if nome in ("cifar10", "cifar100"):
-        pasta_esperada = "cifar-10-batches-py" if nome == "cifar10" else "cifar-100-python"
-        raiz = cfg_dataset.get("raiz_cifar", _resolver("../data"))
-        if os.path.isdir(os.path.join(raiz, pasta_esperada)):
-            logging.info(f"[Dataset] Usando {nome} já baixado em {os.path.join(raiz, pasta_esperada)}")
-        else:
-            logging.warning(f"[Dataset] Pasta {pasta_esperada!r} NÃO encontrada em {raiz}. O torchvision vai "
-                            f"tentar baixar o dataset para lá. Se ele já foi baixado, confira "
-                            f"'dataset.raiz_cifar' em config_experimento.json: deve apontar para a pasta que "
-                            f"CONTÉM {pasta_esperada!r}, não para ela mesma.")
-    transform = transforms.Compose([
-        transforms.Resize(resize),
-        transforms.ToTensor(),
-        transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD),
-    ])
-
-    if nome == "cifar10":
-        raiz = cfg_dataset.get("raiz_cifar", "../data")
-        train_set = torchvision.datasets.CIFAR10(root=raiz, train=True, download=True, transform=transform)
-        test_set = torchvision.datasets.CIFAR10(root=raiz, train=False, download=True, transform=transform)
-    elif nome == "cifar100":
-        raiz = cfg_dataset.get("raiz_cifar", "../data")
-        train_set = torchvision.datasets.CIFAR100(root=raiz, train=True, download=True, transform=transform)
-        test_set = torchvision.datasets.CIFAR100(root=raiz, train=False, download=True, transform=transform)
-    elif nome == "omnibenchmark":
-        raiz = cfg_dataset["raiz_omnibenchmark"]
-        raiz_treino = os.path.join(raiz, "train")
-        raiz_teste = os.path.join(raiz, "test")
-        if not os.path.isdir(raiz_treino) or not os.path.isdir(raiz_teste):
-            raise FileNotFoundError(
-                f"OmniBenchmark esperado em formato ImageFolder com subpastas 'train/' e 'test/' "
-                f"dentro de {raiz!r} (cada uma com uma subpasta por classe). "
-                f"Ajuste 'dataset.raiz_omnibenchmark' em config.json.")
-        train_set = torchvision.datasets.ImageFolder(raiz_treino, transform=transform)
-        test_set = torchvision.datasets.ImageFolder(raiz_teste, transform=transform)
+    if cfg_dataset.get("recorte_central", False):
+        lado = int(round(max(resize) / 0.875))
+        passos = [transforms.Resize(lado), transforms.CenterCrop(resize)]
     else:
-        raise ValueError(f"Dataset não suportado: {nome!r} (use 'cifar10', 'cifar100' ou 'omnibenchmark')")
+        passos = [transforms.Resize(resize)]
+    return transforms.Compose(passos + [transforms.ToTensor(), transforms.Normalize(IMAGENET_MEAN, IMAGENET_STD)])
 
-    logging.info(f"[Dataset] {nome} carregado — {len(train_set.classes)} classes disponíveis, "
-                 f"{len(train_set)} imagens de treino, {len(test_set)} imagens de teste.")
+
+def _pastas_com_classes(raiz, nomes_classes, transform):
+    """ImageFolder cujos índices de classe seguem 'nomes_classes' (a ordem do TREINO), para que
+    treino e teste usem o mesmo índice para a mesma classe mesmo se uma pasta tiver classes a menos."""
+    ds = torchvision.datasets.ImageFolder(raiz, transform=transform)
+    idx = {n: i for i, n in enumerate(nomes_classes)}
+    faltando = [n for n in ds.classes if n not in idx]
+    if faltando:
+        raise ValueError(f"{raiz} tem classes que não existem no treino: {faltando[:5]}...")
+    ds.samples = [(c, idx[ds.classes[r]]) for c, r in ds.samples]
+    ds.imgs, ds.targets = ds.samples, [r for _, r in ds.samples]
+    ds.classes, ds.class_to_idx = list(nomes_classes), dict(idx)
+    return ds
+
+
+def _dividir_pastas(raiz, fracao_teste, seed, transform):
+    """Para datasets sem divisão oficial em treino/teste (ex.: algumas cópias de ImageNet-R/A):
+    separa, de cada classe, uma fração fixa (pela seed de divisão) para teste."""
+    base = torchvision.datasets.ImageFolder(raiz, transform=transform)
+    rng = np.random.RandomState(seed)
+    treino, teste = [], []
+    por_classe = {}
+    for amostra in base.samples:
+        por_classe.setdefault(amostra[1], []).append(amostra)
+    for r in sorted(por_classe):
+        lista = por_classe[r]
+        ordem = rng.permutation(len(lista))
+        n_teste = max(1, int(round(fracao_teste * len(lista))))
+        teste += [lista[i] for i in ordem[:n_teste]]
+        treino += [lista[i] for i in ordem[n_teste:]]
+    tr = torchvision.datasets.ImageFolder(raiz, transform=transform)
+    te = torchvision.datasets.ImageFolder(raiz, transform=transform)
+    for ds, amostras in ((tr, treino), (te, teste)):
+        ds.samples = ds.imgs = amostras
+        ds.targets = [r for _, r in amostras]
+    return tr, te
+
+
+def carregar_dataset_base(cfg_dataset):
+    """Retorna (train_set, test_set), ambos expondo .targets (inteiros) e .classes (nomes).
+
+    Bloco "dataset" do config (ou do perfil):
+      nome            : cifar10, cifar100, imagenet_r, imagenet_a, objectnet, omnibenchmark, vtab
+                        ou "pastas" (qualquer dataset organizado em uma pasta por classe)
+      raiz            : pasta do dataset. CIFAR: a pasta que CONTÉM cifar-100-python/.
+                        Demais: a pasta que contém as subpastas de treino e teste.
+      pasta_treino    : subpasta de treino (padrão "train")
+      pasta_teste     : subpasta de teste (padrão "test")
+      fracao_teste    : se o dataset NÃO tiver divisão em treino/teste, use "pasta_unica" e esta
+                        fração para separar o teste (fixa por "seed_divisao", padrão 0)
+      resize          : [altura, largura] da entrada da rede
+      recorte_central : true para imagens não quadradas (padrão ImageNet); false para CIFAR
+    Chaves antigas (raiz_cifar, raiz_omnibenchmark) continuam aceitas."""
+    nome = cfg_dataset["nome"].strip().lower()
+    if nome not in CATALOGO_DATASETS:
+        raise ValueError(f"Dataset {nome!r} não previsto. Use um de {sorted(CATALOGO_DATASETS)}.")
+    info = CATALOGO_DATASETS[nome]
+    transform = construir_transform(cfg_dataset)
+
+    if info["tipo"] == "torchvision":
+        raiz = resolver_caminho(cfg_dataset.get("raiz", cfg_dataset.get("raiz_cifar", "../data")))
+        pasta_esperada = "cifar-10-batches-py" if nome == "cifar10" else "cifar-100-python"
+        if not os.path.isdir(os.path.join(raiz, pasta_esperada)):
+            logging.warning(f"[Dataset] Pasta {pasta_esperada!r} NÃO encontrada em {raiz}. O torchvision vai "
+                            f"tentar baixar o dataset. Se ele já foi baixado, 'dataset.raiz' deve apontar para "
+                            f"a pasta que CONTÉM {pasta_esperada!r}.")
+        classe = torchvision.datasets.CIFAR10 if nome == "cifar10" else torchvision.datasets.CIFAR100
+        train_set = classe(root=raiz, train=True, download=True, transform=transform)
+        test_set = classe(root=raiz, train=False, download=True, transform=transform)
+    else:
+        padrao_antigo = cfg_dataset.get("raiz_omnibenchmark") if nome == "omnibenchmark" else None
+        raiz = resolver_caminho(cfg_dataset.get("raiz", padrao_antigo or f"../../my_data/{nome}"))
+        if cfg_dataset.get("pasta_unica") is not None:
+            fr = float(cfg_dataset.get("fracao_teste", 0.2))
+            train_set, test_set = _dividir_pastas(os.path.join(raiz, cfg_dataset["pasta_unica"]), fr,
+                                                  int(cfg_dataset.get("seed_divisao", 0)), transform)
+            logging.warning(f"[Dataset] {nome}: sem divisão oficial; {fr:.0%} de cada classe separados para "
+                            f"teste (seed_divisao={cfg_dataset.get('seed_divisao', 0)}). Resultados só são "
+                            f"comparáveis com a literatura se a divisão for a mesma.")
+        else:
+            raiz_tr = os.path.join(raiz, cfg_dataset.get("pasta_treino", "train"))
+            raiz_te = os.path.join(raiz, cfg_dataset.get("pasta_teste", "test"))
+            if not os.path.isdir(raiz_tr) or not os.path.isdir(raiz_te):
+                raise FileNotFoundError(
+                    f"{nome}: esperado formato de pastas com {raiz_tr!r} e {raiz_te!r}, cada uma com uma "
+                    f"subpasta por classe. Ajuste dataset.raiz / pasta_treino / pasta_teste, ou use "
+                    f"pasta_unica + fracao_teste se o dataset não tiver divisão em treino e teste.")
+            train_set = torchvision.datasets.ImageFolder(raiz_tr, transform=transform)
+            test_set = _pastas_com_classes(raiz_te, train_set.classes, transform)
+
+    n = len(train_set.classes)
+    if info["classes"] is not None and n != info["classes"]:
+        logging.warning(f"[Dataset] {nome}: {n} classes encontradas; a versão usada em SimpleCIL/APER/EASE "
+                        f"tem {info['classes']}. Confira se é a mesma versão do dataset.")
+    logging.info(f"[Dataset] {nome} carregado — {n} classes, {len(train_set)} imagens de treino, "
+                 f"{len(test_set)} imagens de teste, entrada {cfg_dataset.get('resize', [64, 64])}"
+                 f"{' com recorte central' if cfg_dataset.get('recorte_central') else ''}.")
     return train_set, test_set
 
 
-def montar_particao_tarefas(num_classes_disponiveis, num_tasks, classes_por_tarefa, seed):
+class DatasetPhi(torch.utils.data.Dataset):
+    """[Velocidade] Dataset de descrições phi já calculadas. Expõe .targets e .classes como os datasets de
+    imagens, então obter_loaders_cil (divisão, remapeamento de rótulos) funciona igual."""
+    def __init__(self, phi, targets, classes):
+        self.phi, self.targets, self.classes = phi, list(targets), list(classes)
+
+    def __len__(self):
+        return len(self.targets)
+
+    def __getitem__(self, i):
+        return self.phi[i], self.targets[i]
+
+
+class BackboneIdentidade(nn.Module):
+    """[Velocidade] Com cache_phi, os loaders já entregam phi; o "backbone" vira a identidade."""
+    def forward(self, x):
+        return x
+
+
+@torch.no_grad()
+def calcular_phi(backbone, dataset):
+    feats = []
+    for x, _ in DataLoader(dataset, batch_size=256, shuffle=False, num_workers=2):
+        feats.append(backbone(x.to(DEVICE)).float().cpu())
+    return torch.cat(feats)
+
+
+def preparar_cache_phi(backbone_real, train_set, test_set, cfg_dataset):
+    """Calcula (ou lê do disco) phi de todo o treino e todo o teste, na ordem original dos datasets."""
+    chave = json.dumps({k: cfg_dataset.get(k) for k in ("nome", "raiz", "raiz_cifar", "raiz_omnibenchmark",
+                        "pasta_treino", "pasta_teste", "pasta_unica", "fracao_teste", "seed_divisao",
+                        "resize", "recorte_central")}, sort_keys=True)
+    import hashlib
+    nome_arq = f"{cfg_dataset['nome']}_{hashlib.md5(chave.encode()).hexdigest()[:10]}.pt"
+    pasta = os.path.join(OS_RESULTADOS_RAIZ, "cache_phi")
+    caminho = os.path.join(pasta, nome_arq)
+    if CACHE_PHI_DISCO and os.path.exists(caminho):
+        dados = torch.load(caminho, map_location="cpu")
+        if dados["n_treino"] == len(train_set) and dados["n_teste"] == len(test_set):
+            logging.info(f"[Cache phi] lido de {caminho}")
+            return dados["phi_treino"], dados["phi_teste"]
+        logging.warning(f"[Cache phi] {caminho} não corresponde ao dataset atual; recalculando.")
+    t0 = datetime.now()
+    phi_tr, phi_te = calcular_phi(backbone_real, train_set), calcular_phi(backbone_real, test_set)
+    logging.info(f"[Cache phi] phi calculado uma vez: treino {tuple(phi_tr.shape)}, teste {tuple(phi_te.shape)} "
+                 f"em {(datetime.now() - t0).total_seconds():.0f}s.")
+    if CACHE_PHI_DISCO:
+        os.makedirs(pasta, exist_ok=True)
+        torch.save({"phi_treino": phi_tr, "phi_teste": phi_te, "n_treino": len(train_set),
+                    "n_teste": len(test_set), "chave": chave}, caminho)
+        logging.info(f"[Cache phi] gravado em {caminho}")
+    return phi_tr, phi_te
+
+
+def montar_particao_tarefas(num_classes_disponiveis, num_tasks, classes_por_tarefa, seed, ordem="aleatoria"):
     """Sorteia, sem reposição, num_tasks*classes_por_tarefa classes do
     dataset (índices originais) e as divide em num_tasks blocos de
     classes_por_tarefa cada -- a ORDEM dos blocos define a ordem das tarefas
@@ -330,8 +492,11 @@ def montar_particao_tarefas(num_classes_disponiveis, num_tasks, classes_por_tare
         raise ValueError(
             f"num_tasks*classes_por_tarefa={necessarias} excede as {num_classes_disponiveis} "
             f"classes disponíveis no dataset escolhido.")
-    rng = np.random.RandomState(seed)
-    classes_sorteadas = rng.choice(num_classes_disponiveis, size=necessarias, replace=False)
+    if ordem == "original":
+        classes_sorteadas = np.arange(necessarias)
+    else:
+        rng = np.random.RandomState(seed)
+        classes_sorteadas = rng.choice(num_classes_disponiveis, size=necessarias, replace=False)
     tarefas_classes_originais = [
         classes_sorteadas[i * classes_por_tarefa:(i + 1) * classes_por_tarefa].tolist()
         for i in range(num_tasks)
@@ -762,6 +927,9 @@ def calcular_logits_finais(backbone, adapters, fc, lvq, images, classes_por_tare
         tarefa_idx = c // classes_por_tarefa
         delta_c = deltas_por_tarefa[tarefa_idx]
         s_cos = F.cosine_similarity(delta_c, fc[c].unsqueeze(0).expand_as(delta_c), dim=1)
+        if alpha_lvq == 0:          # LVQ desligado: mesma nota, sem calcular as distâncias
+            scores.append(s_cos)
+            continue
         s_lvq = lvq.score_lvq(delta_c, c, tau_lvq)
         scores.append((1 - alpha_lvq) * s_cos + alpha_lvq * s_lvq)
     return torch.stack(scores, dim=1)
@@ -836,7 +1004,8 @@ def avaliar_validacao(backbone, adapters_anteriores, adapter_novo, fc, lvq, load
 
 
 def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
-                    loader_treino, loader_teste_acumulado, nomes_classe_cil, gerador=None, loader_val=None):
+                    loader_treino, loader_teste_acumulado, nomes_classe_cil, gerador=None, loader_val=None,
+                    estat_anteriores=None):
     classes_novas = list(range(indice_tarefa * CLASSES_POR_TAREFA, (indice_tarefa + 1) * CLASSES_POR_TAREFA))
     todas_classes_ativas = list(range(0, (indice_tarefa + 1) * CLASSES_POR_TAREFA))
     nomes_tarefa = ", ".join(nomes_classe_cil[c] for c in classes_novas)
@@ -908,6 +1077,10 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
     parar = False
     info_parada = None
 
+    # [Padronização] estimativa corrente (média móvel) da nota vencedora do Adapter novo nas imagens de
+    # treino, para a margem padronizada dos pseudo-negativos (a estatística definitiva só existe no fim)
+    estat_nova = None
+
     historico = []
     for epoch in range(EPOCHS_POR_TAREFA):
         adapter_novo.train()
@@ -935,6 +1108,11 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
             ], dim=1)
             # [Correção] escala s nos logits (s = 1 reproduz o comportamento anterior)
             loss_ce = criterion(ESCALA_LOGITS * logits_cos, labels)
+            with torch.no_grad():
+                venc = logits_cos[:, -CLASSES_POR_TAREFA:].max(dim=1).values
+                mu_b, sd_b = float(venc.mean()), float(venc.std()) if venc.numel() > 1 else 0.0
+                estat_nova = (mu_b, sd_b) if estat_nova is None else \
+                    (0.9 * estat_nova[0] + 0.1 * mu_b, 0.9 * estat_nova[1] + 0.1 * sd_b)
             loss_lvq, bmu = lvq.perda_lvq(delta_novo, labels, classes_ativas=todas_classes_ativas)
             if ATUALIZAR_PROTOTIPOS_NOVOS:
                 idx_local = labels - indice_tarefa * CLASSES_POR_TAREFA
@@ -949,7 +1127,9 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
             if usar_pn:
                 ctx = {"adapters_anteriores": adapters_anteriores, "adapter_novo": adapter_novo,
                        "fc": fc_expandida, "lvq": lvq, "classes_ativas": todas_classes_ativas,
-                       "classes_novas": classes_novas}
+                       "classes_novas": classes_novas,
+                       "estat_tarefas": (list(estat_anteriores) + [estat_nova])
+                       if estat_anteriores is not None and estat_nova is not None else None}
                 phi_pn, y_pn = gerador.amostrar(PN_POR_LOTE, ctx)
                 S_pn = scores_combinados(phi_pn, adapters_anteriores, adapter_novo, fc_expandida, lvq,
                                          todas_classes_ativas, CLASSES_POR_TAREFA, ALPHA_LVQ, TAU_LVQ,
@@ -1032,22 +1212,24 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
             if epoch + 1 >= PA_EPOCAS_MIN and sem_melhora >= PA_PACIENCIA:
                 parar = True
 
-        adapter_novo.eval()
-        adapters_atuais = adapters_anteriores + [adapter_novo]
-        acc_por_classe = testar_por_classe(backbone, adapters_atuais, fc_expandida, lvq, loader_teste_acumulado,
-                                            todas_classes_ativas, CLASSES_POR_TAREFA, ALPHA_LVQ, TAU_LVQ)
-        acc_por_tarefa_vista = [
-            float(np.mean([acc_por_classe[c] for c in range(t * CLASSES_POR_TAREFA, (t + 1) * CLASSES_POR_TAREFA)]))
-            for t in range(indice_tarefa + 1)
-        ]
-        aac_ep = float(np.mean(acc_por_tarefa_vista))
-
-        registro = {
-            "epoca": epoch + 1, "loss_ce": loss_ce_treino, "loss_lvq": loss_lvq_treino,
-            "acc_treino": acc_treino, "acc_por_classe": {nomes_classe_cil[c]: acc_por_classe[c]
-                                                          for c in todas_classes_ativas},
-            "acc_por_tarefa": acc_por_tarefa_vista, "aac": aac_ep,
-        }
+        # [Velocidade] teste durante o treino só a cada AVAL_TESTE_A_CADA épocas (é só para os gráficos;
+        # nenhuma decisão usa o teste), e sempre na 1ª, na última, na de parada e nas de log
+        log_agora = (epoch + 1) % FREQ_LOG_EPOCAS == 0 or epoch == EPOCHS_POR_TAREFA - 1 or parar
+        avaliar_agora = epoch == 0 or (epoch + 1) % AVAL_TESTE_A_CADA == 0 or log_agora
+        registro = {"epoca": epoch + 1, "loss_ce": loss_ce_treino, "loss_lvq": loss_lvq_treino,
+                    "acc_treino": acc_treino}
+        if avaliar_agora:
+            adapter_novo.eval()
+            adapters_atuais = adapters_anteriores + [adapter_novo]
+            acc_por_classe = testar_por_classe(backbone, adapters_atuais, fc_expandida, lvq, loader_teste_acumulado,
+                                                todas_classes_ativas, CLASSES_POR_TAREFA, ALPHA_LVQ, TAU_LVQ)
+            acc_por_tarefa_vista = [
+                float(np.mean([acc_por_classe[c] for c in range(t * CLASSES_POR_TAREFA, (t + 1) * CLASSES_POR_TAREFA)]))
+                for t in range(indice_tarefa + 1)
+            ]
+            aac_ep = float(np.mean(acc_por_tarefa_vista))
+            registro.update({"acc_por_classe": {nomes_classe_cil[c]: acc_por_classe[c] for c in todas_classes_ativas},
+                             "acc_por_tarefa": acc_por_tarefa_vista, "aac": aac_ep})
         if val is not None:
             registro.update(val)
         if usar_pn:
@@ -1060,7 +1242,7 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
             registro["pseudo_negativos"] = gerador.resumo_estatisticas()
         historico.append(registro)
 
-        if (epoch + 1) % FREQ_LOG_EPOCAS == 0 or epoch == EPOCHS_POR_TAREFA - 1 or parar:
+        if log_agora:
             resumo_classes = " | ".join(f"{nomes_classe_cil[c]}: {acc_por_classe[c]:.2f}%" for c in classes_novas)
             logging.info(f"   [Tarefa {indice_tarefa}] Época [{epoch+1}/{EPOCHS_POR_TAREFA}] -> "
                          f"CE:{loss_ce_treino:.4f} | L_LVQ:{loss_lvq_treino:.4f} | "
@@ -1472,6 +1654,7 @@ def plotar_tsne(feats, labs, nomes_classe_cil, titulo, nome_arquivo):
 
 
 def plotar_acc_por_classe(historico, classes_da_tarefa, nomes_classe_cil, indice_tarefa, nome_arquivo):
+    historico = [h for h in historico if "acc_por_classe" in h]   # épocas em que o teste foi avaliado
     epocas = [h["epoca"] for h in historico]
     cores = _paleta(len(classes_da_tarefa))
     fig, ax = plt.subplots(figsize=(9, 5.5))
@@ -1492,6 +1675,7 @@ def plotar_acc_por_classe(historico, classes_da_tarefa, nomes_classe_cil, indice
 
 
 def plotar_aac_acumulado(historico, indice_tarefa, nome_arquivo):
+    historico = [h for h in historico if "aac" in h]
     epocas = [h["epoca"] for h in historico]
     fig, ax = plt.subplots(figsize=(9, 5.5))
     ax.plot(epocas, [h["aac"] for h in historico], color='tab:blue', label="AAC (tarefas vistas)")
@@ -1692,13 +1876,18 @@ def _json_seguro(v):
     return v
 
 
-def relatorio_vazamento(backbone, adapters, fc, lvq, loader, banco, task_stats, rotulo):
-    logits, labels = coletar_logits(backbone, adapters, fc, lvq, loader)
+def relatorio_vazamento(backbone, adapters, fc, lvq, loader, banco, task_stats, rotulo, padronizar=False,
+                        logits_labels=None):
+    """Métricas de vazamento. Com padronizar=True, usa as notas padronizadas por tarefa (média e desvio
+    da nota vencedora no treino de cada tarefa), as mesmas de treino.padronizar_notas."""
+    logits, labels = logits_labels if logits_labels is not None else coletar_logits(backbone, adapters, fc, lvq, loader)
     num_classes = logits.shape[1]
     class_task = np.arange(num_classes) // CLASSES_POR_TAREFA
     protos = np.stack([banco.media(c).cpu().numpy() for c in range(num_classes)])
-    rep = leakage_metrics(logits, labels, class_task, protos=protos, task_stats=task_stats)
-    logging.info(f"=== MÉTRICAS DE VAZAMENTO — {rotulo} ===")
+    if padronizar:
+        logits = normalize_by_task(logits, class_task, task_stats)
+    rep = leakage_metrics(logits, labels, class_task, protos=protos, task_stats=None if padronizar else task_stats)
+    logging.info(f"=== MÉTRICAS DE VAZAMENTO — {rotulo}{' (notas padronizadas)' if padronizar else ''} ===")
     for linha in rep.resumo().splitlines():
         logging.info("   " + linha)
     return {
@@ -1717,20 +1906,88 @@ def relatorio_vazamento(backbone, adapters, fc, lvq, loader, banco, task_stats, 
     }
 
 
+def _normalizar_nome(nome):
+    return re.sub(r"[\s\-]+", "_", str(nome).strip().lower())
+
+
+def avaliar_dataset_extra(cfg_extra, backbone, adapters, fc, lvq, nomes_classe_cil, task_stats):
+    """[Datasets] Testa o modelo final em outro dataset, SEM treinar nele (ex.: ObjectNet).
+
+    Bloco em "avaliacao_extra" (lista) do config ou do perfil:
+      nome         : rótulo usado no JSON e no log
+      raiz, pasta  : pasta com uma subpasta por classe (ex.: raiz/test)
+      mapa_classes : opcional, JSON {nome_da_pasta_no_extra: nome_da_classe_no_treino}. Sem ele, casa
+                     os nomes iguais (sem diferenciar maiúsculas, espaços e hífens)
+      resize, recorte_central : opcionais; por padrão, os mesmos do dataset de treino
+    Só entram as imagens das classes que existem no treino; o modelo escolhe entre TODAS as classes
+    treinadas, como no teste normal. Reporta acurácia, vazamento e quantas classes casaram."""
+    nome = cfg_extra["nome"]
+    raiz = os.path.join(resolver_caminho(cfg_extra["raiz"]), cfg_extra.get("pasta", "test"))
+    cfg_tf = dict(CFG_DATASET)
+    cfg_tf.update({k: cfg_extra[k] for k in ("resize", "recorte_central") if k in cfg_extra})
+    ds = torchvision.datasets.ImageFolder(raiz, transform=construir_transform(cfg_tf))
+    treino_por_nome = {_normalizar_nome(n): c for c, n in nomes_classe_cil.items()}
+    mapa = {}
+    if cfg_extra.get("mapa_classes"):
+        with open(resolver_caminho(cfg_extra["mapa_classes"]), encoding="utf-8") as f:
+            mapa = {_normalizar_nome(k): _normalizar_nome(v) for k, v in json.load(f).items()}
+    extra_para_cil = {}
+    for i, n in enumerate(ds.classes):
+        alvo = mapa.get(_normalizar_nome(n), _normalizar_nome(n))
+        if alvo in treino_por_nome:
+            extra_para_cil[i] = treino_por_nome[alvo]
+    if not extra_para_cil:
+        raise ValueError(f"nenhuma classe de {raiz} corresponde às classes treinadas; use 'mapa_classes'.")
+    ds.samples = [(c, extra_para_cil[r]) for c, r in ds.samples if r in extra_para_cil]
+    ds.imgs, ds.targets = ds.samples, [r for _, r in ds.samples]
+    loader = DataLoader(ds, batch_size=BATCH_SIZE, shuffle=False)
+    logits, labels = coletar_logits(backbone, adapters, fc, lvq, loader)
+    class_task = np.arange(logits.shape[1]) // CLASSES_POR_TAREFA
+    rep_ = leakage_metrics(logits, labels, class_task, task_stats=task_stats)
+    res = {"raiz": raiz, "classes_no_extra": len(ds.classes), "classes_casadas": len(extra_para_cil),
+           "imagens_avaliadas": len(ds.samples), "acc": _json_seguro(rep_.acc),
+           "vazamento": _json_seguro(rep_.leakage), "erro_dentro_da_tarefa": _json_seguro(rep_.e_wp),
+           "acc_oraculo_tarefa": _json_seguro(rep_.acc_oracle),
+           "vazamento_apos_normalizacao": _json_seguro(rep_.leakage_norm)}
+    logging.info(f"[Avaliação extra] {nome}: {len(extra_para_cil)} de {len(ds.classes)} classes casaram com o treino, "
+                 f"{len(ds.samples)} imagens | acurácia {100 * rep_.acc:.2f}% | vazamento {100 * rep_.leakage:.2f}%")
+    return res
+
+
 # ============================================================================
 # 15. PIPELINE PRINCIPAL
 # ============================================================================
 def executar_experimento():
+    global NUM_TASKS, NUM_CLASSES_TOTAIS
     logging.info(f"=== [Nova Estratégia 2] Generalização da Estratégia 26 — "
-                 f"{NUM_TASKS} tarefas x {CLASSES_POR_TAREFA} classes, dataset={CFG_DATASET['nome']}, "
+                 f"{NUM_TASKS or 'auto'} tarefas x {CLASSES_POR_TAREFA} classes, dataset={CFG_DATASET['nome']}, "
                  f"seed={SEED} ===")
 
     train_set, test_set = carregar_dataset_base(CFG_DATASET)
-    tarefas_classes_originais = montar_particao_tarefas(len(train_set.classes), NUM_TASKS, CLASSES_POR_TAREFA, SEED)
+    if NUM_TASKS == 0:   # num_tasks = "auto": todas as classes, em tarefas de CLASSES_POR_TAREFA
+        NUM_TASKS = len(train_set.classes) // CLASSES_POR_TAREFA
+        NUM_CLASSES_TOTAIS = NUM_TASKS * CLASSES_POR_TAREFA
+        sobra = len(train_set.classes) - NUM_CLASSES_TOTAIS
+        logging.info(f"[Tarefas] num_tasks automático: {len(train_set.classes)} classes / {CLASSES_POR_TAREFA} "
+                     f"= {NUM_TASKS} tarefas" + (f" ({sobra} classes ficam de fora)" if sobra else ""))
+        if NUM_TASKS < 2:
+            raise ValueError("Com esse classes_por_tarefa sobra menos de 2 tarefas.")
+    tarefas_classes_originais = montar_particao_tarefas(len(train_set.classes), NUM_TASKS, CLASSES_POR_TAREFA, SEED,
+                                                        ordem=ORDEM_CLASSES)
     mapa_original_para_cil, nomes_classe_cil = preparar_particao_e_nomes(train_set, tarefas_classes_originais)
     for t, tarefa_orig in enumerate(tarefas_classes_originais):
         nomes = [nomes_classe_cil[mapa_original_para_cil[c]] for c in tarefa_orig]
         logging.info(f"[Partição de tarefas] Tarefa {t}: classes originais {tarefa_orig} -> {nomes}")
+
+    backbone_real = criar_backbone_pretreinado_congelado()
+    if CACHE_PHI:
+        phi_tr, phi_te = preparar_cache_phi(backbone_real, train_set, test_set, CFG_DATASET)
+        train_set = DatasetPhi(phi_tr, train_set.targets, train_set.classes)
+        test_set = DatasetPhi(phi_te, test_set.targets, test_set.classes)
+        backbone = BackboneIdentidade().to(DEVICE)
+        logging.info("[Cache phi] ATIVO: os Adapters treinam sobre phi pré-calculado.")
+    else:
+        backbone = backbone_real
 
     loaders_treino, loaders_teste_tarefa, loaders_teste_acumulado, loaders_teste_classe, loaders_validacao = \
         obter_loaders_cil(train_set, test_set, tarefas_classes_originais, mapa_original_para_cil, BATCH_SIZE,
@@ -1742,7 +1999,6 @@ def executar_experimento():
                      f"Imagens de treino por tarefa: {[len(l.dataset) for l in loaders_treino]}; "
                      f"de validação: {[len(l.dataset) for l in loaders_validacao]}.")
 
-    backbone = criar_backbone_pretreinado_congelado()
     linhas, colunas = dimensionar_grade_lvq(NUM_TASKS, CLASSES_POR_TAREFA, UNIDADES_LVQ_POR_CLASSE)
     logging.info(f"[Mapa LVQ] Grade hexagonal {linhas}x{colunas}={linhas*colunas} unidades "
                  f"({NUM_TASKS} blocos de linha x {CLASSES_POR_TAREFA} blocos de coluna, "
@@ -1763,6 +2019,8 @@ def executar_experimento():
             "adapter_residual": ADAPTER_RESIDUAL, "escala_logits": ESCALA_LOGITS,
             "init_classes_novas": INIT_CLASSES_NOVAS, "atualizar_prototipos_novos": ATUALIZAR_PROTOTIPOS_NOVOS,
             "parada_antecipada": CFG_PA if PA_ATIVO else {"ativo": False},
+            "cache_phi": CACHE_PHI, "padronizar_notas": PADRONIZAR_NOTAS,
+            "avaliar_teste_a_cada": AVAL_TESTE_A_CADA,
         },
         "particao_tarefas": {
             "classes_originais_por_tarefa": tarefas_classes_originais,
@@ -1798,7 +2056,7 @@ def executar_experimento():
         gerador.preparar_tarefa(classes_antigas=list(range(t * CLASSES_POR_TAREFA)))
         adapter_t, fc, historico_t, theta_init_adapter_t, theta_init_lvq_t, classes_novas = treinar_tarefa(
             t, backbone, lvq, adapters, fc, loaders_treino[t], loaders_teste_acumulado[t], nomes_classe_cil,
-            gerador=gerador, loader_val=loaders_validacao[t])
+            gerador=gerador, loader_val=loaders_validacao[t], estat_anteriores=list(task_stats))
 
         # [Estratégia 2] alimenta o banco com phi das classes desta tarefa (backbone congelado:
         # não depende do Adapter, então estas estatísticas valem para todas as tarefas futuras)
@@ -1871,15 +2129,22 @@ def executar_experimento():
                                     f"margem_vazamento_nova_estrategia_2_apos_tarefa{t}")
 
             # [Estratégia 2] métricas de vazamento entre tarefas após esta fronteira
+            _ll = coletar_logits(backbone, adapters + [adapter_t], fc, lvq, loaders_teste_acumulado[t])
             json_data.setdefault("metricas_vazamento_por_fronteira", {})[str(t)] = relatorio_vazamento(
                 backbone, adapters + [adapter_t], fc, lvq, loaders_teste_acumulado[t], banco,
-                task_stats, f"após a tarefa {t}")
+                task_stats, f"após a tarefa {t}", logits_labels=_ll)
+            json_data.setdefault("metricas_vazamento_por_fronteira_padronizada", {})[str(t)] = relatorio_vazamento(
+                backbone, adapters + [adapter_t], fc, lvq, loaders_teste_acumulado[t], banco,
+                task_stats, f"após a tarefa {t}", padronizar=True, logits_labels=_ll)
 
         # [Correção] acurácia no teste acumulado logo após cada tarefa (inclusive a tarefa 0),
         # para a AAC incremental da literatura (média dessas acurácias), além da acurácia média final.
         _lg, _lb = coletar_logits(backbone, adapters + [adapter_t], fc, lvq, loaders_teste_acumulado[t])
         json_data.setdefault("acc_apos_tarefa", []).append(float((_lg.argmax(axis=1) == _lb).mean() * 100))
-        logging.info(f"[Tarefa {t}] Acurácia no teste acumulado após a tarefa: {json_data['acc_apos_tarefa'][-1]:.2f}%")
+        _z = normalize_by_task(_lg, np.arange(_lg.shape[1]) // CLASSES_POR_TAREFA, task_stats)
+        json_data.setdefault("acc_apos_tarefa_padronizada", []).append(float((_z.argmax(axis=1) == _lb).mean() * 100))
+        logging.info(f"[Tarefa {t}] Acurácia no teste acumulado após a tarefa: {json_data['acc_apos_tarefa'][-1]:.2f}% "
+                     f"(notas padronizadas: {json_data['acc_apos_tarefa_padronizada'][-1]:.2f}%)")
 
         adapters.append(adapter_t)
         thetas_init_adapter.append(theta_init_adapter_t)
@@ -1912,6 +2177,20 @@ def executar_experimento():
     # "aac_incremental" é a AAC da literatura: média das acurácias após cada tarefa.
     aac_incremental = float(np.mean(json_data.get("acc_apos_tarefa", [float("nan")])))
     logging.info(f" > AAC incremental (média das acurácias após cada tarefa): {aac_incremental:.2f}%")
+    # [Padronização] mesmos números com as notas padronizadas por tarefa
+    _lg_f, _lb_f = coletar_logits(backbone, adapters, fc, lvq, loader_teste_total)
+    _z_f = normalize_by_task(_lg_f, np.arange(_lg_f.shape[1]) // CLASSES_POR_TAREFA, task_stats)
+    _pred_z = _z_f.argmax(axis=1)
+    acc_por_tarefa_pad = [float((_pred_z[_lb_f // CLASSES_POR_TAREFA == k] == _lb_f[_lb_f // CLASSES_POR_TAREFA == k])
+                                .mean() * 100) for k in range(NUM_TASKS)]
+    json_data["resultado_final_padronizado"] = {
+        "acc_por_tarefa": acc_por_tarefa_pad, "aac": float(np.mean(acc_por_tarefa_pad)),
+        "aac_incremental": float(np.mean(json_data.get("acc_apos_tarefa_padronizada", [float("nan")]))),
+    }
+    json_data["versao_principal"] = "padronizada" if PADRONIZAR_NOTAS else "original"
+    logging.info(f" > Acurácia final padronizada ({NUM_TASKS} tarefas): {json_data['resultado_final_padronizado']['aac']:.2f}% "
+                 f"| AAC incremental padronizada: {json_data['resultado_final_padronizado']['aac_incremental']:.2f}% "
+                 f"| por tarefa: {[round(v, 1) for v in acc_por_tarefa_pad]}")
     json_data["resultado_final"] = {
         "acc_por_tarefa": acc_por_tarefa_final, "aac": aac, "aac_incremental": aac_incremental,
         "nc1_concatenado": nc1,
@@ -1935,7 +2214,19 @@ def executar_experimento():
 
     # [Estratégia 2] métricas de vazamento finais
     json_data["metricas_vazamento_final"] = relatorio_vazamento(
-        backbone, adapters, fc, lvq, loader_teste_total, banco, task_stats, "final")
+        backbone, adapters, fc, lvq, loader_teste_total, banco, task_stats, "final", logits_labels=(_lg_f, _lb_f))
+    json_data["metricas_vazamento_final_padronizada"] = relatorio_vazamento(
+        backbone, adapters, fc, lvq, loader_teste_total, banco, task_stats, "final", padronizar=True,
+        logits_labels=(_lg_f, _lb_f))
+
+    # [Datasets] avaliação extra: só TESTE em outros datasets com o modelo final (ex.: ObjectNet)
+    for cfg_extra in CFG.get("avaliacao_extra", []) or []:
+        try:
+            json_data.setdefault("avaliacao_extra", {})[cfg_extra["nome"]] = avaliar_dataset_extra(
+                cfg_extra, backbone_real, adapters, fc, lvq, nomes_classe_cil, task_stats)
+        except Exception as erro:   # uma avaliação extra com problema não derruba a execução inteira
+            logging.error(f"[Avaliação extra] {cfg_extra.get('nome')}: falhou ({erro}).")
+            json_data.setdefault("avaliacao_extra", {})[cfg_extra.get("nome", "?")] = {"erro": str(erro)}
 
     # === CHECKPOINT ===
     checkpoint_path = os.path.join(OS_CHECKPOINTS_DIR, f"checkpoint_{ID_EXECUCAO}.pt")

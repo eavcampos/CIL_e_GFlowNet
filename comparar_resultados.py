@@ -41,12 +41,16 @@ import matplotlib.pyplot as plt
 
 # Paleta categórica validada (dataviz, validate_palette.js: CVD e contraste aprovados)
 # (#199e70 = verde-água um passo mais escuro, para contraste >= 3:1 no fundo branco)
-COR = {"baseline": "#2a78d6", "experimento": "#eb6834", "gauss": "#199e70"}
+COR = {"baseline": "#2a78d6", "experimento": "#eb6834", "gauss": "#199e70", "margem_padronizada": "#8e5bd0"}
 ROTULO = {"baseline": "Linha de base (sem pseudo-negativos)",
           "gauss": "Gauss (pseudo-negativos às cegas)",
-          "experimento": "Experimento (pseudo-negativos pela margem)"}
-ROTULO_CURTO = {"baseline": "Linha\nde base", "gauss": "Gauss\n(às cegas)", "experimento": "Experimento\n(margem)"}
-ORDEM_BRACOS = ["baseline", "gauss", "experimento"]   # do mais simples ao método proposto
+          "experimento": "Experimento (pseudo-negativos pela margem)",
+          "margem_padronizada": "Margem padronizada (pseudo-negativos pela margem nas notas padronizadas)"}
+ROTULO_CURTO = {"baseline": "Linha\nde base", "gauss": "Gauss\n(às cegas)", "experimento": "Experimento\n(margem)",
+                "margem_padronizada": "Margem\npadronizada"}
+NOME_SIMPLES = {"baseline": "linha de base", "gauss": "gauss", "experimento": "experimento",
+                "margem_padronizada": "margem padronizada"}
+ORDEM_BRACOS = ["baseline", "gauss", "experimento", "margem_padronizada"]   # do mais simples ao método proposto
 TINTA, TINTA_2, GRADE = "#1f1f1e", "#5f5e58", "#e4e3df"
 RAMPA_TAREFAS = ["#86b6ef", "#3987e5", "#1c5cab", "#0d366b"]       # ordinal, uma matiz (azul)
 
@@ -70,9 +74,18 @@ def papel(nome_config):
 
 def contrastes(bracos):
     """Pares (depois, antes) cuja diferença é reportada."""
+    pares = []
     if "gauss" in bracos:
-        return [("gauss", "baseline"), ("experimento", "gauss")]
-    return [("experimento", "baseline")]
+        pares += [("gauss", "baseline")]
+        if "experimento" in bracos:
+            pares += [("experimento", "gauss")]
+    elif "experimento" in bracos:
+        pares += [("experimento", "baseline")]
+    if "margem_padronizada" in bracos:
+        pares += [("margem_padronizada", "gauss" if "gauss" in bracos else "baseline")]
+        if "experimento" in bracos:
+            pares += [("margem_padronizada", "experimento")]
+    return pares
 
 
 def carregar(pasta):
@@ -161,7 +174,7 @@ def grafico_pares(m, bracos, seeds, pasta, sufixo):
         ax.set_xlim(-0.3, k - 1 + 0.4)
         ax.set_ylabel(f"{unidade} ({sentido})", fontsize=8)
         ax.grid(axis="x", visible=False)
-    nomes = " × ".join({"baseline": "linha de base", "gauss": "gauss", "experimento": "experimento"}[p] for p in bracos)
+    nomes = " × ".join(NOME_SIMPLES[p] for p in bracos)
     fig.suptitle(f"{nomes[0].upper() + nomes[1:]}, pareado por seed{sufixo}", x=0.01, ha="left",
                  fontsize=12, color=TINTA, fontweight="bold")
     fig.tight_layout()
@@ -313,6 +326,25 @@ def escrever_csv(m, bracos, seeds, pasta, referencias=None):
     print(f"  {caminho}")
 
 
+VERSOES = ("original", "padronizada")
+
+
+def versao_json(d, versao):
+    """Para versao='padronizada', devolve uma cópia rasa do JSON em que os campos principais são os das
+    notas padronizadas, para reaproveitar todos os gráficos. None se a execução não tiver essa versão."""
+    if versao == "original":
+        return d
+    if "resultado_final_padronizado" not in d:
+        return None
+    v = dict(d)
+    rf = dict(d["resultado_final"])
+    rf.update(d["resultado_final_padronizado"])
+    v["resultado_final"] = rf
+    v["metricas_vazamento_final"] = d.get("metricas_vazamento_final_padronizada", {})
+    v["metricas_vazamento_por_fronteira"] = d.get("metricas_vazamento_por_fronteira_padronizada", {})
+    return v
+
+
 def main():
     pasta_script = os.path.dirname(os.path.abspath(__file__))
     ap = argparse.ArgumentParser(description="Compara linha de base, gauss e experimento (Nova Estratégia 2)")
@@ -325,37 +357,46 @@ def main():
         print(f"Nenhum resultado de 'baseline*' ou 'experimento*' em {os.path.abspath(args.resultados)}.")
         return 1
     carimbo = f"{datetime.now():%Y%m%d_%H%M%S}"
-    for sufixo, grupo in sorted(grupos.items()):
+    for sufixo, grupo_orig in sorted(grupos.items()):
         nome_grupo = sufixo.strip("_") or "principal"
-        if "baseline" not in grupo or "experimento" not in grupo:
-            print(f"[{nome_grupo}] falta a linha de base ou o experimento; nada a comparar.")
+        if "baseline" not in grupo_orig:
+            print(f"[{nome_grupo}] falta a linha de base; nada a comparar.")
             continue
-        seeds_2 = sorted(set(grupo["baseline"]) & set(grupo["experimento"]))
-        seeds_3 = sorted(set(seeds_2) & set(grupo.get("gauss", {})))
-        comparacoes = []
-        if seeds_3:
-            comparacoes.append((["baseline", "gauss", "experimento"], seeds_3, ""))
-        if seeds_2 and seeds_2 != seeds_3:
-            # há seeds sem o braço gauss: compara também os dois braços originais em todas as seeds
-            comparacoes.append((["baseline", "experimento"], seeds_2, "_2bracos" if seeds_3 else ""))
-            if seeds_3:
-                print(f"[{nome_grupo}] gauss só existe para {seeds_3}; os 3 braços são comparados nessas seeds, "
-                      f"e linha de base x experimento também em {seeds_2}.")
-        if not comparacoes:
-            print(f"[{nome_grupo}] nenhuma seed com a linha de base e o experimento concluídos.")
-            continue
-        for bracos, seeds, extra in comparacoes:
-            rotulo = f" ({nome_grupo})" if sufixo else ""
+        for versao in VERSOES:
+            # cada braço em cada seed, na versão pedida (descarta execuções antigas sem essa versão)
+            grupo = {}
+            for p, por_seed in grupo_orig.items():
+                for s, d in por_seed.items():
+                    dv = versao_json(d, versao)
+                    if dv is not None:
+                        grupo.setdefault(p, {})[s] = dv
+            bracos = [p for p in ORDEM_BRACOS if p in grupo]
+            if "baseline" not in bracos or len(bracos) < 2:
+                if versao == "original":
+                    print(f"[{nome_grupo}] só há a linha de base; nada a comparar.")
+                continue
+            seeds = sorted(set.intersection(*(set(grupo[p]) for p in bracos)))
+            if not seeds:
+                print(f"[{nome_grupo}/{versao}] nenhuma seed com todos os braços {bracos}.")
+                continue
+            faltando = {p: sorted(set(grupo[p]) - set(seeds)) for p in bracos if set(grupo[p]) - set(seeds)}
+            if faltando:
+                print(f"[{nome_grupo}/{versao}] seeds fora da comparação (algum braço não terminou): {faltando}")
+            extra = "" if versao == "original" else "_padronizada"
+            rotulo = (f" ({nome_grupo}" + (", notas padronizadas" if versao != "original" else "") + ")"
+                      if sufixo or versao != "original" else "")
             pasta = os.path.join(args.saida, f"{carimbo}{sufixo}{extra}")
             os.makedirs(pasta, exist_ok=True)
-            print(f"Comparando{rotulo} {bracos}: seeds {seeds} -> {os.path.abspath(pasta)}")
+            print(f"Comparando{rotulo or ' (principal)'} {bracos}: seeds {seeds} -> {os.path.abspath(pasta)}")
             m = {p: {s: metricas(grupo[p][s]) for s in seeds} for p in bracos}
-            refs = {s: metricas(grupo["ncm"][s]) for s in seeds if s in grupo.get("ncm", {})}
+            # a referência NCM aparece nas duas versões com as notas originais (NCM não tem inflação de notas)
+            refs = {s: metricas(grupo_orig["ncm"][s]) for s in seeds if s in grupo_orig.get("ncm", {})}
             escrever_csv(m, bracos, seeds, pasta, refs)
             grafico_pares(m, bracos, seeds, pasta, rotulo)
             grafico_fronteiras(grupo, bracos, seeds, pasta, rotulo)
             grafico_acc_tarefas(m, bracos, seeds, pasta, rotulo)
-            grafico_diagnostico(grupo, seeds, pasta, rotulo)
+            if "experimento" in grupo:
+                grafico_diagnostico(grupo, seeds, pasta, rotulo)
             grafico_h4_validacao(grupo, bracos, seeds, pasta, rotulo)
             for p in bracos:
                 print(f"   épocas executadas por tarefa ({p}): "

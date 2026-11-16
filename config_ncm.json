@@ -12,21 +12,19 @@
     "nota_seed": "Rodar o experimento completo uma vez para cada valor de 'seed' acima (editando este campo, ou via 'python cil_nova_estrategia_1.py --seed 1994') para obter as 4 repetições independentes do estudo. A mesma seed controla tanto a reprodutibilidade geral (random/numpy/torch) quanto o sorteio de quais classes do dataset compõem cada tarefa.",
     "dataset": {
         "nome": "cifar100",
-        "nota_nome": "Valores aceitos: 'cifar10', 'cifar100' ou 'omnibenchmark'.",
-        "raiz_cifar": "../../my_data",
-        "raiz_omnibenchmark": "../../my_data/omnibenchmark",
-        "nota_omnibenchmark": "Esperado em formato ImageFolder com subpastas 'train/' e 'test/', cada uma contendo uma subpasta por classe (convenção torchvision.datasets.ImageFolder) — mesmo benchmark de 300 classes fine-grained usado em SimpleCIL/ADAM (Zhou et al., IJCV 2024) e EASE/RanPAC, já citados nas Estratégias 24c-24e deste projeto.",
+        "raiz": "../../my_data",
         "resize": [
             64,
             64
         ],
-        "nota_resize": "Backbones pré-treinados no ImageNet normalmente esperam ~224x224; 64x64 é mantido por comparabilidade com as Estratégias 24-27c, mas pode ser alterado aqui.",
-        "nota_raiz": "Caminhos relativos são resolvidos a partir da pasta onde está cil_nova_estrategia_2.py (não da pasta de onde o comando é executado). '../../my_data' = dois níveis acima do projeto. Para o CIFAR-100, esta pasta deve CONTER a subpasta 'cifar-100-python' (formato do torchvision). Pode-se usar caminho absoluto. Use '/' mesmo no Windows."
+        "recorte_central": false,
+        "nota": "Dataset padrão deste config. Para outro dataset, não edite aqui: use um perfil, por exemplo 'bash rodar_experimentos.sh --perfil imagenet_r --bateria 1' (arquivos em perfis/)."
     },
     "tarefas": {
-        "num_tasks": 5,
         "classes_por_tarefa": 20,
-        "nota": "5 tarefas x 20 classes = as 100 classes do CIFAR-100. Com 100 de 100 classes, a seed não muda QUAIS classes entram, só a ORDEM em que aparecem e como se agrupam nas tarefas. num_tasks * classes_por_tarefa classes são sorteadas (sem reposição) do total de classes do dataset escolhido, usando 'seed'. As classes de cada tarefa nunca se repetem entre tarefas nem dentro da mesma tarefa."
+        "num_tasks": 5,
+        "ordem_classes": "aleatoria",
+        "nota": "classes_por_tarefa define o tamanho de cada tarefa; num_tasks = 'auto' usa todas as classes do dataset (protocolo B0 IncX). Para usar só parte das classes, ponha um número em num_tasks. ordem_classes: 'aleatoria' (sorteada pela seed) ou 'original'."
     },
     "treino": {
         "epochs_por_tarefa": 0,
@@ -46,7 +44,7 @@
         "atualizar_prototipos_novos": true,
         "nota_ncm": "Sem treino: com adapter_residual = true e 'up' iniciado em zero, cada Adapter é a identidade, e a classificação é o cosseno entre phi e a média de phi de cada classe (classificador pela média sobre o backbone congelado; SimpleCIL, Zhou et al., IJCV 2024). Não há vazamento entre Adapters por construção: todas as classes vivem no mesmo espaço phi.",
         "parada_antecipada": {
-            "ativo": true,
+            "ativo": false,
             "fracao_validacao": 0.1,
             "metrica": "ambas",
             "peso_pn_validacao": 0.5,
@@ -57,7 +55,12 @@
             "pseudo_negativos_validacao": 1000,
             "nota": "Parada antecipada: 10% do treino de cada classe vira validação (o teste nunca decide nada). Métrica 'ambas': acompanha separadamente (1) a CE de validação nas classes novas (aprender o novo) e (2) a CE de um conjunto FIXO de 1000 pseudo-negativos sorteados às cegas (recusar o antigo), e só para quando NENHUMA das duas melhora mais que delta_minimo há 'paciencia' épocas, depois de 'epocas_minimas'. Igual em todos os braços, inclusive a linha de base; na tarefa 0 vale só a parte (1). Ao parar, restaura a época da janela final (últimas paciencia+1 épocas) com menor val_ce + peso_pn_validacao x pn_val_ce. epochs_por_tarefa é o MÁXIMO."
         },
-        "nota_opcoes": "(1) escala_logits multiplica os cossenos antes da entropia cruzada (com 1, a softmax nunca fica confiante: NormFace); (2) init_classes_novas = 'media_phi' + atualizar_prototipos_novos: as classes novas são representadas pela média das saídas do Adapter desde o início do treino; (3) LVQ desligado (alpha_lvq = lambda_lvq = 0); (4) adapter_residual: o Adapter devolve phi + up(h) e começa como identidade; (5) parada_antecipada: validação separada do treino decide quando parar."
+        "nota_opcoes": "(1) escala_logits multiplica os cossenos antes da entropia cruzada (com 1, a softmax nunca fica confiante: NormFace); (2) init_classes_novas = 'media_phi' + atualizar_prototipos_novos: as classes novas são representadas pela média das saídas do Adapter desde o início do treino; (3) LVQ desligado (alpha_lvq = lambda_lvq = 0); (4) adapter_residual: o Adapter devolve phi + up(h) e começa como identidade; (5) parada_antecipada: validação separada do treino decide quando parar.",
+        "cache_phi": true,
+        "cache_phi_em_disco": true,
+        "padronizar_notas": true,
+        "avaliar_teste_a_cada": 5,
+        "nota_velocidade": "cache_phi: phi calculado uma vez (e guardado em resultados/cache_phi/ para as outras execuções do mesmo dataset); avaliar_teste_a_cada: teste durante o treino só a cada N épocas, para os gráficos. padronizar_notas: reporta tudo também com as notas padronizadas por tarefa, que viram a versão principal. parada_antecipada desligada: com phi pré-calculado, 100 épocas fixas custam pouco e evitam que cada braço pare numa época diferente."
     },
     "otimizador": {
         "tipo": "SGD",
@@ -100,7 +103,8 @@
             "exploracao": 1.3
         },
         "nota_teste_rapido": "Para um primeiro teste de execução: treino.epochs_por_tarefa = 2 (mantendo 5 x 20). Isso já exercita todas as fronteiras, o banco com 80 classes e os gráficos de 100 classes.",
-        "nota_n_proposta": "Propostas da amostragem por importância por lote. Com até 80 classes antigas (tarefa 4), 4096 dá ~50 propostas por classe antiga; com 1024 seriam ~13, e o ESS ficaria instável."
+        "nota_n_proposta": "Propostas da amostragem por importância por lote. Com até 80 classes antigas (tarefa 4), 4096 dá ~50 propostas por classe antiga; com 1024 seriam ~13, e o ESS ficaria instável.",
+        "margem_padronizada": false
     },
     "papel_no_estudo": "REFERÊNCIA: desempenho do backbone congelado sem Adapters treinados (todas as classes no mesmo espaço phi, sem vazamento entre Adapters por construção). Se superar a linha de base, os Adapters treinados criam o vazamento."
 }

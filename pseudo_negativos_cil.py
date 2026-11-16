@@ -167,11 +167,24 @@ def scores_combinados(phi, adapters_anteriores, adapter_novo, fc, lvq, classes_a
     for c in classes_ativas:
         delta = deltas[c // classes_por_tarefa]
         s_cos = F.cosine_similarity(delta, fc[c].unsqueeze(0).expand_as(delta), dim=1)
+        if alpha_lvq == 0:          # LVQ desligado: não calcula as distâncias (só custo)
+            cols.append(s_cos)
+            continue
         idx = lvq.indices_por_classe[c]
         d2 = torch.cdist(delta, protos[idx]) ** 2
         s_lvq = torch.exp(-d2.min(dim=1).values / (2 * tau_lvq ** 2))
         cols.append((1 - alpha_lvq) * s_cos + alpha_lvq * s_lvq)
     return torch.stack(cols, dim=1)
+
+
+def padronizar_notas_tensor(S, classes_ativas, classes_por_tarefa, estat_tarefas):
+    """(nota - media_k) / desvio_k para cada coluna, com k = tarefa da classe. estat_tarefas[k] =
+    (media, desvio) da nota vencedora nas imagens de treino da tarefa k."""
+    tarefas = torch.tensor([c // classes_por_tarefa for c in classes_ativas], device=S.device)
+    mu = torch.tensor([float(estat_tarefas[k][0]) for k in tarefas.tolist()], device=S.device, dtype=S.dtype)
+    sd = torch.tensor([max(float(estat_tarefas[k][1]), 1e-8) for k in tarefas.tolist()], device=S.device,
+                      dtype=S.dtype)
+    return (S - mu) / sd
 
 
 def margem_vazamento(S, rotulos, classes_novas, classes_ativas):
@@ -278,6 +291,9 @@ class GeradorPseudoNegativos:
         self.beta = float(cfg.get("beta", 5.0))
         self.n_prop = int(cfg.get("n_proposta", 1024))
         self.relu = bool(cfg.get("relu", True))
+        # margem_padronizada: a margem usa as notas PADRONIZADAS por tarefa ((nota - media_k) / desvio_k),
+        # as mesmas da decisão final com treino.padronizar_notas. Exige ctx["estat_tarefas"].
+        self.margem_padronizada = bool(cfg.get("margem_padronizada", False))
         self.cpt, self.alpha, self.tau, self.device = classes_por_tarefa, alpha_lvq, tau_lvq, device
         self.cfg_gfn = cfg.get("gfn", {})
         self.gfn, self.opt_gfn = None, None
@@ -314,6 +330,8 @@ class GeradorPseudoNegativos:
         S = scores_combinados(self._pos(z), ctx["adapters_anteriores"], ctx["adapter_novo"], ctx["fc"],
                               ctx["lvq"], ctx["classes_ativas"], self.cpt, self.alpha, self.tau,
                               grad_novo=False)
+        if self.margem_padronizada and ctx.get("estat_tarefas"):
+            S = padronizar_notas_tensor(S, ctx["classes_ativas"], self.cpt, ctx["estat_tarefas"])
         return margem_vazamento(S, rotulos, ctx["classes_novas"], ctx["classes_ativas"])
 
     @torch.no_grad()

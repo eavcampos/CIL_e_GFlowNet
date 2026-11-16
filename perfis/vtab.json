@@ -1,0 +1,21 @@
+{
+    "dataset": {
+        "nome": "vtab",
+        "raiz": "../../my_data/vtab",
+        "pasta_treino": "train",
+        "pasta_teste": "test",
+        "resize": [
+            224,
+            224
+        ],
+        "recorte_central": true,
+        "nota": "50 classes (5 conjuntos do VTAB com 10 classes cada, na versão de SimpleCIL/APER)."
+    },
+    "tarefas": {
+        "classes_por_tarefa": 10,
+        "num_tasks": "auto",
+        "ordem_classes": "aleatoria",
+        "nota": "classes_por_tarefa define o tamanho de cada tarefa; num_tasks = 'auto' usa todas as classes do dataset (protocolo B0 IncX). Para usar só parte das classes, ponha um número em num_tasks. ordem_classes: 'aleatoria' (sorteada pela seed) ou 'original'."
+    },
+    "avaliacao_extra": []
+}

@@ -8,6 +8,7 @@
 #   config_baseline.json    -> pseudo_negativos.modo = "nenhum"  (linha de base)
 #   config_experimento.json -> pseudo_negativos.modo = "is"      (pseudo-negativos pela margem)
 #   config_gauss.json       -> pseudo_negativos.modo = "gauss"   (pseudo-negativos às cegas)
+#   config_margem_padronizada.json -> "is" com a margem nas notas padronizadas
 # Os três últimos são idênticos no resto.
 #
 # Uso (na pasta do projeto, ou de qualquer lugar):
@@ -16,6 +17,12 @@
 #   bash rodar_experimentos.sh --bateria 2   # seed 1994 (3: 1995, 4: 1996)
 #   bash rodar_experimentos.sh --bateria 1 2 # várias baterias em sequência
 #   acrescente --refazer para rodar de novo inclusive o que já terminou com sucesso
+#
+# OUTRO DATASET: --perfil NOME usa perfis/NOME.json (dataset e tamanho das tarefas), com os mesmos
+# quatro braços. As saídas levam o nome do perfil (ex.: gauss_imagenet_r_seed1993_...).
+#   bash rodar_experimentos.sh --perfil imagenet_r --teste
+#   bash rodar_experimentos.sh --perfil imagenet_r --bateria 1
+#   perfis disponíveis: ls perfis/
 #
 # Tudo é gravado DENTRO do projeto, em resultados/ (logs, results, figures_cil, checkpoints,
 # execucoes, comparacao). A comparação no fim de cada bateria usa todas as seeds já concluídas.
@@ -33,24 +40,28 @@ cd "$PASTA_PROJETO" || exit 1
 
 SCRIPT="cil_nova_estrategia_2.py"
 # Ordem: a referência sem treino primeiro (minutos), depois linha de base, experimento e gauss.
-CONFIGS=("config_ncm.json" "config_baseline.json" "config_experimento.json" "config_gauss.json")
+CONFIGS=("config_ncm.json" "config_baseline.json" "config_experimento.json" "config_gauss.json"
+         "config_margem_padronizada.json")
 # bateria N -> seed SEEDS_POR_BATERIA[N-1]
 SEEDS_POR_BATERIA=(1993 1994 1995 1996)
 EPOCAS_TESTE=2
 
 MODO_TESTE=0
 REFAZER=0
+PERFIL=""
 BATERIA=""
 while [ $# -gt 0 ]; do
     case "$1" in
         --teste)   MODO_TESTE=1 ;;
+        --perfil)  PERFIL="${2:-}"; shift ;;
+        --perfil=*) PERFIL="${1#--perfil=}" ;;
         --refazer) REFAZER=1 ;;
         --bateria)
             # aceita uma ou mais baterias: --bateria 1   ou   --bateria 1 2
             while [ $# -gt 1 ] && [[ "$2" =~ ^[0-9]+$ ]]; do BATERIA="$BATERIA $2"; shift; done ;;
         --bateria=*) BATERIA="${1#--bateria=}"; BATERIA="${BATERIA//,/ }" ;;
-        -h|--help) sed -n '2,28p' "$0"; exit 0 ;;
-        *) echo "Opção desconhecida: $1 (use --bateria 1 a 4, --teste, --refazer ou --help)"; exit 2 ;;
+        -h|--help) sed -n '2,35p' "$0"; exit 0 ;;
+        *) echo "Opção desconhecida: $1 (use --bateria 1 a 4, --perfil NOME, --teste, --refazer ou --help)"; exit 2 ;;
     esac
     shift
 done
@@ -74,6 +85,17 @@ else
     done
     echo "  bash $0 --teste        # teste rápido (seed 1993, $EPOCAS_TESTE épocas)"
     exit 2
+fi
+
+# --- perfil de dataset -------------------------------------------------------
+ARGS_PERFIL=()
+SUFIXO_PERFIL=""
+if [ -n "$PERFIL" ]; then
+    ARQ_PERFIL="perfis/${PERFIL%.json}.json"
+    [ -f "$ARQ_PERFIL" ] || { echo "ERRO: perfil $ARQ_PERFIL não encontrado (disponíveis: $(ls perfis 2>/dev/null | tr '\n' ' '))"; exit 2; }
+    ARGS_PERFIL=(--perfil "$ARQ_PERFIL")
+    SUFIXO_PERFIL="_${PERFIL%.json}"
+    echo "Perfil de dataset: $ARQ_PERFIL"
 fi
 
 # --- interpretador Python ----------------------------------------------------
@@ -144,7 +166,7 @@ INICIO_GERAL=$(date +%s)
 for seed in "${SEEDS[@]}"; do
     for cfg in "${CONFIGS[@]}"; do
         N=$((N + 1))
-        nome="$(basename "${cfg%.json}")_seed${seed}"
+        nome="$(basename "${cfg%.json}")${SUFIXO_PERFIL}_seed${seed}"
         saida="$PASTA_SAIDA/${nome}.txt"
         marcador="$PASTA_SAIDA/${nome}.ok"
 
@@ -159,7 +181,7 @@ for seed in "${SEEDS[@]}"; do
         echo "  saída completa em: $saida"
         ini=$(date +%s)
         # logs/, results/, figures_cil/, checkpoints/ vão para resultados/ dentro do projeto
-        "$PYTHON" "$SCRIPT" --config "$cfg" --seed "$seed" > "$saida" 2>&1
+        "$PYTHON" "$SCRIPT" --config "$cfg" --seed "$seed" "${ARGS_PERFIL[@]}" > "$saida" 2>&1
         status=$?
         dur=$(( $(date +%s) - ini ))
         dur_txt="$((dur / 3600))h$(( (dur % 3600) / 60 ))min"
@@ -167,6 +189,8 @@ for seed in "${SEEDS[@]}"; do
         if [ $status -eq 0 ]; then
             touch "$marcador"
             aac=$(grep -o "AAC ([0-9]* tarefas): [0-9.]*%" "$saida" | tail -1)
+            pad=$(grep -o "Acurácia final padronizada ([0-9]* tarefas): [0-9.]*%" "$saida" | tail -1 | grep -o "[0-9.]*%$")
+            [ -n "$pad" ] && aac="$aac | padronizada: $pad"
             vaz=$(grep -A2 "MÉTRICAS DE VAZAMENTO — final" "$saida" | grep -o "Vazamento (Lambda) [. ]*[0-9.]*%" | grep -o "[0-9.]*%$")
             echo "  OK em $dur_txt | ${aac:-AAC não encontrado} | vazamento final: ${vaz:-?}"
             RESUMO+=("$nome | OK | $dur_txt | ${aac:-?} | vazamento ${vaz:-?}")
