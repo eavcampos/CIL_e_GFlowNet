@@ -67,6 +67,7 @@ class BancoGaussianas:
     def __init__(self, dim, rank=32, encolhimento=1e-3, device="cpu"):
         self.dim, self.rank, self.enc, self.device = dim, rank, encolhimento, device
         self.mu, self.U, self.e, self.s2, self.n = {}, {}, {}, {}, {}
+        self._pilha = None   # [Velocidade] tensores empilhados por classe, para amostrar sem laço
 
     @torch.no_grad()
     def adicionar_classe(self, c, phi):
@@ -85,6 +86,7 @@ class BancoGaussianas:
         self.e[c] = e.float()
         self.s2[c] = float(s2)
         self.n[c] = n
+        self._pilha = None
 
     def classes(self):
         return sorted(self.mu.keys())
@@ -97,9 +99,52 @@ class BancoGaussianas:
         r = self.e[c].numel()
         return float((self.e[c].sum() + (self.dim - r) * self.s2[c]) / self.dim)
 
+    def _empilhar(self):
+        cls = self.classes()
+        ranks = {self.U[c].shape[1] for c in cls}
+        if len(ranks) != 1:
+            return None                               # postos diferentes: usa o laço por classe
+        pos = torch.full((max(cls) + 1,), -1, dtype=torch.long, device=self.device)
+        pos[torch.tensor(cls, device=self.device)] = torch.arange(len(cls), device=self.device)
+        return {"pos": pos, "mu": torch.stack([self.mu[c] for c in cls]),
+                "U": torch.stack([self.U[c] for c in cls]),
+                "raiz_e": torch.stack([self.e[c].sqrt() for c in cls]),
+                "raiz_s2": torch.tensor([math.sqrt(self.s2[c]) for c in cls], device=self.device)}
+
     @torch.no_grad()
     def amostrar(self, rotulos):
-        """rotulos: LongTensor [m] de classes do banco -> phi sintéticos [m, d]."""
+        """rotulos: LongTensor [m] de classes do banco -> phi sintéticos [m, d].
+        [Velocidade] Mesma distribuição de antes, sem laço por classe: agrupa as amostras por classe e
+        faz uma multiplicação em lote (bmm) para todas as classes de uma vez."""
+        if self._pilha is None:
+            self._pilha = self._empilhar() or False
+        if self._pilha:
+            P = self._pilha
+            k = P["pos"][rotulos.to(self.device)]                       # índice na pilha
+            ordem = torch.argsort(k)
+            k_ord = k[ordem]
+            uniq, cont = torch.unique_consecutive(k_ord, return_counts=True)
+            M = int(cont.max())
+            inicio = torch.cumsum(cont, 0) - cont
+            lin = torch.repeat_interleave(torch.arange(len(uniq), device=self.device), cont)
+            col = torch.arange(len(k_ord), device=self.device) - inicio[lin]
+            U = P["U"][uniq]                                            # [G, d, r]
+            r = U.shape[2]
+            eps_r = torch.zeros(len(uniq), r, M, device=self.device)
+            eps_r[lin, :, col] = torch.randn(len(k_ord), r, device=self.device)
+            eps_d = torch.zeros(len(uniq), self.dim, M, device=self.device)
+            eps_d[lin, :, col] = torch.randn(len(k_ord), self.dim, device=self.device)
+            eps_d = eps_d - U @ (U.transpose(1, 2) @ eps_d)            # componente fora do subespaço
+            z = (P["mu"][uniq].unsqueeze(2) + U @ (P["raiz_e"][uniq].unsqueeze(2) * eps_r)
+                 + P["raiz_s2"][uniq].view(-1, 1, 1) * eps_d)           # [G, d, M]
+            saida = torch.empty(len(rotulos), self.dim, device=self.device)
+            saida[ordem] = z[lin, :, col]
+            return saida
+        return self._amostrar_laco(rotulos)
+
+    @torch.no_grad()
+    def _amostrar_laco(self, rotulos):
+        """Versão original, com um laço por classe."""
         out = torch.empty(len(rotulos), self.dim, device=self.device)
         for c in rotulos.unique().tolist():
             idx = (rotulos == c).nonzero(as_tuple=True)[0]
@@ -148,6 +193,20 @@ def coletar_phi_por_classe(backbone, loader, classes, device):
 # ============================================================================
 # 2. Scores: os mesmos da inferência (cosseno + LVQ), em versão de treino
 # ============================================================================
+def logits_cosseno(deltas_por_tarefa, fc, num_classes, classes_por_tarefa):
+    """[Velocidade] Cosseno entre a saída do Adapter de cada tarefa e os vetores das classes dessa tarefa,
+    para as classes 0..num_classes-1, com uma multiplicação de matrizes por tarefa em vez de um laço por
+    classe. Mesmo valor de F.cosine_similarity (exceto vetores de norma ~0)."""
+    n_tarefas = (num_classes + classes_por_tarefa - 1) // classes_por_tarefa
+    blocos = []
+    for k in range(n_tarefas):
+        fim = min((k + 1) * classes_por_tarefa, num_classes)
+        e = F.normalize(deltas_por_tarefa[k], dim=1, eps=1e-8)
+        w = F.normalize(fc[k * classes_por_tarefa:fim], dim=1, eps=1e-8)
+        blocos.append(e @ w.T)
+    return torch.cat(blocos, dim=1)
+
+
 def scores_combinados(phi, adapters_anteriores, adapter_novo, fc, lvq, classes_ativas,
                       classes_por_tarefa, alpha_lvq, tau_lvq, grad_novo):
     """Score combinado (1-alpha)*cos + alpha*LVQ para cada classe ativa, igual a
@@ -162,6 +221,8 @@ def scores_combinados(phi, adapters_anteriores, adapter_novo, fc, lvq, classes_a
     else:
         with torch.no_grad():
             deltas.append(adapter_novo(phi))
+    if alpha_lvq == 0 and list(classes_ativas) == list(range(len(classes_ativas))):
+        return logits_cosseno(deltas, fc, len(classes_ativas), classes_por_tarefa)   # caminho rápido
     protos = lvq.prototipos_efetivos()
     cols = []
     for c in classes_ativas:

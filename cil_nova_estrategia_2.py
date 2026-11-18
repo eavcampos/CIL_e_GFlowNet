@@ -110,7 +110,7 @@ import matplotlib.cm as cm
 
 # [Estratégia 2]
 from pseudo_negativos_cil import (BancoGaussianas, GeradorPseudoNegativos, coletar_phi_por_classe,
-                                  scores_combinados, margem_vazamento)
+                                  scores_combinados, margem_vazamento, logits_cosseno)
 from metricas_vazamento import leakage_metrics, normalize_by_task
 
 # ============================================================================
@@ -225,6 +225,8 @@ PADRONIZAR_NOTAS = bool(CFG_TREINO.get("padronizar_notas", False))
 # [Velocidade] avaliar_teste_a_cada: avaliação no teste durante o treino (só para os gráficos) a cada N
 # épocas, e sempre na 1ª, na última e na de parada. 1 = toda época (comportamento antigo).
 AVAL_TESTE_A_CADA = max(1, int(CFG_TREINO.get("avaliar_teste_a_cada", 1)))
+
+LVQ_DESLIGADO = (ALPHA_LVQ == 0 and LAMBDA_LVQ == 0)
 
 if INIT_CLASSES_NOVAS not in ("aleatorio", "media_phi"):
     raise ValueError(f"treino.init_classes_novas inválido: {INIT_CLASSES_NOVAS} (use 'aleatorio' ou 'media_phi')")
@@ -446,6 +448,43 @@ class BackboneIdentidade(nn.Module):
         return x
 
 
+class _Tamanho:
+    def __init__(self, n):
+        self.n = n
+
+    def __len__(self):
+        return self.n
+
+
+class LoaderPhi:
+    """[Velocidade] Substitui DataLoader(Subset(DatasetPhi, idx)): phi fica inteiro na GPU e cada lote é
+    um fatiamento, sem custo de Python por amostra. Entrega (phi do lote na GPU, rótulos na CPU), o
+    mesmo formato do DataLoader de antes (o código chama .to(DEVICE) nos dois e .numpy() nos rótulos)."""
+    def __init__(self, ds, indices, batch_size, shuffle, seed=0):
+        self.phi = ds.phi                                   # tensor na GPU, compartilhado
+        self.idx = torch.as_tensor(list(indices), dtype=torch.long)
+        self.y = torch.as_tensor([ds.targets[i] for i in self.idx.tolist()], dtype=torch.long)
+        self.batch_size, self.shuffle = batch_size, shuffle
+        self.g = torch.Generator().manual_seed(int(seed))
+        self.dataset = _Tamanho(len(self.idx))
+
+    def __len__(self):
+        return (len(self.idx) + self.batch_size - 1) // self.batch_size
+
+    def __iter__(self):
+        n = len(self.idx)
+        ordem = torch.randperm(n, generator=self.g) if self.shuffle else torch.arange(n)
+        for i in range(0, n, self.batch_size):
+            sel = ordem[i:i + self.batch_size]
+            yield self.phi[self.idx[sel].to(self.phi.device)], self.y[sel]
+
+
+def _criar_loader(ds, indices, batch_size, shuffle, seed=0):
+    if isinstance(ds, DatasetPhi):
+        return LoaderPhi(ds, indices, batch_size, shuffle, seed)
+    return DataLoader(Subset(ds, list(indices)), batch_size=batch_size, shuffle=shuffle)
+
+
 @torch.no_grad()
 def calcular_phi(backbone, dataset):
     feats = []
@@ -581,22 +620,20 @@ def obter_loaders_cil(train_set, test_set, tarefas_classes_originais, mapa_origi
     remapear_rotulos(train_set, mapa_original_para_cil)
     remapear_rotulos(test_set, mapa_original_para_cil)
 
-    loaders_treino = [DataLoader(Subset(train_set, idx), batch_size=batch_size, shuffle=True)
-                      for idx in indices_treino_por_tarefa]
-    loaders_validacao = [None if idx is None else DataLoader(Subset(train_set, idx), batch_size=batch_size,
-                                                              shuffle=False)
+    loaders_treino = [_criar_loader(train_set, idx, batch_size, True, seed + 1000 + t)
+                      for t, idx in enumerate(indices_treino_por_tarefa)]
+    loaders_validacao = [None if idx is None else _criar_loader(train_set, idx, batch_size, False)
                          for idx in indices_validacao_por_tarefa]
-    loaders_teste_tarefa = [DataLoader(Subset(test_set, idx), batch_size=batch_size, shuffle=False)
-                             for idx in indices_teste_por_tarefa]
-    loaders_teste_classe = {c: DataLoader(Subset(test_set, idx), batch_size=batch_size, shuffle=False)
-                             for c, idx in indices_teste_por_classe_cil.items()}
+    loaders_teste_tarefa = [_criar_loader(test_set, idx, batch_size, False) for idx in indices_teste_por_tarefa]
+    loaders_teste_classe = {c: _criar_loader(test_set, idx, batch_size, False)
+                            for c, idx in indices_teste_por_classe_cil.items()}
 
     loaders_teste_acumulado = []
     indices_acumulados = []
     for idx_tarefa in indices_teste_por_tarefa:
         indices_acumulados = indices_acumulados + idx_tarefa
         loaders_teste_acumulado.append(
-            DataLoader(Subset(test_set, list(indices_acumulados)), batch_size=batch_size, shuffle=False))
+            _criar_loader(test_set, list(indices_acumulados), batch_size, False))
 
     return loaders_treino, loaders_teste_tarefa, loaders_teste_acumulado, loaders_teste_classe, loaders_validacao
 
@@ -920,8 +957,11 @@ def criar_mapa_lvq(linhas, colunas, dim, num_classes, blocos_linha, blocos_colun
 # ============================================================================
 def calcular_logits_finais(backbone, adapters, fc, lvq, images, classes_por_tarefa, alpha_lvq, tau_lvq):
     phi = backbone(images)
-    deltas_por_tarefa = [adapter(phi) for adapter in adapters]
     num_classes_ativas = fc.shape[0]
+    n_tarefas = (num_classes_ativas + classes_por_tarefa - 1) // classes_por_tarefa
+    deltas_por_tarefa = [adapter(phi) for adapter in adapters[:n_tarefas]]
+    if alpha_lvq == 0:   # [Velocidade] mesma nota, uma multiplicação de matrizes por tarefa
+        return logits_cosseno(deltas_por_tarefa, fc, num_classes_ativas, classes_por_tarefa)
     scores = []
     for c in range(num_classes_ativas):
         tarefa_idx = c // classes_por_tarefa
@@ -944,10 +984,12 @@ def testar_por_classe(backbone, adapters, fc, lvq, loader_teste, classes_avaliad
             images, labels = images.to(DEVICE), labels.to(DEVICE)
             logits = calcular_logits_finais(backbone, adapters, fc, lvq, images, classes_por_tarefa, alpha_lvq, tau_lvq)
             preds = logits.argmax(dim=1)
+            n = max(classes_avaliadas) + 1
+            tot = torch.bincount(labels, minlength=n).cpu()
+            acc = torch.bincount(labels[preds == labels], minlength=n).cpu()
             for c in classes_avaliadas:
-                mask = labels == c
-                total[c] += int(mask.sum().item())
-                corretos[c] += int((preds[mask] == labels[mask]).sum().item())
+                total[c] += int(tot[c])
+                corretos[c] += int(acc[c])
     return {c: (100.0 * corretos[c] / total[c] if total[c] > 0 else 0.0) for c in classes_avaliadas}
 
 
@@ -985,10 +1027,7 @@ def avaliar_validacao(backbone, adapters_anteriores, adapter_novo, fc, lvq, load
             images, labels = images.to(DEVICE), labels.to(DEVICE)
             phi = backbone(images)
             deltas = [ad(phi) for ad in adapters_anteriores] + [adapter_novo(phi)]
-            logits = torch.stack([
-                F.cosine_similarity(deltas[c // CLASSES_POR_TAREFA],
-                                     fc[c].unsqueeze(0).expand_as(deltas[c // CLASSES_POR_TAREFA]), dim=1)
-                for c in classes_ativas], dim=1)
+            logits = logits_cosseno(deltas, fc, len(classes_ativas), CLASSES_POR_TAREFA)
             soma_ce += F.cross_entropy(ESCALA_LOGITS * logits, labels, reduction="sum").item()
             corretos += (logits.argmax(1) == labels).sum().item()
             total += labels.size(0)
@@ -1100,12 +1139,7 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
             delta_novo = adapter_novo(phi)
             deltas_todos = deltas_anteriores + [delta_novo]
 
-            logits_cos = torch.stack([
-                F.cosine_similarity(deltas_todos[c // CLASSES_POR_TAREFA],
-                                     fc_expandida[c].unsqueeze(0).expand_as(deltas_todos[c // CLASSES_POR_TAREFA]),
-                                     dim=1)
-                for c in todas_classes_ativas
-            ], dim=1)
+            logits_cos = logits_cosseno(deltas_todos, fc_expandida, len(todas_classes_ativas), CLASSES_POR_TAREFA)
             # [Correção] escala s nos logits (s = 1 reproduz o comportamento anterior)
             loss_ce = criterion(ESCALA_LOGITS * logits_cos, labels)
             with torch.no_grad():
@@ -1113,7 +1147,10 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
                 mu_b, sd_b = float(venc.mean()), float(venc.std()) if venc.numel() > 1 else 0.0
                 estat_nova = (mu_b, sd_b) if estat_nova is None else \
                     (0.9 * estat_nova[0] + 0.1 * mu_b, 0.9 * estat_nova[1] + 0.1 * sd_b)
-            loss_lvq, bmu = lvq.perda_lvq(delta_novo, labels, classes_ativas=todas_classes_ativas)
+            if LVQ_DESLIGADO:   # [Velocidade] LVQ sem peso nenhum: não calcula a perda nem as estatísticas
+                loss_lvq, bmu = torch.zeros((), device=DEVICE), None
+            else:
+                loss_lvq, bmu = lvq.perda_lvq(delta_novo, labels, classes_ativas=todas_classes_ativas)
             if ATUALIZAR_PROTOTIPOS_NOVOS:
                 idx_local = labels - indice_tarefa * CLASSES_POR_TAREFA
                 soma_novas.index_add_(0, idx_local, delta_novo.detach())
@@ -1141,7 +1178,8 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
 
             loss.backward()
             optimizer.step()
-            lvq.atualizar_contagem_hits(bmu, labels)
+            if bmu is not None:
+                lvq.atualizar_contagem_hits(bmu, labels)
 
             running_loss_ce += loss_ce.item() * images.size(0)
             running_loss_lvq += loss_lvq.item() * images.size(0)
@@ -1982,8 +2020,8 @@ def executar_experimento():
     backbone_real = criar_backbone_pretreinado_congelado()
     if CACHE_PHI:
         phi_tr, phi_te = preparar_cache_phi(backbone_real, train_set, test_set, CFG_DATASET)
-        train_set = DatasetPhi(phi_tr, train_set.targets, train_set.classes)
-        test_set = DatasetPhi(phi_te, test_set.targets, test_set.classes)
+        train_set = DatasetPhi(phi_tr.to(DEVICE), train_set.targets, train_set.classes)
+        test_set = DatasetPhi(phi_te.to(DEVICE), test_set.targets, test_set.classes)
         backbone = BackboneIdentidade().to(DEVICE)
         logging.info("[Cache phi] ATIVO: os Adapters treinam sobre phi pré-calculado.")
     else:

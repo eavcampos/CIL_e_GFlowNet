@@ -1,0 +1,14 @@
+seed;config;aac;vazamento;erro_dentro_da_tarefa;teto_de_ganho;aac_incremental;acc_T0;acc_T1;acc_T2;acc_T3;acc_T4
+1993;baseline;25.500;67.820;6.680;45.710;41.602;0.150;4.950;15.100;42.950;64.350
+1993;gauss;33.850;58.400;7.750;36.340;47.959;5.500;22.650;29.450;50.200;61.450
+1993;experimento;35.860;55.640;8.500;34.060;50.744;8.650;29.850;33.400;48.000;59.400
+1993;margem_padronizada;35.580;56.560;7.860;35.610;50.756;6.200;27.400;30.850;49.550;63.900
+1993;ncm (referência, sem treino);41.290;47.050;11.660;24.160;49.283;34.650;40.300;40.900;49.500;41.100
+média;baseline;25.500;67.820;6.680;45.710
+média;gauss;33.850;58.400;7.750;36.340
+média;experimento;35.860;55.640;8.500;34.060
+média;margem_padronizada;35.580;56.560;7.860;35.610
+diferença média (gauss - baseline);;+8.350;-9.420;+1.070;-9.370
+diferença média (experimento - gauss);;+2.010;-2.760;+0.750;-2.280
+diferença média (margem_padronizada - gauss);;+1.730;-1.840;+0.110;-0.730
+diferença média (margem_padronizada - experimento);;-0.280;+0.920;-0.640;+1.550

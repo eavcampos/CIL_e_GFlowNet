@@ -60,7 +60,7 @@ O JSON de cada execução traz as duas versões: `resultado_final`, `metricas_va
 `_padronizado`/`_padronizada` (notas padronizadas). `versao_principal` diz qual é a principal.
 
 Os três braços treinados são idênticos exceto pelo modo. Por padrão, CIFAR-100, 5 tarefas × 20
-classes, dataset em `../../my_data`, seeds 1993 a 1996; outros datasets por perfil (abaixo).
+classes, dataset em `../../my_data`, seeds 1993 a 1998 (baterias 1 a 6); outros datasets por perfil (abaixo).
 
 ### Amostradores (`pseudo_negativos.modo`)
 
@@ -86,6 +86,7 @@ commits). Os configs do estudo usam os valores da coluna "estudo".
 | `padronizar_notas` | `false` | `true` | A versão padronizada vira a principal (as duas são sempre calculadas e gravadas) |
 | `cache_phi` | `false` | `true` | Calcula `phi = backbone(imagem)` **uma vez** e treina os Adapters sobre ele. O backbone é congelado e não há aumento de dados, então é a mesma conta, muito mais rápida |
 | `cache_phi_em_disco` | — | `true` | Guarda `phi` em `resultados/cache_phi/`, reaproveitado pelas outras execuções do mesmo dataset (fora do Git) |
+| (sempre, com `cache_phi`) | — | — | `phi` fica inteiro na GPU e os lotes são fatias dele (sem custo de Python por amostra); as notas de cosseno são calculadas com uma multiplicação de matrizes por tarefa; o banco de gaussianas sorteia todas as classes de uma vez; com a LVQ desligada, ela não é calculada. Mesmas contas; os números mudam só na ordem dos sorteios |
 | `avaliar_teste_a_cada` | `1` | `5` | Teste durante o treino (só para os gráficos) a cada N épocas, e sempre na 1ª, na última e nas de log |
 | `parada_antecipada.ativo` | `false` | `false` | Ver abaixo. Desligada no estudo: com `phi` pré-calculado, 100 épocas fixas custam pouco e cada braço treina o mesmo tempo |
 
@@ -265,7 +266,7 @@ as notas padronizadas. A referência NCM aparece nas duas com as notas originais
 - **Modelo gaussiano**: covariância de posto 32 e ReLU aplicada às amostras; classes multimodais
   seriam mais bem descritas por misturas.
 - **Validação**: com a parada antecipada, cada classe treina com 90% das imagens.
-- **Estatística**: 4 seeds dão comparações pareadas com pouco poder (Wilcoxon bilateral: p mínimo 0,125).
+- **Estatística**: com 6 seeds, o teste de Wilcoxon pareado bilateral consegue chegar a p = 0,031 (com 4, o mínimo é 0,125).
 - **Modo `gfn` em 512 dimensões**: não avaliado no CIFAR-100.
 
 ## Arquivos

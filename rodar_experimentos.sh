@@ -1,8 +1,8 @@
 #!/usr/bin/env bash
 # ============================================================================
-# Roda os QUATRO configs da Estratégia 2, em QUATRO BATERIAS, uma por seed:
-#   bateria 1 -> seed 1993     bateria 3 -> seed 1995
-#   bateria 2 -> seed 1994     bateria 4 -> seed 1996
+# Roda os configs da Estratégia 2 em SEIS BATERIAS, uma por seed:
+#   bateria 1 -> seed 1993     bateria 3 -> seed 1995     bateria 5 -> seed 1997
+#   bateria 2 -> seed 1994     bateria 4 -> seed 1996     bateria 6 -> seed 1998
 #
 #   config_ncm.json         -> referência sem treino (média de phi; leva minutos)
 #   config_baseline.json    -> pseudo_negativos.modo = "nenhum"  (linha de base)
@@ -14,7 +14,8 @@
 # Uso (na pasta do projeto, ou de qualquer lugar):
 #   bash rodar_experimentos.sh --teste       # primeiro: seed 1993, poucas épocas
 #   bash rodar_experimentos.sh --bateria 1   # seed 1993
-#   bash rodar_experimentos.sh --bateria 2   # seed 1994 (3: 1995, 4: 1996)
+#   bash rodar_experimentos.sh --bateria 2   # seed 1994 (3: 1995, 4: 1996, 5: 1997, 6: 1998)
+#   bash rodar_experimentos.sh --bateria 1 2 3 4 5 6   # todas, em sequência
 #   bash rodar_experimentos.sh --bateria 1 2 # várias baterias em sequência
 #   acrescente --refazer para rodar de novo inclusive o que já terminou com sucesso
 #
@@ -43,7 +44,7 @@ SCRIPT="cil_nova_estrategia_2.py"
 CONFIGS=("config_ncm.json" "config_baseline.json" "config_experimento.json" "config_gauss.json"
          "config_margem_padronizada.json")
 # bateria N -> seed SEEDS_POR_BATERIA[N-1]
-SEEDS_POR_BATERIA=(1993 1994 1995 1996)
+SEEDS_POR_BATERIA=(1993 1994 1995 1996 1997 1998)
 EPOCAS_TESTE=2
 
 MODO_TESTE=0
