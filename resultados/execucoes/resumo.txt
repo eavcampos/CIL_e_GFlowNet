@@ -9,3 +9,34 @@ config_gauss_seed1993 | OK | 2h16min | AAC (5 tarefas): 33.85% | padronizada: 41
 50.12%
 config_margem_padronizada_seed1993 | OK | 2h59min | AAC (5 tarefas): 35.58% | padronizada: 43.92% | vazamento 56.56%
 47.64%
+Execução de 19/11/2026 15:40:57 — bateria 2 3 4
+config_ncm_seed1994 | OK | 0h24min | AAC (5 tarefas): 41.29% | padronizada: 40.68% | vazamento 46.87%
+47.41%
+config_baseline_seed1994 | OK | 1h15min | AAC (5 tarefas): 24.46% | padronizada: 39.71% | vazamento 68.45%
+53.68%
+config_experimento_seed1994 | OK | 2h38min | AAC (5 tarefas): 36.13% | padronizada: 45.31% | vazamento 56.63%
+46.49%
+config_gauss_seed1994 | OK | 2h16min | AAC (5 tarefas): 35.65% | padronizada: 44.65% | vazamento 56.76%
+47.87%
+config_margem_padronizada_seed1994 | OK | 2h33min | AAC (5 tarefas): 35.41% | padronizada: 45.20% | vazamento 56.87%
+46.81%
+config_ncm_seed1995 | OK | 0h26min | AAC (5 tarefas): 41.29% | padronizada: 40.80% | vazamento 46.50%
+47.25%
+config_baseline_seed1995 | OK | 1h11min | AAC (5 tarefas): 24.12% | padronizada: 39.18% | vazamento 69.20%
+53.90%
+config_experimento_seed1995 | OK | 2h5min | AAC (5 tarefas): 35.95% | padronizada: 44.37% | vazamento 56.06%
+47.08%
+config_gauss_seed1995 | OK | 1h58min | AAC (5 tarefas): 32.96% | padronizada: 42.31% | vazamento 58.97%
+49.26%
+config_margem_padronizada_seed1995 | OK | 2h58min | AAC (5 tarefas): 32.70% | padronizada: 42.48% | vazamento 59.34%
+48.78%
+config_ncm_seed1996 | OK | 0h27min | AAC (5 tarefas): 41.29% | padronizada: 40.53% | vazamento 47.87%
+49.24%
+config_baseline_seed1996 | OK | 1h15min | AAC (5 tarefas): 23.83% | padronizada: 38.48% | vazamento 69.33%
+55.32%
+config_experimento_seed1996 | OK | 2h27min | AAC (5 tarefas): 34.90% | padronizada: 44.01% | vazamento 57.80%
+48.41%
+config_gauss_seed1996 | OK | 1h26min | AAC (5 tarefas): 33.61% | padronizada: 44.41% | vazamento 59.65%
+48.46%
+config_margem_padronizada_seed1996 | OK | 1h35min | AAC (5 tarefas): 35.65% | padronizada: 44.62% | vazamento 57.15%
+47.96%
