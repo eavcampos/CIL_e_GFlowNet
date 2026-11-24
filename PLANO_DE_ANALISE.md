@@ -1,16 +1,18 @@
-# Pré-registro — Vazamento entre adapters em aprendizado incremental de classes sem exemplares
+# Plano de análise — Vazamento entre adapters em aprendizado incremental de classes sem exemplares
 
-**Versão:** rascunho 5, 23/11/2026, para revisão de Edilene e Takashi. Depois de aprovado e registrado, este texto não se altera; qualquer mudança entra como adendo datado (Seção 10).
+**Versão:** 1.0, 24/11/2026, revisada e aprovada por Edilene e Takashi. A partir desta versão, o texto não se altera; qualquer mudança entra como adendo datado (Seção 10).
 **Autores:** Edilene Aparecida Veneruchi de Campos, Edson Takashi Matsubara (FACOM-UFMS).
-**Registro:** OSF Registries (a fazer), com este mesmo texto. Uma versão em inglês entra como apêndice do material suplementar do artigo.
+**Onde fica:** versionado no repositório Git do projeto, junto com o código (Seção 9). Não foi feito registro em plataforma externa (como o OSF). Uma versão em inglês entra como apêndice do material suplementar do artigo.
 
 ---
 
 ## 0. Para que serve este documento e como lê-lo
 
-Um **pré-registro** é a descrição, feita **antes** de rodar os experimentos de teste, do que esperamos encontrar, de como vamos medir e de como vamos decidir se acertamos. Depois de registrado com data, ele não pode mais ser ajustado aos resultados. Isso protege o trabalho de uma crítica comum: a de que os autores testaram muitas coisas e relataram só o que deu certo.
+Este **plano de análise** descreve, **antes** de rodar os experimentos de teste, o que esperamos encontrar, como vamos medir e como vamos decidir se acertamos. Depois de fixado, ele não pode mais ser ajustado aos resultados. Isso protege o trabalho de uma crítica comum: a de que os autores testaram muitas coisas e relataram só o que deu certo.
 
-O documento foi escrito para quem **não acompanhou** o desenvolvimento. A Seção 0.1 explica os termos técnicos e os nomes dos braços; a Seção 7 explica cada cálculo estatístico com exemplos numéricos. Existe uma versão em inglês com o mesmo conteúdo (`PREREGISTRATION_EN.md`).
+**Por que "plano de análise" e não "pré-registro".** Um pré-registro formal é depositado numa plataforma externa (como o OSF), que fixa a data de forma que terceiros possam conferir. Optamos por não fazer esse depósito. O plano fica versionado no Git do projeto, e sua anterioridade em relação às execuções de teste se apoia nas tags do repositório (Seção 9). **Limitação assumida:** as datas do Git são registradas pelos próprios autores e, em princípio, podem ser alteradas; portanto, não afirmamos que a anterioridade possa ser verificada de forma independente. O que oferecemos é transparência: o plano completo, o histórico do repositório e as regras de decisão, que tornam visível qualquer desvio.
+
+O documento foi escrito para quem **não acompanhou** o desenvolvimento. A Seção 0.1 explica os termos técnicos e os nomes dos braços; a Seção 7 explica cada cálculo estatístico com exemplos numéricos. Existe uma versão em inglês com o mesmo conteúdo (`ANALYSIS_PLAN_EN.md`).
 
 ### 0.1 Glossário
 
@@ -51,9 +53,9 @@ O documento foi escrito para quem **não acompanhou** o desenvolvimento. A Seç�
 
 ---
 
-## 1. O que já foi feito antes deste registro
+## 1. O que já foi feito antes deste plano
 
-Este registro é feito **depois** de uma fase de desenvolvimento. Para que o leitor saiba exatamente o que foi visto e decidido antes, ela é descrita aqui em detalhe.
+Este plano é escrito **depois** de uma fase de desenvolvimento. Para que o leitor saiba exatamente o que foi visto e decidido antes, ela é descrita aqui em detalhe.
 
 ### 1.1 Cenário usado no desenvolvimento
 
@@ -84,7 +86,7 @@ As decisões abaixo foram tomadas **olhando resultados de teste das seeds 1993 a
 8. **Padronização das notas.** Um diagnóstico (a parcela de escala, κ) indicou que parte do vazamento vinha de os adapters terem notas em escalas diferentes. Aplicada depois do treino aos checkpoints das seeds 1993–1996 (treinados com parada antecipada), a padronização levou a acurácia final do baseline de 24,0% para 40,6%. **Decisão:** toda avaliação passa a ser feita com notas brutas e com notas padronizadas.
 9. **Braço margem_padronizada.** Criado para que a seleção pela margem use as mesmas notas (padronizadas) que decidem a classe no teste.
 10. **Aceleração.** As features φ passaram a ser calculadas uma única vez e guardadas em disco. Como não há aumento de dados, isso não muda nenhum resultado, só o tempo.
-11. **Código final da fase de desenvolvimento** rodado nas seeds 1993 a 1998, em 18 e 19/11/2026.
+11. **Código final da fase de desenvolvimento** rodado nas seeds 1993 a 1998, em 18 e 19/11/2026. O código e todos os resultados da fase de desenvolvimento estão marcados com a tag git `v0.9-desenvolvimento` no repositório `eavcampos/CIL_e_GFlowNet` (commit `ec84535484056e6d666ad0b2708a4376a06fbbb4`, de 23/11/2026). Isso inclui as pastas `resultados_parada_val_ce/`, `resultados_parada_ambas/` e `resultados_100epocas_v1/`, das execuções com parada antecipada (itens 6 e 7).
 
 ### 1.3 Situação de cada seed e de cada cenário
 
@@ -411,7 +413,7 @@ Uma **ablação** muda uma única peça do método e observa o efeito. As ablaç
 
 ### 4.5 Análise exploratória condicionada: o diagnóstico aplicado aos métodos publicados
 
-**Condição:** só é feita se EASE, MOS e TUNA forem rodados por nós (Seção 4.3.7). Com os números publicados, não há como fazê-la, porque ela precisa da predição de cada imagem. Por ser exploratória, não tem previsão e não entra em P1 a P4; ela é registrada aqui para que, se for feita, não conte como análise inventada depois de ver os dados.
+**Condição:** só é feita se EASE, MOS e TUNA forem rodados por nós (Seção 4.3.7). Com os números publicados, não há como fazê-la, porque ela precisa da predição de cada imagem. Por ser exploratória, não tem previsão e não entra em P1 a P4; ela é descrita aqui para que, se for feita, não conte como análise inventada depois de ver os dados.
 
 **Motivação.** Nossos adapters ficam depois do backbone, e não dentro dos blocos do ViT como nos três métodos, porque o mecanismo de recusa precisa de um espaço de features fixo onde as gaussianas das classes antigas continuem válidas (Seção 4.3.7 e artigo, Seção de Método). Um revisor pode perguntar se o diagnóstico vale para esses métodos reais ou só para o nosso sistema simples. Esta análise responde a essa pergunta.
 
@@ -620,9 +622,9 @@ Para mostrar que os números copiados são comparáveis aos nossos, rodamos o **
 
 ## 9. Código
 
-**9.1 Código das execuções de teste.** O código usado nas execuções de teste é marcado com a tag git `v1.0-teste` no repositório `eavcampos/CIL_e_GFlowNet`. Antes da primeira execução de teste, um adendo datado (Seção 10) informa o hash desse commit e anexa a este registro no OSF um arquivo .zip com o código exato da tag. O OSF congela os arquivos anexados com a data do registro, de modo que nem os autores podem alterá-los depois.
+**9.1 Plano e código das execuções de teste.** Este plano (versão 1.0) e o código das execuções de teste ficam no repositório `eavcampos/CIL_e_GFlowNet`. Antes da primeira execução de teste, o código é marcado com a tag git `v1.0-teste`, e a tag é enviada ao GitHub. O commit dessa tag contém este plano sem alterações. Um adendo (Seção 10) informa o hash do commit. As execuções de teste só usam esse código.
 
-**9.2 Verificação durante uma revisão duplo-cega.** Numa revisão em que os autores são anônimos, o avaliador recebe o código por um espelho anônimo (por exemplo, Anonymous GitHub), que não mostra o histórico do Git nem a tag. Por isso, o artigo submetido traz um link de visualização anônimo do OSF, que esconde os nomes e dá acesso a este pré-registro e ao .zip da Seção 9.1, ambos com data. Assim, o avaliador pode confirmar, sem saber quem são os autores, que o código existia antes das execuções de teste.
+**9.2 O que pode e o que não pode ser conferido.** Depois da publicação, o repositório completo fica público: qualquer leitor pode ver o histórico, as tags `v0.9-desenvolvimento` e `v1.0-teste`, e comparar o plano, o código e os resultados. Durante uma revisão duplo-cega, o avaliador recebe o código por um espelho anônimo (por exemplo, Anonymous GitHub), que não mostra o histórico, e este plano como apêndice do material suplementar. Em nenhum dos dois casos as datas podem ser confirmadas por uma fonte independente dos autores, porque não houve depósito externo (Seção 0). O artigo diz isso explicitamente e descreve o procedimento como "plano de análise definido antes das execuções de teste e versionado no repositório", sem afirmar uma verificação independente.
 
 **9.3 Versão limpa para o artigo.** Perto da submissão, é criada uma versão do repositório só com o que o artigo usa, marcada com a tag `v1.0-artigo`. Ela só pode remover arquivos não usados, renomear e documentar; nenhuma linha que afete treino ou avaliação pode mudar. A equivalência é verificada rodando uma seed com `v1.0-artigo` e conferindo que os resultados são idênticos aos da mesma seed com `v1.0-teste`. O espelho anônimo da revisão e o DOI de arquivamento (Zenodo), depois da aceitação, são gerados a partir de `v1.0-artigo`.
 
@@ -630,7 +632,7 @@ Para mostrar que os números copiados são comparáveis aos nossos, rodamos o **
 
 ## 10. Adendos
 
-Qualquer desvio deste registro é descrito aqui, com data, motivo e efeito esperado, **antes** de ser aplicado.
+Qualquer desvio deste plano é descrito aqui, com data, motivo e efeito esperado, num commit próprio feito **antes** de o desvio ser aplicado.
 
 | Data | Desvio | Motivo |
 |---|---|---|

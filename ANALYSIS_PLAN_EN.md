@@ -1,14 +1,16 @@
-# Preregistration — Inter-adapter leakage in exemplar-free class-incremental learning
+# Analysis plan — Inter-adapter leakage in exemplar-free class-incremental learning
 
-**Version:** draft 5, 23 Nov 2026, for review by Edilene and Takashi. Once approved and registered, this text does not change; any change is added as a dated addendum (Section 10).
+**Version:** 1.0, 24 Nov 2026, reviewed and approved by Edilene and Takashi. From this version on, the text does not change; any change is added as a dated addendum (Section 10).
 **Authors:** Edilene Aparecida Veneruchi de Campos, Edson Takashi Matsubara (FACOM-UFMS, Brazil).
-**Registration:** OSF Registries (to do), with this same text. This English version is also included as an appendix of the paper's supplementary material. A Portuguese version with the same content exists (`PREREGISTRO.md`).
+**Where it is kept:** versioned in the project's Git repository, together with the code (Section 9). No registration was made on an external platform (such as OSF). This English version is also included as an appendix of the paper's supplementary material. A Portuguese version with the same content exists (`PLANO_DE_ANALISE.md`).
 
 ---
 
 ## 0. What this document is for and how to read it
 
-A **preregistration** describes, **before** the test experiments are run, what we expect to find, how we will measure it and how we will decide whether we were right. Once registered with a date, it can no longer be adjusted to the results. This protects the work from a common criticism: that the authors tried many things and reported only what worked.
+This **analysis plan** describes, **before** the test experiments are run, what we expect to find, how we will measure it and how we will decide whether we were right. Once fixed, it can no longer be adjusted to the results. This protects the work from a common criticism: that the authors tried many things and reported only what worked.
+
+**Why "analysis plan" and not "preregistration".** A formal preregistration is deposited on an external platform (such as OSF), which fixes the date in a way third parties can check. We chose not to make such a deposit. The plan is versioned in the project's Git repository, and its precedence over the test runs relies on the repository's tags (Section 9). **Acknowledged limitation:** Git dates are recorded by the authors themselves and can, in principle, be altered; therefore, we do not claim that precedence can be verified independently. What we offer is transparency: the full plan, the repository history and the decision rules, which make any deviation visible.
 
 The document is written for readers who **did not follow** the development. Section 0.1 explains the technical terms and the names of the arms; Section 7 explains every statistical computation with numerical examples.
 
@@ -51,9 +53,9 @@ The document is written for readers who **did not follow** the development. Sect
 
 ---
 
-## 1. What was done before this registration
+## 1. What was done before this plan
 
-This registration is made **after** a development phase. So that the reader knows exactly what was seen and decided beforehand, that phase is described here in detail.
+This plan is written **after** a development phase. So that the reader knows exactly what was seen and decided beforehand, that phase is described here in detail.
 
 ### 1.1 Setting used during development
 
@@ -84,7 +86,7 @@ The decisions below were made **while looking at test results of seeds 1993 to 1
 8. **Score standardization.** A diagnostic (the scale share, κ) indicated that part of the leakage came from the adapters' scores being on different scales. Applied after training to the checkpoints of seeds 1993–1996 (trained with early stopping), standardization raised the baseline's final accuracy from 24.0% to 40.6%. **Decision:** every evaluation is done with raw and with standardized scores.
 9. **margin_std arm.** Created so that margin-based selection uses the same (standardized) scores that decide the class at test time.
 10. **Speed-up.** The features φ are computed once and cached on disk. Since there is no data augmentation, this changes no result, only the running time.
-11. **Final development code** run on seeds 1993 to 1998, on 18 and 19 Nov 2026.
+11. **Final development code** run on seeds 1993 to 1998, on 18 and 19 Nov 2026. The code and all results of the development phase are marked with the git tag `v0.9-desenvolvimento` in the repository `eavcampos/CIL_e_GFlowNet` (commit `ec84535484056e6d666ad0b2708a4376a06fbbb4`, 23 Nov 2026). This includes the folders `resultados_parada_val_ce/`, `resultados_parada_ambas/` and `resultados_100epocas_v1/`, from the early-stopping runs (items 6 and 7).
 
 ### 1.3 Status of each seed and setting
 
@@ -411,7 +413,7 @@ An **ablation** changes a single piece of the method and observes the effect. Th
 
 ### 4.5 Conditional exploratory analysis: the diagnostic applied to the published methods
 
-**Condition:** performed only if EASE, MOS and TUNA are run by us (Section 4.3.7). It cannot be done with published numbers, because it needs the prediction for each image. Being exploratory, it has no prediction and does not enter P1 to P4; it is registered here so that, if performed, it does not count as an analysis invented after seeing the data.
+**Condition:** performed only if EASE, MOS and TUNA are run by us (Section 4.3.7). It cannot be done with published numbers, because it needs the prediction for each image. Being exploratory, it has no prediction and does not enter P1 to P4; it is described here so that, if performed, it does not count as an analysis invented after seeing the data.
 
 **Motivation.** Our adapters sit after the backbone, not inside the ViT blocks as in the three methods, because the refusal mechanism needs a fixed feature space in which the Gaussians of old classes remain valid (Section 4.3.7 and the paper's Method section). A reviewer may ask whether the diagnostic applies to these real methods or only to our simple system. This analysis answers that question.
 
@@ -620,9 +622,9 @@ To show that the copied numbers are comparable with ours, we run **RanPAC** on I
 
 ## 9. Code
 
-**9.1 Code of the test runs.** The code used in the test runs is marked with the git tag `v1.0-teste` in the repository `eavcampos/CIL_e_GFlowNet`. Before the first test run, a dated addendum (Section 10) gives the hash of this commit and attaches to this OSF registration a .zip file with the exact code of the tag. OSF freezes attached files with the registration date, so that not even the authors can change them afterwards.
+**9.1 Plan and code of the test runs.** This plan (version 1.0) and the code of the test runs are kept in the repository `eavcampos/CIL_e_GFlowNet`. Before the first test run, the code is marked with the git tag `v1.0-teste`, and the tag is pushed to GitHub. The commit of this tag contains this plan unchanged. An addendum (Section 10) gives the commit hash. Test runs use only this code.
 
-**9.2 Verification during double-blind review.** In a review where the authors are anonymous, the reviewer receives the code through an anonymous mirror (for example, Anonymous GitHub), which does not show the Git history or the tag. Therefore, the submitted paper includes an anonymous view-only OSF link, which hides the names and gives access to this preregistration and to the .zip of Section 9.1, both dated. The reviewer can thus confirm, without knowing who the authors are, that the code existed before the test runs.
+**9.2 What can and cannot be checked.** After publication, the full repository becomes public: any reader can see the history, the tags `v0.9-desenvolvimento` and `v1.0-teste`, and compare the plan, the code and the results. During a double-blind review, the reviewer receives the code through an anonymous mirror (for example, Anonymous GitHub), which does not show the history, and this plan as an appendix of the supplementary material. In neither case can the dates be confirmed by a source independent of the authors, because no external deposit was made (Section 0). The paper states this explicitly and describes the procedure as an "analysis plan defined before the test runs and versioned in the repository", without claiming independent verification.
 
 **9.3 Clean version for the paper.** Close to submission, a version of the repository containing only what the paper uses is created and marked with the tag `v1.0-artigo`. It may only remove unused files, rename and document; no line that affects training or evaluation may change. Equivalence is verified by running one seed with `v1.0-artigo` and checking that the results are identical to those of the same seed with `v1.0-teste`. The anonymous mirror for review and the archival DOI (Zenodo), after acceptance, are generated from `v1.0-artigo`.
 
@@ -630,7 +632,7 @@ To show that the copied numbers are comparable with ours, we run **RanPAC** on I
 
 ## 10. Addenda
 
-Any deviation from this registration is described here, with date, reason and expected effect, **before** it is applied.
+Any deviation from this plan is described here, with date, reason and expected effect, in a dedicated commit made **before** the deviation is applied.
 
 | Date | Deviation | Reason |
 |---|---|---|

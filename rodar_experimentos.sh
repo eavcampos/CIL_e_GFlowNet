@@ -4,7 +4,7 @@
 #   bateria 1 -> seed 1993     bateria 3 -> seed 1995     bateria 5 -> seed 1997
 #   bateria 2 -> seed 1994     bateria 4 -> seed 1996     bateria 6 -> seed 1998
 #   bateria 7 -> seed 1999     bateria 8 -> seed 2000     bateria 9 -> seed 2001     bateria 10 -> seed 2002
-#   Desenvolvimento: baterias 1-4 (1993-1996). Teste: baterias 5-10 (1997-2002). Ver PREREGISTRO.md.
+#   Desenvolvimento: baterias 1-4 (1993-1996). Teste: baterias 5-10 (1997-2002). Ver PLANO_DE_ANALISE.md.
 #
 #   config_ncm.json         -> referência sem treino (média de phi; leva minutos)
 #   config_baseline.json    -> pseudo_negativos.modo = "nenhum"  (linha de base)

@@ -1,6 +1,6 @@
 #!/usr/bin/env python3
 """
-Separa os resultados de DESENVOLVIMENTO dos de TESTE (Fase A5 do plano; Seção 1 do PREREGISTRO.md).
+Separa os resultados de DESENVOLVIMENTO dos de TESTE (Fase A5 do plano; Seção 1 do PLANO_DE_ANALISE.md).
 
 - Seeds de desenvolvimento: 1993-1996 -> resultados/desenvolvimento/<subpasta>/
 - Seeds de teste (1997 em diante)     -> resultados/teste/<subpasta>/
