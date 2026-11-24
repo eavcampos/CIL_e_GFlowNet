@@ -58,6 +58,8 @@ env/
 
 # Os logs de execução são texto pequeno e úteis: voltam a ser versionados
 !resultados/logs/*.log
+!resultados/desenvolvimento/logs/*.log
+!resultados/teste/logs/*.log
 
 # ---- Sistema operacional e editores -----------------------------------------
 .DS_Store
