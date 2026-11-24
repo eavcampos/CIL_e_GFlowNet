@@ -9,12 +9,12 @@
             224
         ],
         "recorte_central": true,
-        "nota": "50 classes (5 conjuntos do VTAB com 10 classes cada, na versão de SimpleCIL/APER)."
+        "nota": "50 classes = 10 de cada um de 5 datasets do VTAB. Protocolo da literatura: B0 Inc10 = 5 tarefas, SEM embaralhar as classes (shuffle=false no APER/PILOT): cada tarefa é um dataset de origem. Por isso ordem_classes = 'original'. Usar a cópia distribuída com SimpleCIL/APER/EASE (link no README do LAMDA-PILOT)."
     },
     "tarefas": {
         "classes_por_tarefa": 10,
         "num_tasks": "auto",
-        "ordem_classes": "aleatoria",
+        "ordem_classes": "original",
         "nota": "classes_por_tarefa define o tamanho de cada tarefa; num_tasks = 'auto' usa todas as classes do dataset (protocolo B0 IncX). Para usar só parte das classes, ponha um número em num_tasks. ordem_classes: 'aleatoria' (sorteada pela seed) ou 'original'."
     },
     "avaliacao_extra": []

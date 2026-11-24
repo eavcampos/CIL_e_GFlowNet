@@ -9,7 +9,7 @@
             224
         ],
         "recorte_central": true,
-        "nota": "300 classes."
+        "nota": "300 classes. Usar a cópia distribuída com SimpleCIL/APER/EASE (link no README do LAMDA-PILOT). Protocolo da literatura (EASE, MOS): B0 Inc30 = 10 tarefas."
     },
     "tarefas": {
         "classes_por_tarefa": 30,

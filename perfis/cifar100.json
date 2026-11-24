@@ -7,7 +7,7 @@
             64
         ],
         "recorte_central": false,
-        "nota": "raiz = pasta que CONTÉM cifar-100-python/. 64x64 mantém a comparabilidade com as execuções já feitas."
+        "nota": "raiz = pasta que CONTÉM cifar-100-python/. B0 Inc20 (5 tarefas), 64x64: o protocolo das execuções de desenvolvimento (seeds 1993-1996), mantido para continuidade. Para comparar com a literatura use o perfil cifar100_inc5."
     },
     "tarefas": {
         "classes_por_tarefa": 20,

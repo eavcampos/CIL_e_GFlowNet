@@ -1,0 +1,19 @@
+{
+    "dataset": {
+        "nome": "cifar100",
+        "raiz": "../../my_data",
+        "resize": [
+            64,
+            64
+        ],
+        "recorte_central": false,
+        "nota": "raiz = pasta que CONTÉM cifar-100-python/. Protocolo da literatura (EASE, MOS): B0 Inc5 = 20 tarefas de 5 classes. O tamanho de entrada (resize) depende do backbone: 64x64 com ResNet-18; com ViT-B/16, Resize(256, bicúbico) + CenterCrop(224) como no PILOT."
+    },
+    "tarefas": {
+        "classes_por_tarefa": 5,
+        "num_tasks": "auto",
+        "ordem_classes": "aleatoria",
+        "nota": "classes_por_tarefa define o tamanho de cada tarefa; num_tasks = 'auto' usa todas as classes do dataset (protocolo B0 IncX). Para usar só parte das classes, ponha um número em num_tasks. ordem_classes: 'aleatoria' (sorteada pela seed) ou 'original'."
+    },
+    "avaliacao_extra": []
+}

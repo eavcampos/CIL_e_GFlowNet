@@ -9,10 +9,10 @@
             224
         ],
         "recorte_central": true,
-        "nota": "200 classes na versão de SimpleCIL/APER. Para usar o ObjectNet só como teste de outro treino, veja 'avaliacao_extra' no README."
+        "nota": "NÃO USAR PARA TREINO. A licença do ObjectNet diz: 'ObjectNet may never be used to tune the parameters of any model'. Excluído de todos os cenários do PREREGISTRO.md. O perfil fica só como registro; não deve ser rodado."
     },
     "tarefas": {
-        "classes_por_tarefa": 20,
+        "classes_por_tarefa": 10,
         "num_tasks": "auto",
         "ordem_classes": "aleatoria",
         "nota": "classes_por_tarefa define o tamanho de cada tarefa; num_tasks = 'auto' usa todas as classes do dataset (protocolo B0 IncX). Para usar só parte das classes, ponha um número em num_tasks. ordem_classes: 'aleatoria' (sorteada pela seed) ou 'original'."

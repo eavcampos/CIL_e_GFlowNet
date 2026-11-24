@@ -3,6 +3,8 @@
 # Roda os configs da Estratégia 2 em SEIS BATERIAS, uma por seed:
 #   bateria 1 -> seed 1993     bateria 3 -> seed 1995     bateria 5 -> seed 1997
 #   bateria 2 -> seed 1994     bateria 4 -> seed 1996     bateria 6 -> seed 1998
+#   bateria 7 -> seed 1999     bateria 8 -> seed 2000     bateria 9 -> seed 2001     bateria 10 -> seed 2002
+#   Desenvolvimento: baterias 1-4 (1993-1996). Teste: baterias 5-10 (1997-2002). Ver PREREGISTRO.md.
 #
 #   config_ncm.json         -> referência sem treino (média de phi; leva minutos)
 #   config_baseline.json    -> pseudo_negativos.modo = "nenhum"  (linha de base)
@@ -44,7 +46,7 @@ SCRIPT="cil_nova_estrategia_2.py"
 CONFIGS=("config_ncm.json" "config_baseline.json" "config_experimento.json" "config_gauss.json"
          "config_margem_padronizada.json")
 # bateria N -> seed SEEDS_POR_BATERIA[N-1]
-SEEDS_POR_BATERIA=(1993 1994 1995 1996 1997 1998)
+SEEDS_POR_BATERIA=(1993 1994 1995 1996 1997 1998 1999 2000 2001 2002)
 EPOCAS_TESTE=2
 
 MODO_TESTE=0
@@ -62,7 +64,7 @@ while [ $# -gt 0 ]; do
             while [ $# -gt 1 ] && [[ "$2" =~ ^[0-9]+$ ]]; do BATERIA="$BATERIA $2"; shift; done ;;
         --bateria=*) BATERIA="${1#--bateria=}"; BATERIA="${BATERIA//,/ }" ;;
         -h|--help) sed -n '2,35p' "$0"; exit 0 ;;
-        *) echo "Opção desconhecida: $1 (use --bateria 1 a 4, --perfil NOME, --teste, --refazer ou --help)"; exit 2 ;;
+        *) echo "Opção desconhecida: $1 (use --bateria 1 a 10, --perfil NOME, --teste, --refazer ou --help)"; exit 2 ;;
     esac
     shift
 done

@@ -9,7 +9,7 @@
             224
         ],
         "recorte_central": true,
-        "nota": "200 classes. Sem divisão oficial: use a divisão train/test distribuída com SimpleCIL/APER/EASE para comparar com a literatura. Se só tiver a pasta original, troque pasta_treino/pasta_teste por \"pasta_unica\": \".\" e \"fracao_teste\": 0.2."
+        "nota": "200 classes. Usar a cópia distribuída com SimpleCIL/APER/EASE (link no README do LAMDA-PILOT), que já vem dividida em train/test. Protocolo: B0 Inc20 = 10 tarefas (o mesmo de MOS e do exps/ease_inr.json do PILOT; o artigo do EASE usa Inc5)."
     },
     "tarefas": {
         "classes_por_tarefa": 20,
