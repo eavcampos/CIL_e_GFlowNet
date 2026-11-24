@@ -1,0 +1,24 @@
+{
+    "dataset": {
+        "nome": "cifar100",
+        "raiz": "../../my_data",
+        "transformacao": "pilot",
+        "nota": "Cenário 4: CIFAR-100, B0 Inc5 (20 tarefas), ViT-B/16-IN21K. Protocolo de MOS e TUNA. Ablações. Confira 'raiz' na sua máquina."
+    },
+    "tarefas": {
+        "classes_por_tarefa": 5,
+        "num_tasks": "auto",
+        "ordem_classes": "aleatoria"
+    },
+    "sobrescrever": {
+        "treino": {
+            "backbone": "vit_b16_in21k",
+            "embedding_dim": 768,
+            "diagnosticos_extras": false
+        },
+        "pseudo_negativos": {
+            "relu": false
+        }
+    },
+    "avaliacao_extra": []
+}

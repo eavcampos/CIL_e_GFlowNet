@@ -636,7 +636,8 @@ Any deviation from this plan is described here, with date, reason and expected e
 
 | Date | Deviation | Reason |
 |---|---|---|
-| — | — | — |
+| 24 Nov 2026 | **Description fix (no change of method).** Section 5.1: weight decay is **10⁻⁴ on the Adapter parameters** (`treino.weight_decay_adapter`) and 0 on the others (`otimizador.weight_decay`), not "0" as written. This is the value used in all development runs and kept in the test runs. | Misreading of the configs when drafting the plan, found while implementing Phase B. |
+| 24 Nov 2026 | **Description fix.** Sections 1.5 and 6: μ_k and σ_k of the development runs are not in the JSONs, but **they are stored in the checkpoints** (`estatisticas_score_por_tarefa`). The scale dispersion DE of those runs can therefore be computed from them. In the test runs, μ_k and σ_k are also written to the JSON. | Found while implementing Phase B. |
 
 ---
 

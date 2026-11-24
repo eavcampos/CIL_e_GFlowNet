@@ -1,0 +1,26 @@
+{
+    "dataset": {
+        "nome": "omnibenchmark",
+        "raiz": "../../my_data/omnibenchmark",
+        "pasta_treino": "train",
+        "pasta_teste": "test",
+        "transformacao": "pilot",
+        "nota": "Cenário 7: OmniBenchmark, B0 Inc30 (10 tarefas), ViT-B/16-IN21K. Protocolo de MOS. Confira 'raiz' na sua máquina."
+    },
+    "tarefas": {
+        "classes_por_tarefa": 30,
+        "num_tasks": "auto",
+        "ordem_classes": "aleatoria"
+    },
+    "sobrescrever": {
+        "treino": {
+            "backbone": "vit_b16_in21k",
+            "embedding_dim": 768,
+            "diagnosticos_extras": false
+        },
+        "pseudo_negativos": {
+            "relu": false
+        }
+    },
+    "avaliacao_extra": []
+}

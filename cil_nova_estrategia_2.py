@@ -1,5 +1,18 @@
 ### nova_estrategia_2 - Nova Estratégia 1 + PSEUDO-NEGATIVOS no espaço phi do backbone congelado
 """
+[Fase B] Acréscimos para as execuções de teste do PLANO_DE_ANALISE.md (todos opcionais; sem as chaves
+novas, o comportamento é o da tag v0.9-desenvolvimento):
+  - treino.backbone: "resnet18" (padrão) ou "vit_b16_in21k" (timm, ImageNet-21k, o de SimpleCIL/EASE);
+  - dataset.transformacao: "pilot" = Resize(256, bicúbica) + CenterCrop(224) + ToTensor, sem normalização;
+  - perfil com bloco "sobrescrever" (mescla chaves de treino/pseudo_negativos/dataset por cenário);
+  - treino.adapter_compartilhado: um único Adapter treinado em todas as tarefas (teste da previsão P4);
+  - treino.fracao_estatisticas_validacao: separa uma fração do treino e também padroniza com μ_k, σ_k
+    calculados nela (ablação A1);
+  - treino.diagnosticos_extras: false desliga t-SNE, aritmética de tarefas, drift e gráficos (só avaliação);
+  - JSON com μ_k e σ_k por tarefa, dispersão de escala DE, acurácia por tarefa após cada tarefa,
+    esquecimento médio, memória guardada e tempos.
+"""
+"""
 NOVA ESTRATÉGIA 2: NOVA ESTRATÉGIA 1 + PSEUDO-NEGATIVOS
 ================================================================================
 
@@ -93,6 +106,8 @@ import copy
 import random
 import logging
 import argparse
+import time
+import platform
 from datetime import datetime
 
 import numpy as np
@@ -141,6 +156,13 @@ def carregar_configuracao():
         for bloco in ("dataset", "tarefas", "avaliacao_extra"):
             if bloco in perfil:
                 cfg[bloco] = perfil[bloco]
+        # [Fase B] "sobrescrever": {"treino": {...}, "pseudo_negativos": {...}} -> mescla chave a chave no
+        # config (ex.: backbone, embedding_dim e ReLU das amostras mudam por cenário, o resto não)
+        for bloco, valores in (perfil.get("sobrescrever") or {}).items():
+            if isinstance(valores, dict):
+                cfg.setdefault(bloco, {}).update(valores)
+            else:
+                cfg[bloco] = valores
         cfg["_perfil"] = os.path.splitext(os.path.basename(args.perfil))[0]
     cfg["_arquivo_config"] = os.path.abspath(args.config)   # [Estratégia 2] nomeia as saídas
     return cfg
@@ -227,6 +249,23 @@ PADRONIZAR_NOTAS = bool(CFG_TREINO.get("padronizar_notas", False))
 AVAL_TESTE_A_CADA = max(1, int(CFG_TREINO.get("avaliar_teste_a_cada", 1)))
 
 LVQ_DESLIGADO = (ALPHA_LVQ == 0 and LAMBDA_LVQ == 0)
+
+# [Fase B] backbone: "resnet18" (padrão, desenvolvimento) ou "vit_b16_in21k" (ViT-B/16 ImageNet-21k via timm)
+BACKBONE = str(CFG_TREINO.get("backbone", "resnet18")).lower()
+if BACKBONE not in ("resnet18", "vit_b16_in21k"):
+    raise ValueError(f"treino.backbone inválido: {BACKBONE} (use 'resnet18' ou 'vit_b16_in21k')")
+# [Fase B] adapter_compartilhado: um ÚNICO Adapter, que continua sendo treinado a cada tarefa (protótipos
+# antigos ficam como estavam no fim da sua tarefa). Imita o encoder compartilhado de Xu et al. (2026).
+ADAPTER_COMPARTILHADO = bool(CFG_TREINO.get("adapter_compartilhado", False))
+# [Fase B] fracao_estatisticas_validacao: separa essa fração do treino de cada classe (o modelo treina no
+# resto) e, além da padronização com μ_k, σ_k do treino, reporta a padronização com μ_k, σ_k calculados
+# nessa parte não vista (ablação A1 do plano de análise). 0 = desligado.
+FRACAO_EST_VAL = float(CFG_TREINO.get("fracao_estatisticas_validacao", 0.0))
+if not (0.0 <= FRACAO_EST_VAL < 0.5):
+    raise ValueError("treino.fracao_estatisticas_validacao deve estar entre 0 e 0.5")
+# [Fase B] diagnosticos_extras: t-SNE, aritmética de tarefas, drift, NC1, mapas de scores e gráficos.
+# Só avaliação (não mudam o treino); false economiza tempo nos cenários grandes.
+DIAGNOSTICOS_EXTRAS = bool(CFG_TREINO.get("diagnosticos_extras", True))
 
 if INIT_CLASSES_NOVAS not in ("aleatorio", "media_phi"):
     raise ValueError(f"treino.init_classes_novas inválido: {INIT_CLASSES_NOVAS} (use 'aleatorio' ou 'media_phi')")
@@ -321,6 +360,11 @@ def construir_transform(cfg_dataset):
     """Redimensiona e normaliza (sem aumento de dados: o mesmo phi a cada época). Com
     recorte_central = true: redimensiona o lado menor para resize/0.875 e recorta o centro
     (padrão ImageNet para imagens não quadradas); com false: redimensiona direto para resize."""
+    if str(cfg_dataset.get("transformacao", "")).lower() == "pilot":
+        # [Fase B] igual ao build_transform(is_train=False) do LAMDA-PILOT, usado por SimpleCIL/EASE/MOS/TUNA
+        # com o ViT-B/16-IN21K: Resize(256, bicúbica) + CenterCrop(224) + ToTensor, SEM normalização.
+        return transforms.Compose([transforms.Resize(256, interpolation=transforms.InterpolationMode.BICUBIC),
+                                   transforms.CenterCrop(224), transforms.ToTensor()])
     resize = tuple(cfg_dataset.get("resize", [64, 64]))
     if cfg_dataset.get("recorte_central", False):
         lado = int(round(max(resize) / 0.875))
@@ -495,16 +539,23 @@ def calcular_phi(backbone, dataset):
 
 def preparar_cache_phi(backbone_real, train_set, test_set, cfg_dataset):
     """Calcula (ou lê do disco) phi de todo o treino e todo o teste, na ordem original dos datasets."""
-    chave = json.dumps({k: cfg_dataset.get(k) for k in ("nome", "raiz", "raiz_cifar", "raiz_omnibenchmark",
-                        "pasta_treino", "pasta_teste", "pasta_unica", "fracao_teste", "seed_divisao",
-                        "resize", "recorte_central")}, sort_keys=True)
+    campos = {k: cfg_dataset.get(k) for k in ("nome", "raiz", "raiz_cifar", "raiz_omnibenchmark",
+              "pasta_treino", "pasta_teste", "pasta_unica", "fracao_teste", "seed_divisao",
+              "resize", "recorte_central", "transformacao")}
+    if BACKBONE != "resnet18" or campos.get("transformacao"):
+        # [Fase B] o backbone e a transformação entram na chave: phi da ResNet e do ViT nunca se misturam.
+        # (Sem essas chaves, a chave fica igual à da v0.9 e o cache antigo da ResNet continua valendo.)
+        campos["backbone"] = BACKBONE
+    chave = json.dumps(campos, sort_keys=True)
     import hashlib
-    nome_arq = f"{cfg_dataset['nome']}_{hashlib.md5(chave.encode()).hexdigest()[:10]}.pt"
+    prefixo = cfg_dataset['nome'] if BACKBONE == "resnet18" else f"{cfg_dataset['nome']}_{BACKBONE}"
+    nome_arq = f"{prefixo}_{hashlib.md5(chave.encode()).hexdigest()[:10]}.pt"
     pasta = os.path.join(OS_RESULTADOS_RAIZ, "cache_phi")
     caminho = os.path.join(pasta, nome_arq)
     if CACHE_PHI_DISCO and os.path.exists(caminho):
         dados = torch.load(caminho, map_location="cpu")
-        if dados["n_treino"] == len(train_set) and dados["n_teste"] == len(test_set):
+        if (dados["n_treino"] == len(train_set) and dados["n_teste"] == len(test_set)
+                and dados["phi_treino"].shape[1] == DIM_EMBEDDING):
             logging.info(f"[Cache phi] lido de {caminho}")
             return dados["phi_treino"], dados["phi_teste"]
         logging.warning(f"[Cache phi] {caminho} não corresponde ao dataset atual; recalculando.")
@@ -642,6 +693,8 @@ def obter_loaders_cil(train_set, test_set, tarefas_classes_originais, mapa_origi
 # 3. BACKBONE PRÉ-TREINADO, CONGELADO DESDE A CRIAÇÃO (idêntico à Estratégia 26)
 # ============================================================================
 def criar_backbone_pretreinado_congelado():
+    if BACKBONE == "vit_b16_in21k":
+        return criar_vit_in21k_congelado()
     try:
         pesos = torchvision.models.ResNet18_Weights.IMAGENET1K_V1
         backbone = torchvision.models.resnet18(weights=pesos)
@@ -653,6 +706,33 @@ def criar_backbone_pretreinado_congelado():
     backbone.eval()
     logging.info("[Backbone] ResNet-18 pré-treinada no ImageNet, congelada desde a criação.")
     return backbone.to(DEVICE)
+
+
+VERSAO_TIMM = None
+
+
+def criar_vit_in21k_congelado():
+    """[Fase B] ViT-B/16 pré-treinado no ImageNet-21k (o mesmo de SimpleCIL, EASE, MOS e TUNA no LAMDA-PILOT,
+    que chama timm.create_model("vit_base_patch16_224_in21k", pretrained=True, num_classes=0)). Com
+    num_classes=0, a saída é o token CLS depois da normalização final: um vetor de 768 números."""
+    global VERSAO_TIMM
+    import timm
+    VERSAO_TIMM = timm.__version__
+    erros = []
+    for nome in ("vit_base_patch16_224.augreg_in21k", "vit_base_patch16_224_in21k"):
+        try:
+            modelo = timm.create_model(nome, pretrained=True, num_classes=0)
+            break
+        except Exception as erro:   # nomes diferentes conforme a versão do timm
+            erros.append(f"{nome}: {erro}")
+    else:
+        raise RuntimeError("Não foi possível carregar o ViT-B/16-IN21K pelo timm:\n" + "\n".join(erros))
+    for p in modelo.parameters():
+        p.requires_grad = False
+    modelo.eval()
+    logging.info(f"[Backbone] ViT-B/16 ImageNet-21k ({nome}, timm {VERSAO_TIMM}), congelado; "
+                 f"dimensão de saída {modelo.num_features}.")
+    return modelo.to(DEVICE)
 
 
 def extrair_embedding(backbone, x):
@@ -1011,6 +1091,7 @@ def prever_final(backbone, adapters, fc, lvq, loader_teste, classes_por_tarefa, 
 #     Tarefa 0 é apenas o caso particular "sem adapters anteriores".
 # ============================================================================
 PARADA_POR_TAREFA = {}   # [Parada antecipada] resumo por tarefa, gravado no JSON
+TEMPO_POR_TAREFA = {}    # [Fase B] segundos de treino de cada tarefa (laço de épocas), gravado no JSON
 
 
 def avaliar_validacao(backbone, adapters_anteriores, adapter_novo, fc, lvq, loader_val, classes_ativas,
@@ -1055,7 +1136,16 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
         fc_expandida = expandir_fc_ortogonal(fc_atual, n_novas=CLASSES_POR_TAREFA, dim=DIM_EMBEDDING,
                                               seed=SEED + 100 + indice_tarefa)
 
-    adapter_novo = Adapter(dim=DIM_EMBEDDING, r=R_ADAPTER).to(DEVICE)
+    if ADAPTER_COMPARTILHADO and adapters_anteriores:
+        # [Fase B] encoder compartilhado: o MESMO Adapter das tarefas anteriores continua sendo treinado
+        adapter_novo = adapters_anteriores[-1]
+        for p_ in adapter_novo.parameters():
+            p_.requires_grad = True
+        adapter_novo.train()
+        logging.info(f"[Tarefa {indice_tarefa}] Adapter COMPARTILHADO: o Adapter único continua sendo treinado "
+                     f"(as classes antigas passam a ser pontuadas por ele, com os protótipos antigos fixos).")
+    else:
+        adapter_novo = Adapter(dim=DIM_EMBEDDING, r=R_ADAPTER).to(DEVICE)
     theta_init_adapter = copy.deepcopy(adapter_novo.state_dict())
 
     # [Correção] classes novas começam na média das saídas do Adapter novo (com adapter_residual,
@@ -1121,6 +1211,7 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
     estat_nova = None
 
     historico = []
+    t_inicio_treino = time.time()
     for epoch in range(EPOCHS_POR_TAREFA):
         adapter_novo.train()
         running_loss_ce, running_loss_lvq, corretos, total = 0.0, 0.0, 0, 0
@@ -1308,6 +1399,8 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
                          f"melhora > {PA_DELTA} há {sem_melhora} épocas (melhor época: {melhor['epoca']}).")
             break
 
+    TEMPO_POR_TAREFA[indice_tarefa] = time.time() - t_inicio_treino
+
     # [Parada antecipada] restaura o estado da melhor época na validação
     if usar_pa and historico:
         epocas_executadas = historico[-1]["epoca"]
@@ -1347,7 +1440,9 @@ def treinar_tarefa(indice_tarefa, backbone, lvq, adapters_anteriores, fc_atual,
     congelar_adapter(adapter_novo)
     lvq.congelar_classes(classes_novas)
     logging.info(f"[Tarefa {indice_tarefa}] Adapter_{indice_tarefa} CONGELADO e MANTIDO; unidades LVQ da "
-                 f"tarefa CONGELADAS (AAC diagnóstica final: {historico[-1]['aac']:.2f}%).")
+                 f"tarefa CONGELADAS (AAC diagnóstica final: {historico[-1]['aac']:.2f}%; "
+                 f"treino em {TEMPO_POR_TAREFA[indice_tarefa]:.0f}s)."
+                 + (" [Adapter compartilhado: volta a ser treinado na próxima tarefa]" if ADAPTER_COMPARTILHADO else ""))
 
     prototipos_novos = []
     for c in classes_novas:
@@ -1992,11 +2087,52 @@ def avaliar_dataset_extra(cfg_extra, backbone, adapters, fc, lvq, nomes_classe_c
     return res
 
 
+def acc_por_tarefa_vista(logits, labels, num_tarefas):
+    """[Fase B] Acurácia (%) de cada tarefa já vista, a partir de logits e rótulos CIL."""
+    pred = logits.argmax(axis=1)
+    tarefa = labels // CLASSES_POR_TAREFA
+    return [float((pred[tarefa == k] == labels[tarefa == k]).mean() * 100) for k in range(num_tarefas)]
+
+
+def esquecimento_medio(acc_por_etapa):
+    """[Fase B] acc_por_etapa[t][k] = acurácia da tarefa k depois da tarefa t (k <= t). Para cada tarefa k,
+    exceto a última: maior acurácia que ela teve em alguma etapa menos a acurácia dela no fim. Média entre
+    as tarefas (plano de análise, Seção 7.2)."""
+    T = len(acc_por_etapa)
+    if T < 2:
+        return None
+    final = acc_por_etapa[-1]
+    vals = [max(acc_por_etapa[t][k] for t in range(k, T)) - final[k] for k in range(T - 1)]
+    return float(np.mean(vals))
+
+
+def dispersao_escala(task_stats):
+    """[Fase B] DE = desvio-padrão (amostral) das médias μ_k entre tarefas / média dos desvios σ_k
+    (plano de análise, Seção 7.2). Usa só estatísticas de treino; não depende de aplicar a padronização."""
+    if len(task_stats) < 2:
+        return None
+    mus = np.array([m for m, _ in task_stats], dtype=float)
+    sds = np.array([sd for _, sd in task_stats], dtype=float)
+    return float(np.std(mus, ddof=1) / np.mean(sds))
+
+
+def memoria_guardada(banco, adapters, num_classes):
+    """[Fase B] Bytes guardados (float32 = 4 bytes): banco de gaussianas (média + vetores próprios +
+    autovalores + variância isotrópica), protótipos e Adapters distintos (o compartilhado conta uma vez)."""
+    b_banco = [4 * (banco.mu[c].numel() + banco.U[c].numel() + banco.e[c].numel() + 1) for c in range(num_classes)]
+    distintos = {id(a): a for a in adapters}.values()
+    b_adapters = sum(4 * sum(p.numel() for p in a.parameters()) for a in distintos)
+    return {"bytes_banco_por_classe_media": float(np.mean(b_banco)), "bytes_banco_total": int(sum(b_banco)),
+            "bytes_prototipo_por_classe": 4 * DIM_EMBEDDING, "bytes_adapters_total": int(b_adapters),
+            "adapters_distintos": len(list(distintos)), "bytes_estatisticas_padronizacao": 4 * 2 * len(adapters)}
+
+
 # ============================================================================
 # 15. PIPELINE PRINCIPAL
 # ============================================================================
 def executar_experimento():
     global NUM_TASKS, NUM_CLASSES_TOTAIS
+    t_inicio_execucao = time.time()
     logging.info(f"=== [Nova Estratégia 2] Generalização da Estratégia 26 — "
                  f"{NUM_TASKS or 'auto'} tarefas x {CLASSES_POR_TAREFA} classes, dataset={CFG_DATASET['nome']}, "
                  f"seed={SEED} ===")
@@ -2018,6 +2154,12 @@ def executar_experimento():
         logging.info(f"[Partição de tarefas] Tarefa {t}: classes originais {tarefa_orig} -> {nomes}")
 
     backbone_real = criar_backbone_pretreinado_congelado()
+    with torch.no_grad():   # [Fase B] a dimensão de phi tem de bater com treino.embedding_dim
+        d_saida = backbone_real(train_set[0][0].unsqueeze(0).to(DEVICE)).shape[1]
+    if d_saida != DIM_EMBEDDING:
+        raise ValueError(f"O backbone {BACKBONE} devolve vetores de dimensão {d_saida}, mas treino.embedding_dim = "
+                         f"{DIM_EMBEDDING}. Ajuste embedding_dim no config ou no perfil do cenário.")
+    t_cache = time.time()
     if CACHE_PHI:
         phi_tr, phi_te = preparar_cache_phi(backbone_real, train_set, test_set, CFG_DATASET)
         train_set = DatasetPhi(phi_tr.to(DEVICE), train_set.targets, train_set.classes)
@@ -2026,10 +2168,14 @@ def executar_experimento():
         logging.info("[Cache phi] ATIVO: os Adapters treinam sobre phi pré-calculado.")
     else:
         backbone = backbone_real
+    tempo_cache_phi = time.time() - t_cache
 
     loaders_treino, loaders_teste_tarefa, loaders_teste_acumulado, loaders_teste_classe, loaders_validacao = \
         obter_loaders_cil(train_set, test_set, tarefas_classes_originais, mapa_original_para_cil, BATCH_SIZE,
-                          fracao_validacao=PA_FRACAO_VAL, seed=SEED)
+                          fracao_validacao=max(PA_FRACAO_VAL, FRACAO_EST_VAL), seed=SEED)
+    if FRACAO_EST_VAL > 0:
+        logging.info(f"[Ablação A1] {FRACAO_EST_VAL:.0%} do treino de cada classe fica de fora; a padronização também "
+                     f"é reportada com μ_k, σ_k calculados nessa parte não vista.")
     if PA_ATIVO:
         logging.info(f"[Parada antecipada] ATIVA: {PA_FRACAO_VAL:.0%} do treino de cada classe vira validação; "
                      f"métrica={PA_METRICA}, paciência={PA_PACIENCIA}, delta mínimo={PA_DELTA}, "
@@ -2059,7 +2205,14 @@ def executar_experimento():
             "parada_antecipada": CFG_PA if PA_ATIVO else {"ativo": False},
             "cache_phi": CACHE_PHI, "padronizar_notas": PADRONIZAR_NOTAS,
             "avaliar_teste_a_cada": AVAL_TESTE_A_CADA,
+            "backbone": BACKBONE, "transformacao": CFG_DATASET.get("transformacao"),
+            "adapter_compartilhado": ADAPTER_COMPARTILHADO,
+            "fracao_estatisticas_validacao": FRACAO_EST_VAL, "diagnosticos_extras": DIAGNOSTICOS_EXTRAS,
+            "weight_decay_adapter": WEIGHT_DECAY_ADAPTER, "perfil": CFG.get("_perfil"),
         },
+        "ambiente": {"torch": torch.__version__, "torchvision": torchvision.__version__, "timm": VERSAO_TIMM,
+                     "python": platform.python_version(),
+                     "gpu": torch.cuda.get_device_name(0) if torch.cuda.is_available() else None},
         "particao_tarefas": {
             "classes_originais_por_tarefa": tarefas_classes_originais,
             "nomes_por_tarefa": [[nomes_classe_cil[mapa_original_para_cil[c]] for c in tarefa]
@@ -2069,10 +2222,11 @@ def executar_experimento():
         "diagnostico_task_arithmetic": {},
     }
 
-    feats_antes, labs_antes = obter_embeddings(backbone, None, loaders_teste_acumulado[-1])
-    plotar_tsne(feats_antes, labs_antes, nomes_classe_cil,
-                "t-SNE — Todas as classes ANTES do treino (embedding cru do backbone)",
-                "tsne_nova_estrategia_2_00_antes_do_treino")
+    if DIAGNOSTICOS_EXTRAS:
+        feats_antes, labs_antes = obter_embeddings(backbone, None, loaders_teste_acumulado[-1])
+        plotar_tsne(feats_antes, labs_antes, nomes_classe_cil,
+                    "t-SNE — Todas as classes ANTES do treino (embedding cru do backbone)",
+                    "tsne_nova_estrategia_2_00_antes_do_treino")
 
     adapters = []
     fc = None
@@ -2087,6 +2241,7 @@ def executar_experimento():
                             encolhimento=float(CFG_PN.get("encolhimento", 1e-3)), device=DEVICE)
     gerador = GeradorPseudoNegativos(banco, CFG_PN, CLASSES_POR_TAREFA, ALPHA_LVQ, TAU_LVQ, DEVICE)
     task_stats = []
+    task_stats_val = []   # [Fase B, ablação A1] μ_k, σ_k na parte não vista do treino
     json_data["configuracao_efetiva"]["pseudo_negativos"] = CFG_PN
     logging.info(f"[Estratégia 2] Pseudo-negativos: modo={PN_MODO} (\"nenhum\" reproduz a Nova Estratégia 1).")
 
@@ -2106,26 +2261,32 @@ def executar_experimento():
                          f"{banco.variancia_media(c):.4f}).")
         task_stats.append(estatisticas_score_tarefa(backbone, adapters + [adapter_t], fc, lvq,
                                                     loaders_treino[t], t))
+        if FRACAO_EST_VAL > 0:
+            task_stats_val.append(estatisticas_score_tarefa(backbone, adapters + [adapter_t], fc, lvq,
+                                                            loaders_validacao[t], t))
 
         json_data["tarefas"][str(t)] = {
             "classes": [nomes_classe_cil[c] for c in classes_novas],
             "historico_treino": historico_t,
             "parada_antecipada": PARADA_POR_TAREFA.get(t),
+            "tempo_treino_s": TEMPO_POR_TAREFA.get(t),
         }
-        plotar_acc_por_classe(historico_t, classes_novas, nomes_classe_cil, t,
-                              f"acc_por_classe_tarefa{t}_nova_estrategia_2")
-        plotar_aac_acumulado(historico_t, t, f"aac_acumulado_tarefa{t}_nova_estrategia_2")
+        if DIAGNOSTICOS_EXTRAS:
+            plotar_acc_por_classe(historico_t, classes_novas, nomes_classe_cil, t,
+                                  f"acc_por_classe_tarefa{t}_nova_estrategia_2")
+            plotar_aac_acumulado(historico_t, t, f"aac_acumulado_tarefa{t}_nova_estrategia_2")
 
         for c in classes_novas:
             prototipos_congelados[c] = fc[c].clone()
 
-        if t >= 1:
+        if t >= 1 and DIAGNOSTICOS_EXTRAS:
             feats_concat, labs_concat = obter_embeddings_concatenados(backbone, adapters + [adapter_t],
                                                                         loaders_teste_acumulado[t])
             plotar_tsne(feats_concat, labs_concat, nomes_classe_cil,
                         f"t-SNE — classes das tarefas 0..{t} (espaço conjunto dos Adapters)",
                         f"tsne_nova_estrategia_2_{t+1:02d}_pos_tarefa{t}")
 
+        if t >= 1 and DIAGNOSTICOS_EXTRAS and not ADAPTER_COMPARTILHADO:
             logging.info("=" * 60)
             logging.info(f"=== DIAGNÓSTICO A/B/C — fronteira tarefa {t-1} -> tarefa {t} ===")
             diagnostico = diagnostico_task_arithmetic_fronteira(
@@ -2138,6 +2299,7 @@ def executar_experimento():
                 f"diagnostico_task_arithmetic_nova_estrategia_2_f{t-1}_{t}",
                 rotulo_modulo=f"Adapter_{t} + LVQ da tarefa {t}")
 
+        if t >= 1 and DIAGNOSTICOS_EXTRAS:
             logging.info(f"=== DRIFT SEMÂNTICO EXATO (Yu et al., 2020) — após a tarefa {t} ===")
             registros_drift_fronteira = []
             for tarefa_antiga in range(t):
@@ -2166,6 +2328,7 @@ def executar_experimento():
             plotar_margem_vazamento(vazamento_fronteira, f"Margem de vazamento após a tarefa {t}",
                                     f"margem_vazamento_nova_estrategia_2_apos_tarefa{t}")
 
+        if t >= 1:
             # [Estratégia 2] métricas de vazamento entre tarefas após esta fronteira
             _ll = coletar_logits(backbone, adapters + [adapter_t], fc, lvq, loaders_teste_acumulado[t])
             json_data.setdefault("metricas_vazamento_por_fronteira", {})[str(t)] = relatorio_vazamento(
@@ -2181,6 +2344,13 @@ def executar_experimento():
         json_data.setdefault("acc_apos_tarefa", []).append(float((_lg.argmax(axis=1) == _lb).mean() * 100))
         _z = normalize_by_task(_lg, np.arange(_lg.shape[1]) // CLASSES_POR_TAREFA, task_stats)
         json_data.setdefault("acc_apos_tarefa_padronizada", []).append(float((_z.argmax(axis=1) == _lb).mean() * 100))
+        # [Fase B] acurácia de cada tarefa já vista, após esta tarefa (para o esquecimento médio)
+        json_data.setdefault("acc_por_tarefa_apos_tarefa", []).append(acc_por_tarefa_vista(_lg, _lb, t + 1))
+        json_data.setdefault("acc_por_tarefa_apos_tarefa_padronizada", []).append(acc_por_tarefa_vista(_z, _lb, t + 1))
+        if FRACAO_EST_VAL > 0:
+            _zv = normalize_by_task(_lg, np.arange(_lg.shape[1]) // CLASSES_POR_TAREFA, task_stats_val)
+            json_data.setdefault("acc_apos_tarefa_padronizada_val", []).append(
+                float((_zv.argmax(axis=1) == _lb).mean() * 100))
         logging.info(f"[Tarefa {t}] Acurácia no teste acumulado após a tarefa: {json_data['acc_apos_tarefa'][-1]:.2f}% "
                      f"(notas padronizadas: {json_data['acc_apos_tarefa_padronizada'][-1]:.2f}%)")
 
@@ -2207,9 +2377,13 @@ def executar_experimento():
     aac = float(np.mean(acc_por_tarefa_final))
     logging.info(f" > AAC ({NUM_TASKS} tarefas): {aac:.2f}%")
 
-    nc1 = calcular_nc1_concatenado(backbone, adapters, loader_teste_total, NUM_CLASSES_TOTAIS)
-    matriz_scores = calcular_matriz_scores_medios(backbone, adapters, fc, lvq, loader_teste_total, NUM_CLASSES_TOTAIS)
-    alinhamento_diagonal = {nomes_classe_cil[c]: float(matriz_scores[c, c]) for c in range(NUM_CLASSES_TOTAIS)}
+    if DIAGNOSTICOS_EXTRAS:
+        nc1 = calcular_nc1_concatenado(backbone, adapters, loader_teste_total, NUM_CLASSES_TOTAIS)
+        matriz_scores = calcular_matriz_scores_medios(backbone, adapters, fc, lvq, loader_teste_total,
+                                                      NUM_CLASSES_TOTAIS)
+        alinhamento_diagonal = {nomes_classe_cil[c]: float(matriz_scores[c, c]) for c in range(NUM_CLASSES_TOTAIS)}
+    else:
+        nc1, matriz_scores, alinhamento_diagonal = None, None, None
 
     # [Correção] "aac" (nome mantido por compatibilidade) é a acurácia MÉDIA FINAL entre tarefas;
     # "aac_incremental" é a AAC da literatura: média das acurácias após cada tarefa.
@@ -2232,23 +2406,26 @@ def executar_experimento():
     json_data["resultado_final"] = {
         "acc_por_tarefa": acc_por_tarefa_final, "aac": aac, "aac_incremental": aac_incremental,
         "nc1_concatenado": nc1,
-        "alinhamento_diagonal": alinhamento_diagonal, "matriz_scores_medios": matriz_scores.tolist(),
+        "alinhamento_diagonal": alinhamento_diagonal,
+        "matriz_scores_medios": matriz_scores.tolist() if matriz_scores is not None else None,
     }
 
-    plotar_matriz_confusao(labels_total, preds_total, nomes_classe_cil, "matriz_confusao_nova_estrategia_2")
-    plotar_mapa_calor_scores(matriz_scores, nomes_classe_cil, "mapa_calor_similaridade_nova_estrategia_2")
+    if DIAGNOSTICOS_EXTRAS:
+        plotar_matriz_confusao(labels_total, preds_total, nomes_classe_cil, "matriz_confusao_nova_estrategia_2")
+        plotar_mapa_calor_scores(matriz_scores, nomes_classe_cil, "mapa_calor_similaridade_nova_estrategia_2")
 
-    vazamento_final = calcular_margem_vazamento(matriz_scores, [nomes_classe_cil[c] for c in range(NUM_CLASSES_TOTAIS)])
-    for r in vazamento_final:
-        logging.info(f" > [Vazamento final] {r['classe']}: margem={r['margem_vazamento']:+.4f} "
-                     f"(próprio={r['score_proprio']:.4f}, concorrente mais forte={r['concorrente_mais_forte']}"
-                     f"={r['score_concorrente']:.4f})")
-    json_data["vazamento_por_classe_final"] = vazamento_final
-    plotar_margem_vazamento(vazamento_final, "Margem de vazamento final (todas as classes)",
-                            "margem_vazamento_nova_estrategia_2_final")
+        vazamento_final = calcular_margem_vazamento(matriz_scores,
+                                                    [nomes_classe_cil[c] for c in range(NUM_CLASSES_TOTAIS)])
+        for r in vazamento_final:
+            logging.info(f" > [Vazamento final] {r['classe']}: margem={r['margem_vazamento']:+.4f} "
+                         f"(próprio={r['score_proprio']:.4f}, concorrente mais forte={r['concorrente_mais_forte']}"
+                         f"={r['score_concorrente']:.4f})")
+        json_data["vazamento_por_classe_final"] = vazamento_final
+        plotar_margem_vazamento(vazamento_final, "Margem de vazamento final (todas as classes)",
+                                "margem_vazamento_nova_estrategia_2_final")
 
-    if "drift_semantico" in json_data:
-        plotar_drift_semantico(json_data["drift_semantico"], "drift_semantico_nova_estrategia_2")
+        if "drift_semantico" in json_data:
+            plotar_drift_semantico(json_data["drift_semantico"], "drift_semantico_nova_estrategia_2")
 
     # [Estratégia 2] métricas de vazamento finais
     json_data["metricas_vazamento_final"] = relatorio_vazamento(
@@ -2256,6 +2433,27 @@ def executar_experimento():
     json_data["metricas_vazamento_final_padronizada"] = relatorio_vazamento(
         backbone, adapters, fc, lvq, loader_teste_total, banco, task_stats, "final", padronizar=True,
         logits_labels=(_lg_f, _lb_f))
+
+    # [Fase B] estatísticas e métricas novas do plano de análise (Seções 6 e 7.2)
+    json_data["estatisticas_score_por_tarefa"] = [[float(m), float(sd)] for m, sd in task_stats]
+    json_data["dispersao_escala_DE"] = dispersao_escala(task_stats)
+    json_data["esquecimento_medio"] = esquecimento_medio(json_data["acc_por_tarefa_apos_tarefa"])
+    json_data["esquecimento_medio_padronizado"] = esquecimento_medio(
+        json_data["acc_por_tarefa_apos_tarefa_padronizada"])
+    json_data["memoria"] = memoria_guardada(banco, adapters, NUM_CLASSES_TOTAIS)
+    logging.info(f" > [Fase B] DE = {json_data['dispersao_escala_DE']} | esquecimento médio = "
+                 f"{json_data['esquecimento_medio']} (padronizado: {json_data['esquecimento_medio_padronizado']}) | "
+                 f"memória do banco por classe = {json_data['memoria']['bytes_banco_por_classe_media'] / 1024:.1f} KB")
+    if FRACAO_EST_VAL > 0:   # [Fase B, ablação A1]
+        json_data["estatisticas_score_por_tarefa_val"] = [[float(m), float(sd)] for m, sd in task_stats_val]
+        json_data["metricas_vazamento_final_padronizada_val"] = relatorio_vazamento(
+            backbone, adapters, fc, lvq, loader_teste_total, banco, task_stats_val, "final (estatísticas da validação)",
+            padronizar=True, logits_labels=(_lg_f, _lb_f))
+        _zv_f = normalize_by_task(_lg_f, np.arange(_lg_f.shape[1]) // CLASSES_POR_TAREFA, task_stats_val)
+        json_data["resultado_final_padronizado_val"] = {
+            "acc_por_tarefa": acc_por_tarefa_vista(_zv_f, _lb_f, NUM_TASKS),
+            "aac_incremental": float(np.mean(json_data.get("acc_apos_tarefa_padronizada_val", [float("nan")]))),
+        }
 
     # [Datasets] avaliação extra: só TESTE em outros datasets com o modelo final (ex.: ObjectNet)
     for cfg_extra in CFG.get("avaliacao_extra", []) or []:
@@ -2285,6 +2483,8 @@ def executar_experimento():
     }, checkpoint_path)
     logging.info(f" [Checkpoint] {checkpoint_path}")
 
+    json_data["tempos"] = {"cache_phi_s": tempo_cache_phi, "treino_por_tarefa_s": [TEMPO_POR_TAREFA.get(t)
+                           for t in range(NUM_TASKS)], "total_s": time.time() - t_inicio_execucao}
     json_filename = os.path.join(OS_RESULTS_DIR, f"results_{ID_EXECUCAO}.json")
     with open(json_filename, "w", encoding="utf-8") as f:
         json.dump(json_data, f, indent=4, ensure_ascii=False)

@@ -1,0 +1,30 @@
+{
+    "dataset": {
+        "nome": "imagenet_r",
+        "raiz": "../../my_data/imagenet-r",
+        "pasta_treino": "train",
+        "pasta_teste": "test",
+        "resize": [
+            64,
+            64
+        ],
+        "recorte_central": true,
+        "nota": "Cenário 2: ImageNet-R, B0 Inc20 (10 tarefas), ResNet-18, 64x64 (Resize 73 + CenterCrop 64, normalização ImageNet). Confira 'raiz' na sua máquina."
+    },
+    "tarefas": {
+        "classes_por_tarefa": 20,
+        "num_tasks": "auto",
+        "ordem_classes": "aleatoria"
+    },
+    "sobrescrever": {
+        "treino": {
+            "backbone": "resnet18",
+            "embedding_dim": 512,
+            "diagnosticos_extras": false
+        },
+        "pseudo_negativos": {
+            "relu": true
+        }
+    },
+    "avaliacao_extra": []
+}

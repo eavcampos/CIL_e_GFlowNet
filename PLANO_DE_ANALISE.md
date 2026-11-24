@@ -636,7 +636,8 @@ Qualquer desvio deste plano é descrito aqui, com data, motivo e efeito esperado
 
 | Data | Desvio | Motivo |
 |---|---|---|
-| — | — | — |
+| 24/11/2026 | **Correção de descrição (sem mudança de método).** Seção 5.1: o weight decay é **10⁻⁴ nos parâmetros dos Adapters** (`treino.weight_decay_adapter`) e 0 nos demais (`otimizador.weight_decay`), e não "0" como estava escrito. É o valor usado em todas as execuções de desenvolvimento e que continua nas de teste. | Erro de leitura dos configs ao redigir o plano, encontrado ao implementar a Fase B. |
+| 24/11/2026 | **Correção de descrição.** Seções 1.5 e 6: μ_k e σ_k das execuções de desenvolvimento não estão nos JSONs, mas **estão gravados nos checkpoints** (`estatisticas_score_por_tarefa`). A dispersão de escala DE dessas execuções pode, portanto, ser calculada a partir deles. Nas execuções de teste, μ_k e σ_k passam a ir também para o JSON. | Encontrado ao implementar a Fase B. |
 
 ---
 

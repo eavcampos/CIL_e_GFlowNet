@@ -1,0 +1,26 @@
+{
+    "dataset": {
+        "nome": "imagenet_r",
+        "raiz": "../../my_data/imagenet-r",
+        "pasta_treino": "train",
+        "pasta_teste": "test",
+        "transformacao": "pilot",
+        "nota": "Cenário 5: ImageNet-R, B0 Inc20 (10 tarefas), ViT-B/16-IN21K. Protocolo de MOS e TUNA. Ablações e reprodução do RanPAC. Confira 'raiz' na sua máquina."
+    },
+    "tarefas": {
+        "classes_por_tarefa": 20,
+        "num_tasks": "auto",
+        "ordem_classes": "aleatoria"
+    },
+    "sobrescrever": {
+        "treino": {
+            "backbone": "vit_b16_in21k",
+            "embedding_dim": 768,
+            "diagnosticos_extras": false
+        },
+        "pseudo_negativos": {
+            "relu": false
+        }
+    },
+    "avaliacao_extra": []
+}

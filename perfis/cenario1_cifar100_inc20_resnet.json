@@ -1,0 +1,27 @@
+{
+    "dataset": {
+        "nome": "cifar100",
+        "raiz": "../../my_data",
+        "resize": [
+            64,
+            64
+        ],
+        "recorte_central": false,
+        "nota": "Cenário 1 do plano de análise: CIFAR-100, B0 Inc20 (5 tarefas), ResNet-18, 64x64. É o cenário do desenvolvimento (mesmas opções da v0.9, inclusive os diagnósticos extras). Confira 'raiz' na sua máquina."
+    },
+    "tarefas": {
+        "classes_por_tarefa": 20,
+        "num_tasks": "auto",
+        "ordem_classes": "aleatoria"
+    },
+    "sobrescrever": {
+        "treino": {
+            "backbone": "resnet18",
+            "embedding_dim": 512
+        },
+        "pseudo_negativos": {
+            "relu": true
+        }
+    },
+    "avaliacao_extra": []
+}

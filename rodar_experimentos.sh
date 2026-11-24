@@ -59,12 +59,14 @@ while [ $# -gt 0 ]; do
         --perfil)  PERFIL="${2:-}"; shift ;;
         --perfil=*) PERFIL="${1#--perfil=}" ;;
         --refazer) REFAZER=1 ;;
+        --configs) read -r -a CONFIGS <<< "${2:-}"; shift ;;          # [Fase B] ex.: --configs "config_ncm.json config_baseline.json"
+        --configs=*) read -r -a CONFIGS <<< "${1#--configs=}" ;;
         --bateria)
             # aceita uma ou mais baterias: --bateria 1   ou   --bateria 1 2
             while [ $# -gt 1 ] && [[ "$2" =~ ^[0-9]+$ ]]; do BATERIA="$BATERIA $2"; shift; done ;;
         --bateria=*) BATERIA="${1#--bateria=}"; BATERIA="${BATERIA//,/ }" ;;
         -h|--help) sed -n '2,35p' "$0"; exit 0 ;;
-        *) echo "Opção desconhecida: $1 (use --bateria 1 a 10, --perfil NOME, --teste, --refazer ou --help)"; exit 2 ;;
+        *) echo "Opção desconhecida: $1 (use --bateria 1 a 10, --perfil NOME, --configs \"...\", --teste, --refazer ou --help)"; exit 2 ;;
     esac
     shift
 done
@@ -117,6 +119,9 @@ fi
 for f in "$SCRIPT" pseudo_negativos_cil.py metricas_vazamento.py comparar_resultados.py "${CONFIGS[@]}"; do
     [ -f "$f" ] || { echo "ERRO: arquivo $f não encontrado em $PASTA_PROJETO"; exit 1; }
 done
+if [ -n "$PERFIL" ] && grep -q '"vit_b16_in21k"' "$ARQ_PERFIL"; then   # [Fase B] o ViT precisa do timm
+    "$PYTHON" -c "import timm" 2>/dev/null || { echo "ERRO: o perfil $ARQ_PERFIL usa o ViT; instale: pip install timm"; exit 1; }
+fi
 "$PYTHON" -c "import torch, torchvision, sklearn, matplotlib, numpy" 2>/dev/null || {
     echo "ERRO: faltam bibliotecas no Python '$PYTHON'. Instale: pip install torch torchvision scikit-learn matplotlib numpy"
     exit 1
