@@ -78,3 +78,28 @@ Execução de 25/11/2026 04:22:58
 config_ncm_teste_cenario5_imagenet_r_inc20_vit_seed1993 | FALHOU (código 1) | 0h0min | ver /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/execucoes/config_ncm_teste_cenario5_imagenet_r_inc20_vit_seed1993.txt
 config_baseline_teste_cenario5_imagenet_r_inc20_vit_seed1993 | FALHOU (código 1) | 0h0min | ver /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/execucoes/config_baseline_teste_cenario5_imagenet_r_inc20_vit_seed1993.txt
 config_baseline_estatval_teste_cenario5_imagenet_r_inc20_vit_seed1993 | FALHOU (código 1) | 0h0min | ver /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/execucoes/config_baseline_estatval_teste_cenario5_imagenet_r_inc20_vit_seed1993.txt
+Execução de 25/11/2026 14:12:33
+config_ncm_teste_cenario1_cifar100_inc20_resnet_seed1993 | OK | 0h1min | AAC (5 tarefas): 41.29% | padronizada: 40.92% | vazamento 47.05%
+47.41%
+config_baseline_teste_cenario1_cifar100_inc20_resnet_seed1993 | OK | 0h1min | AAC (5 tarefas): 14.21% | padronizada: 33.64% | vazamento 77.72%
+55.65%
+config_gauss_teste_cenario1_cifar100_inc20_resnet_seed1993 | OK | 0h1min | AAC (5 tarefas): 24.30% | padronizada: 37.80% | vazamento 66.66%
+50.92%
+config_adapter_compartilhado_teste_cenario1_cifar100_inc20_resnet_seed1993 | OK | 0h1min | AAC (5 tarefas): 13.76% | padronizada: 8.44% | vazamento 73.82%
+74.84%
+Execução de 25/11/2026 14:36:13
+config_ncm_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h10min | AAC (10 tarefas): 54.39% | padronizada: 54.68% | vazamento 40.75%
+40.55%
+config_baseline_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h1min | AAC (10 tarefas): 21.24% | padronizada: 39.90% | vazamento 74.85%
+55.35%
+config_gauss_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h1min | AAC (10 tarefas): 18.05% | padronizada: 47.28% | vazamento 79.63%
+47.83%
+config_adapter_compartilhado_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h1min | AAC (10 tarefas): 39.42% | padronizada: 21.38% | vazamento 57.78%
+73.73%
+config_margem_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h1min | AAC (10 tarefas): 17.80% | padronizada: 49.51% | vazamento 79.95%
+45.42%
+config_margem_padronizada_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h1min | AAC (10 tarefas): 17.42% | padronizada: 49.61% | vazamento 80.35%
+45.15%
+config_baseline_estatval_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h1min | AAC (10 tarefas): 22.12% | padronizada: 39.87% | vazamento 73.95%
+55.37%
+54.38%

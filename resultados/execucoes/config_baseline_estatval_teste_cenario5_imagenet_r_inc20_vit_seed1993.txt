@@ -1,85 +1,1192 @@
-2026-11-25 04:22:36,920 [INFO] [Reprodutibilidade] Seed=1993 (random, numpy, torch, cudnn determinístico). Esta mesma seed também controla o sorteio das classes por tarefa.
-2026-11-25 04:22:36,920 [INFO] [Configuração] dataset=imagenet_r | num_tasks=auto | classes_por_tarefa=20 | batch_size=48 | otimizador=SGD | device=cuda:0 | pseudo_negativos=nenhum
-2026-11-25 04:22:36,920 [INFO] === [Nova Estratégia 2] Generalização da Estratégia 26 — auto tarefas x 20 classes, dataset=imagenet_r, seed=1993 ===
-2026-11-25 04:22:37,082 [INFO] [Dataset] imagenet_r carregado — 200 classes, 24000 imagens de treino, 6000 imagens de teste, entrada [64, 64].
-2026-11-25 04:22:37,082 [INFO] [Tarefas] num_tasks automático: 200 classes / 20 = 10 tarefas
-2026-11-25 04:22:37,083 [INFO] [Partição de tarefas] Tarefa 0: classes originais [168, 136, 51, 9, 183, 101, 171, 99, 42, 159, 191, 70, 16, 188, 27, 10, 175, 26, 68, 187] -> ['n04347754', 'n03345487', 'n02099601', 'n01616318', 'n07714990', 'n02445715', 'n04465501', 'n02423022', 'n02088364', 'n04141076', 'n07753592', 'n02117135', 'n01770393', 'n07745940', 'n01910747', 'n01630670', 'n04552348', 'n01882714', 'n02113799', 'n07742313']
-2026-11-25 04:22:37,083 [INFO] [Partição de tarefas] Tarefa 1: classes originais [98, 6, 85, 35, 112, 43, 100, 0, 103, 181, 88, 59, 4, 2, 116, 174, 94, 80, 106, 1] -> ['n02410509', 'n01531178', 'n02233338', 'n02066245', 'n02672831', 'n02088466', 'n02437616', 'n01443537', 'n02480495', 'n07697537', 'n02279972', 'n02108915', 'n01514859', 'n01494475', 'n02793495', 'n04536866', 'n02364673', 'n02165456', 'n02483362', 'n01484850']
-2026-11-25 04:22:37,083 [INFO] [Partição de tarefas] Tarefa 2: classes originais [147, 17, 141, 131, 72, 23, 173, 54, 197, 118, 87, 32, 79, 104, 91, 19, 135, 107, 178, 36] -> ['n03630383', 'n01774750', 'n03481172', 'n02966193', 'n02123045', 'n01847000', 'n04522168', 'n02106030', 'n09835506', 'n02802426', 'n02268443', 'n02009912', 'n02138441', 'n02480855', 'n02346627', 'n01806143', 'n03272010', 'n02486410', 'n07693725', 'n02071294']
-2026-11-25 04:22:37,083 [INFO] [Partição de tarefas] Tarefa 3: classes originais [11, 199, 142, 8, 122, 3, 28, 57, 153, 172, 190, 56, 49, 44, 97, 62, 151, 169, 194, 55] -> ['n01632777', 'n12267677', 'n03494278', 'n01614925', 'n02841315', 'n01498041', 'n01944390', 'n02106662', 'n03888257', 'n04487394', 'n07753275', 'n02106550', 'n02097298', 'n02091032', 'n02398521', 'n02110341', 'n03773504', 'n04389033', 'n07880968', 'n02106166']
-2026-11-25 04:22:37,084 [INFO] [Partição de tarefas] Tarefa 4: classes originais [192, 12, 189, 78, 66, 180, 15, 137, 109, 134, 92, 119, 126, 52, 170, 40, 148, 65, 144, 64] -> ['n07768694', 'n01644373', 'n07749582', 'n02134084', 'n02113023', 'n07697313', 'n01748264', 'n03372029', 'n02526121', 'n03124170', 'n02356798', 'n02808440', 'n02909870', 'n02099712', 'n04409515', 'n02088094', 'n03649909', 'n02112137', 'n03498962', 'n02112018']
-2026-11-25 04:22:37,084 [INFO] [Partição de tarefas] Tarefa 5: classes originais [138, 45, 77, 89, 154, 90, 71, 193, 74, 30, 113, 143, 96, 84, 67, 50, 186, 156, 69, 21] -> ['n03424325', 'n02091134', 'n02130308', 'n02317335', 'n03930630', 'n02325366', 'n02119022', 'n07873807', 'n02128757', 'n01986214', 'n02701002', 'n03495258', 'n02395406', 'n02226429', 'n02113624', 'n02098286', 'n07734744', 'n04086273', 'n02114367', 'n01833805']
-2026-11-25 04:22:37,084 [INFO] [Partição de tarefas] Tarefa 6: classes originais [18, 111, 108, 58, 125, 157, 150, 110, 182, 129, 166, 83, 81, 60, 13, 165, 14, 176, 63, 117] -> ['n01784675', 'n02655020', 'n02510455', 'n02108089', 'n02906734', 'n04118538', 'n03710193', 'n02607072', 'n07714571', 'n02950826', 'n04310018', 'n02219486', 'n02190166', 'n02109525', 'n01677366', 'n04275548', 'n01694178', 'n04591713', 'n02110958', 'n02797295']
-2026-11-25 04:22:37,084 [INFO] [Partição de tarefas] Tarefa 7: classes originais [5, 22, 145, 121, 38, 41, 82, 127, 114, 20, 31, 53, 37, 163, 196, 130, 152, 162, 86, 76] -> ['n01518878', 'n01843383', 'n03594945', 'n02823750', 'n02085620', 'n02088238', 'n02206856', 'n02939185', 'n02749479', 'n01820546', 'n02007558', 'n02102318', 'n02077923', 'n04254680', 'n09472597', 'n02951358', 'n03775071', 'n04192698', 'n02236044', 'n02129604']
-2026-11-25 04:22:37,084 [INFO] [Partição de tarefas] Tarefa 8: classes originais [24, 34, 184, 149, 33, 128, 198, 155, 146, 167, 139, 120, 140, 102, 47, 25, 158, 123, 46, 164] -> ['n01855672', 'n02056570', 'n07718472', 'n03676483', 'n02051845', 'n02948072', 'n10565667', 'n03947888', 'n03602883', 'n04325704', 'n03452741', 'n02814860', 'n03467068', 'n02447366', 'n02094433', 'n01860187', 'n04133789', 'n02843684', 'n02092339', 'n04266014']
-2026-11-25 04:22:37,084 [INFO] [Partição de tarefas] Tarefa 9: classes originais [61, 7, 115, 75, 133, 160, 105, 132, 179, 124, 48, 73, 93, 39, 95, 195, 29, 177, 185, 161] -> ['n02110185', 'n01534433', 'n02769748', 'n02129165', 'n02992529', 'n04146614', 'n02481823', 'n02980441', 'n07695742', 'n02883205', 'n02096585', 'n02128385', 'n02363005', 'n02086240', 'n02391049', 'n07920052', 'n01983481', 'n07614500', 'n07720875', 'n04147183']
-2026-11-25 04:22:44,265 [INFO] Loading pretrained weights from Hugging Face hub (timm/vit_base_patch16_224.augreg_in21k)
-2026-11-25 04:22:44,762 [INFO] HTTP Request: HEAD https://huggingface.co/timm/vit_base_patch16_224.augreg_in21k/resolve/main/model.safetensors "HTTP/1.1 302 Found"
+2026-11-25 14:34:54,097 [INFO] [Reprodutibilidade] Seed=1993 (random, numpy, torch, cudnn determinístico). Esta mesma seed também controla o sorteio das classes por tarefa.
+2026-11-25 14:34:54,097 [INFO] [Configuração] dataset=imagenet_r | num_tasks=auto | classes_por_tarefa=20 | batch_size=48 | otimizador=SGD | device=cuda:0 | pseudo_negativos=nenhum
+2026-11-25 14:34:54,098 [INFO] === [Nova Estratégia 2] Generalização da Estratégia 26 — auto tarefas x 20 classes, dataset=imagenet_r, seed=1993 ===
+2026-11-25 14:34:54,259 [INFO] [Dataset] imagenet_r carregado — 200 classes, 24000 imagens de treino, 6000 imagens de teste, entrada Resize(256, bicúbica) + CenterCrop(224), sem normalização (transformação do PILOT).
+2026-11-25 14:34:54,259 [INFO] [Tarefas] num_tasks automático: 200 classes / 20 = 10 tarefas
+2026-11-25 14:34:54,260 [INFO] [Partição de tarefas] Tarefa 0: classes originais [168, 136, 51, 9, 183, 101, 171, 99, 42, 159, 191, 70, 16, 188, 27, 10, 175, 26, 68, 187] -> ['n04347754', 'n03345487', 'n02099601', 'n01616318', 'n07714990', 'n02445715', 'n04465501', 'n02423022', 'n02088364', 'n04141076', 'n07753592', 'n02117135', 'n01770393', 'n07745940', 'n01910747', 'n01630670', 'n04552348', 'n01882714', 'n02113799', 'n07742313']
+2026-11-25 14:34:54,260 [INFO] [Partição de tarefas] Tarefa 1: classes originais [98, 6, 85, 35, 112, 43, 100, 0, 103, 181, 88, 59, 4, 2, 116, 174, 94, 80, 106, 1] -> ['n02410509', 'n01531178', 'n02233338', 'n02066245', 'n02672831', 'n02088466', 'n02437616', 'n01443537', 'n02480495', 'n07697537', 'n02279972', 'n02108915', 'n01514859', 'n01494475', 'n02793495', 'n04536866', 'n02364673', 'n02165456', 'n02483362', 'n01484850']
+2026-11-25 14:34:54,261 [INFO] [Partição de tarefas] Tarefa 2: classes originais [147, 17, 141, 131, 72, 23, 173, 54, 197, 118, 87, 32, 79, 104, 91, 19, 135, 107, 178, 36] -> ['n03630383', 'n01774750', 'n03481172', 'n02966193', 'n02123045', 'n01847000', 'n04522168', 'n02106030', 'n09835506', 'n02802426', 'n02268443', 'n02009912', 'n02138441', 'n02480855', 'n02346627', 'n01806143', 'n03272010', 'n02486410', 'n07693725', 'n02071294']
+2026-11-25 14:34:54,261 [INFO] [Partição de tarefas] Tarefa 3: classes originais [11, 199, 142, 8, 122, 3, 28, 57, 153, 172, 190, 56, 49, 44, 97, 62, 151, 169, 194, 55] -> ['n01632777', 'n12267677', 'n03494278', 'n01614925', 'n02841315', 'n01498041', 'n01944390', 'n02106662', 'n03888257', 'n04487394', 'n07753275', 'n02106550', 'n02097298', 'n02091032', 'n02398521', 'n02110341', 'n03773504', 'n04389033', 'n07880968', 'n02106166']
+2026-11-25 14:34:54,261 [INFO] [Partição de tarefas] Tarefa 4: classes originais [192, 12, 189, 78, 66, 180, 15, 137, 109, 134, 92, 119, 126, 52, 170, 40, 148, 65, 144, 64] -> ['n07768694', 'n01644373', 'n07749582', 'n02134084', 'n02113023', 'n07697313', 'n01748264', 'n03372029', 'n02526121', 'n03124170', 'n02356798', 'n02808440', 'n02909870', 'n02099712', 'n04409515', 'n02088094', 'n03649909', 'n02112137', 'n03498962', 'n02112018']
+2026-11-25 14:34:54,261 [INFO] [Partição de tarefas] Tarefa 5: classes originais [138, 45, 77, 89, 154, 90, 71, 193, 74, 30, 113, 143, 96, 84, 67, 50, 186, 156, 69, 21] -> ['n03424325', 'n02091134', 'n02130308', 'n02317335', 'n03930630', 'n02325366', 'n02119022', 'n07873807', 'n02128757', 'n01986214', 'n02701002', 'n03495258', 'n02395406', 'n02226429', 'n02113624', 'n02098286', 'n07734744', 'n04086273', 'n02114367', 'n01833805']
+2026-11-25 14:34:54,261 [INFO] [Partição de tarefas] Tarefa 6: classes originais [18, 111, 108, 58, 125, 157, 150, 110, 182, 129, 166, 83, 81, 60, 13, 165, 14, 176, 63, 117] -> ['n01784675', 'n02655020', 'n02510455', 'n02108089', 'n02906734', 'n04118538', 'n03710193', 'n02607072', 'n07714571', 'n02950826', 'n04310018', 'n02219486', 'n02190166', 'n02109525', 'n01677366', 'n04275548', 'n01694178', 'n04591713', 'n02110958', 'n02797295']
+2026-11-25 14:34:54,261 [INFO] [Partição de tarefas] Tarefa 7: classes originais [5, 22, 145, 121, 38, 41, 82, 127, 114, 20, 31, 53, 37, 163, 196, 130, 152, 162, 86, 76] -> ['n01518878', 'n01843383', 'n03594945', 'n02823750', 'n02085620', 'n02088238', 'n02206856', 'n02939185', 'n02749479', 'n01820546', 'n02007558', 'n02102318', 'n02077923', 'n04254680', 'n09472597', 'n02951358', 'n03775071', 'n04192698', 'n02236044', 'n02129604']
+2026-11-25 14:34:54,261 [INFO] [Partição de tarefas] Tarefa 8: classes originais [24, 34, 184, 149, 33, 128, 198, 155, 146, 167, 139, 120, 140, 102, 47, 25, 158, 123, 46, 164] -> ['n01855672', 'n02056570', 'n07718472', 'n03676483', 'n02051845', 'n02948072', 'n10565667', 'n03947888', 'n03602883', 'n04325704', 'n03452741', 'n02814860', 'n03467068', 'n02447366', 'n02094433', 'n01860187', 'n04133789', 'n02843684', 'n02092339', 'n04266014']
+2026-11-25 14:34:54,261 [INFO] [Partição de tarefas] Tarefa 9: classes originais [61, 7, 115, 75, 133, 160, 105, 132, 179, 124, 48, 73, 93, 39, 95, 195, 29, 177, 185, 161] -> ['n02110185', 'n01534433', 'n02769748', 'n02129165', 'n02992529', 'n04146614', 'n02481823', 'n02980441', 'n07695742', 'n02883205', 'n02096585', 'n02128385', 'n02363005', 'n02086240', 'n02391049', 'n07920052', 'n01983481', 'n07614500', 'n07720875', 'n04147183']
+2026-11-25 14:34:59,427 [INFO] Loading pretrained weights from Hugging Face hub (timm/vit_base_patch16_224.augreg_in21k)
+2026-11-25 14:34:59,891 [INFO] HTTP Request: HEAD https://huggingface.co/timm/vit_base_patch16_224.augreg_in21k/resolve/main/model.safetensors "HTTP/1.1 302 Found"
 Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-2026-11-25 04:22:44,763 [WARNING] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
-2026-11-25 04:22:44,764 [INFO] [timm/vit_base_patch16_224.augreg_in21k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
-2026-11-25 04:22:45,271 [INFO] [Backbone] ViT-B/16 ImageNet-21k (vit_base_patch16_224.augreg_in21k, timm 1.0.27), congelado; dimensão de saída 768.
-Traceback (most recent call last):
-  File "/home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/cil_nova_estrategia_2.py", line 2495, in <module>
-    executar_experimento()
-  File "/home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/cil_nova_estrategia_2.py", line 2164, in executar_experimento
-    phi_tr, phi_te = preparar_cache_phi(backbone_real, train_set, test_set, CFG_DATASET)
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/cil_nova_estrategia_2.py", line 563, in preparar_cache_phi
-    phi_tr, phi_te = calcular_phi(backbone_real, train_set), calcular_phi(backbone_real, test_set)
-                     ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/utils/_contextlib.py", line 116, in decorate_context
-    return func(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^
-  File "/home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/cil_nova_estrategia_2.py", line 536, in calcular_phi
-    feats.append(backbone(x.to(DEVICE)).float().cpu())
-                 ^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/timm/models/vision_transformer.py", line 1300, in forward
-    x = self.forward_features(x, attn_mask=attn_mask, is_causal=is_causal)
-        ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/timm/models/vision_transformer.py", line 1250, in forward_features
-    x = self.blocks(x)
-        ^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/container.py", line 219, in forward
-    input = module(input)
-            ^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/timm/models/vision_transformer.py", line 213, in forward
-    x = x + self.drop_path2(self.ls2(self.mlp(self.norm2(x))))
-                                     ^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/timm/layers/mlp.py", line 49, in forward
-    x = self.act(x)
-        ^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1553, in _wrapped_call_impl
-    return self._call_impl(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/module.py", line 1562, in _call_impl
-    return forward_call(*args, **kwargs)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-  File "/opt/conda/lib/python3.11/site-packages/torch/nn/modules/activation.py", line 705, in forward
-    return F.gelu(input, approximate=self.approximate)
-           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-torch.OutOfMemoryError: CUDA out of memory. Tried to allocate 592.00 MiB. GPU 0 has a total capacity of 47.40 GiB of which 500.62 MiB is free. Process 449384 has 44.46 GiB memory in use. Process 2551896 has 2.42 GiB memory in use. Of the allocated memory 1.63 GiB is allocated by PyTorch, and 490.20 MiB is reserved by PyTorch but unallocated. If reserved but unallocated memory is large try setting PYTORCH_CUDA_ALLOC_CONF=expandable_segments:True to avoid fragmentation.  See documentation for Memory Management  (https://pytorch.org/docs/stable/notes/cuda.html#environment-variables)
+2026-11-25 14:34:59,892 [WARNING] Warning: You are sending unauthenticated requests to the HF Hub. Please set a HF_TOKEN to enable higher rate limits and faster downloads.
+2026-11-25 14:34:59,914 [INFO] [timm/vit_base_patch16_224.augreg_in21k] Safe alternative available for 'pytorch_model.bin' (as 'model.safetensors'). Loading weights using safetensors.
+2026-11-25 14:35:00,228 [INFO] [Backbone] ViT-B/16 ImageNet-21k (vit_base_patch16_224.augreg_in21k, timm 1.0.27), congelado; dimensão de saída 768.
+/home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/cil_nova_estrategia_2.py:574: FutureWarning: You are using `torch.load` with `weights_only=False` (the current default value), which uses the default pickle module implicitly. It is possible to construct malicious pickle data which will execute arbitrary code during unpickling (See https://github.com/pytorch/pytorch/blob/main/SECURITY.md#untrusted-models for more details). In a future release, the default value for `weights_only` will be flipped to `True`. This limits the functions that could be executed during unpickling. Arbitrary objects will no longer be allowed to be loaded via this mode unless they are explicitly allowlisted by the user via `torch.serialization.add_safe_globals`. We recommend you start setting `weights_only=True` for any use case where you don't have full control of the loaded file. Please open an issue on GitHub for any issues related to this experimental feature.
+  dados = torch.load(caminho, map_location="cpu")
+2026-11-25 14:35:01,406 [INFO] [Cache phi] lido de /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/cache_phi/imagenet_r_vit_b16_in21k_22f4d839bc.pt
+2026-11-25 14:35:01,425 [INFO] [Cache phi] ATIVO: os Adapters treinam sobre phi pré-calculado.
+2026-11-25 14:35:01,990 [INFO] [Ablação A1] 10% do treino de cada classe fica de fora; a padronização também é reportada com μ_k, σ_k calculados nessa parte não vista.
+2026-11-25 14:35:01,990 [INFO] [Mapa LVQ] Grade hexagonal 40x80=3200 unidades (10 blocos de linha x 20 blocos de coluna, 16 unidades/classe).
+2026-11-25 14:35:02,141 [INFO] [Estratégia 2] Pseudo-negativos: modo=nenhum ("nenhum" reproduz a Nova Estratégia 1).
+2026-11-25 14:35:02,594 [INFO] [Tarefa 0] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:35:02,594 [INFO] [Tarefa 0] Snapshots de θ_init (Adapter_0 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:35:02,654 [INFO] === Tarefa 0 (n04347754, n03345487, n02099601, n01616318, n07714990, n02445715, n04465501, n02423022, n02088364, n04141076, n07753592, n02117135, n01770393, n07745940, n01910747, n01630670, n04552348, n01882714, n02113799, n07742313): treinando Adapter_0 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:35:03,554 [INFO]    [Tarefa 0] Época [2/2] -> CE:0.9013 | L_LVQ:0.0000 | Acc treino: 79.60% | AAC acumulado: 77.31% | n04347754: 71.05% | n03345487: 91.30% | n02099601: 90.48% | n01616318: 67.57% | n07714990: 92.31% | n02445715: 61.76% | n04465501: 76.19% | n02423022: 80.77% | n02088364: 73.68% | n04141076: 66.67% | n07753592: 80.85% | n02117135: 64.00% | n01770393: 75.61% | n07745940: 91.94% | n01910747: 80.56% | n01630670: 77.78% | n04552348: 100.00% | n01882714: 65.52% | n02113799: 66.67% | n07742313: 71.43%
+2026-11-25 14:35:03,610 [INFO] [Tarefa 0] Adapter_0 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 77.31%; treino em 1s).
+2026-11-25 14:35:03,696 [INFO] [Tarefa 0] Protótipo (FC) de n04347754 substituído (112 imagens de treino).
+2026-11-25 14:35:03,779 [INFO] [Tarefa 0] Protótipo (FC) de n03345487 substituído (78 imagens de treino).
+2026-11-25 14:35:03,855 [INFO] [Tarefa 0] Protótipo (FC) de n02099601 substituído (106 imagens de treino).
+2026-11-25 14:35:03,930 [INFO] [Tarefa 0] Protótipo (FC) de n01616318 substituído (131 imagens de treino).
+2026-11-25 14:35:04,008 [INFO] [Tarefa 0] Protótipo (FC) de n07714990 substituído (114 imagens de treino).
+2026-11-25 14:35:04,084 [INFO] [Tarefa 0] Protótipo (FC) de n02445715 substituído (113 imagens de treino).
+2026-11-25 14:35:04,159 [INFO] [Tarefa 0] Protótipo (FC) de n04465501 substituído (136 imagens de treino).
+2026-11-25 14:35:04,242 [INFO] [Tarefa 0] Protótipo (FC) de n02423022 substituído (102 imagens de treino).
+2026-11-25 14:35:04,316 [INFO] [Tarefa 0] Protótipo (FC) de n02088364 substituído (83 imagens de treino).
+2026-11-25 14:35:04,398 [INFO] [Tarefa 0] Protótipo (FC) de n04141076 substituído (186 imagens de treino).
+2026-11-25 14:35:04,478 [INFO] [Tarefa 0] Protótipo (FC) de n07753592 substituído (179 imagens de treino).
+2026-11-25 14:35:04,550 [INFO] [Tarefa 0] Protótipo (FC) de n02117135 substituído (83 imagens de treino).
+2026-11-25 14:35:04,634 [INFO] [Tarefa 0] Protótipo (FC) de n01770393 substituído (157 imagens de treino).
+2026-11-25 14:35:04,717 [INFO] [Tarefa 0] Protótipo (FC) de n07745940 substituído (193 imagens de treino).
+2026-11-25 14:35:04,794 [INFO] [Tarefa 0] Protótipo (FC) de n01910747 substituído (213 imagens de treino).
+2026-11-25 14:35:04,881 [INFO] [Tarefa 0] Protótipo (FC) de n01630670 substituído (62 imagens de treino).
+2026-11-25 14:35:04,964 [INFO] [Tarefa 0] Protótipo (FC) de n04552348 substituído (119 imagens de treino).
+2026-11-25 14:35:05,043 [INFO] [Tarefa 0] Protótipo (FC) de n01882714 substituído (233 imagens de treino).
+2026-11-25 14:35:05,111 [INFO] [Tarefa 0] Protótipo (FC) de n02113799 substituído (47 imagens de treino).
+2026-11-25 14:35:05,189 [INFO] [Tarefa 0] Protótipo (FC) de n07742313 substituído (77 imagens de treino).
+2026-11-25 14:35:06,006 [INFO] [Banco] n04347754: 112 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3631).
+2026-11-25 14:35:06,039 [INFO] [Banco] n03345487: 78 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9088).
+2026-11-25 14:35:06,073 [INFO] [Banco] n02099601: 106 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.7733).
+2026-11-25 14:35:06,108 [INFO] [Banco] n01616318: 131 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7048).
+2026-11-25 14:35:06,141 [INFO] [Banco] n07714990: 114 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3150).
+2026-11-25 14:35:06,178 [INFO] [Banco] n02445715: 113 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4994).
+2026-11-25 14:35:06,213 [INFO] [Banco] n04465501: 136 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5162).
+2026-11-25 14:35:06,249 [INFO] [Banco] n02423022: 102 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0644).
+2026-11-25 14:35:06,281 [INFO] [Banco] n02088364: 83 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5000).
+2026-11-25 14:35:06,316 [INFO] [Banco] n04141076: 186 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.2478).
+2026-11-25 14:35:06,351 [INFO] [Banco] n07753592: 179 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9604).
+2026-11-25 14:35:06,382 [INFO] [Banco] n02117135: 83 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9545).
+2026-11-25 14:35:06,418 [INFO] [Banco] n01770393: 157 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6783).
+2026-11-25 14:35:06,453 [INFO] [Banco] n07745940: 193 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7466).
+2026-11-25 14:35:06,487 [INFO] [Banco] n01910747: 213 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.4311).
+2026-11-25 14:35:06,523 [INFO] [Banco] n01630670: 62 vetores phi -> gaussiana (posto 32, variância média por dimensão 5.6247).
+2026-11-25 14:35:06,555 [INFO] [Banco] n04552348: 119 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4067).
+2026-11-25 14:35:06,591 [INFO] [Banco] n01882714: 233 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0724).
+2026-11-25 14:35:06,625 [INFO] [Banco] n02113799: 47 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9946).
+2026-11-25 14:35:06,660 [INFO] [Banco] n07742313: 77 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8318).
+2026-11-25 14:35:06,820 [INFO] [Tarefa 0] Acurácia no teste acumulado após a tarefa: 76.34% (notas padronizadas: 76.34%)
+2026-11-25 14:35:07,154 [INFO] [Tarefa 1] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:35:07,154 [INFO] [Tarefa 1] Snapshots de θ_init (Adapter_1 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:35:07,210 [INFO] === Tarefa 1 (n02410509, n01531178, n02233338, n02066245, n02672831, n02088466, n02437616, n01443537, n02480495, n07697537, n02279972, n02108915, n01514859, n01494475, n02793495, n04536866, n02364673, n02165456, n02483362, n01484850): treinando Adapter_1 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:35:08,012 [INFO]    [Tarefa 1] Época [2/2] -> CE:1.0850 | L_LVQ:0.0000 | Acc treino: 78.72% | AAC acumulado: 54.59% | n02410509: 78.26% | n01531178: 79.49% | n02233338: 60.00% | n02066245: 64.29% | n02672831: 82.14% | n02088466: 25.00% | n02437616: 67.50% | n01443537: 84.78% | n02480495: 78.57% | n07697537: 75.00% | n02279972: 100.00% | n02108915: 73.08% | n01514859: 68.29% | n01494475: 44.44% | n02793495: 75.00% | n04536866: 84.85% | n02364673: 85.29% | n02165456: 91.84% | n02483362: 66.67% | n01484850: 51.06%
+2026-11-25 14:35:08,069 [INFO] [Tarefa 1] Adapter_1 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 54.59%; treino em 1s).
+2026-11-25 14:35:08,148 [INFO] [Tarefa 1] Protótipo (FC) de n02410509 substituído (180 imagens de treino).
+2026-11-25 14:35:08,224 [INFO] [Tarefa 1] Protótipo (FC) de n01531178 substituído (125 imagens de treino).
+2026-11-25 14:35:08,296 [INFO] [Tarefa 1] Protótipo (FC) de n02233338 substituído (74 imagens de treino).
+2026-11-25 14:35:08,358 [INFO] [Tarefa 1] Protótipo (FC) de n02066245 substituído (60 imagens de treino).
+2026-11-25 14:35:08,426 [INFO] [Tarefa 1] Protótipo (FC) de n02672831 substituído (94 imagens de treino).
+2026-11-25 14:35:08,488 [INFO] [Tarefa 1] Protótipo (FC) de n02088466 substituído (41 imagens de treino).
+2026-11-25 14:35:08,555 [INFO] [Tarefa 1] Protótipo (FC) de n02437616 substituído (109 imagens de treino).
+2026-11-25 14:35:08,626 [INFO] [Tarefa 1] Protótipo (FC) de n01443537 substituído (166 imagens de treino).
+2026-11-25 14:35:08,694 [INFO] [Tarefa 1] Protótipo (FC) de n02480495 substituído (95 imagens de treino).
+2026-11-25 14:35:08,758 [INFO] [Tarefa 1] Protótipo (FC) de n07697537 substituído (157 imagens de treino).
+2026-11-25 14:35:08,822 [INFO] [Tarefa 1] Protótipo (FC) de n02279972 substituído (108 imagens de treino).
+2026-11-25 14:35:08,892 [INFO] [Tarefa 1] Protótipo (FC) de n02108915 substituído (131 imagens de treino).
+2026-11-25 14:35:08,955 [INFO] [Tarefa 1] Protótipo (FC) de n01514859 substituído (163 imagens de treino).
+2026-11-25 14:35:09,030 [INFO] [Tarefa 1] Protótipo (FC) de n01494475 substituído (139 imagens de treino).
+2026-11-25 14:35:09,098 [INFO] [Tarefa 1] Protótipo (FC) de n02793495 substituído (56 imagens de treino).
+2026-11-25 14:35:09,173 [INFO] [Tarefa 1] Protótipo (FC) de n04536866 substituído (126 imagens de treino).
+2026-11-25 14:35:09,245 [INFO] [Tarefa 1] Protótipo (FC) de n02364673 substituído (99 imagens de treino).
+2026-11-25 14:35:09,314 [INFO] [Tarefa 1] Protótipo (FC) de n02165456 substituído (199 imagens de treino).
+2026-11-25 14:35:09,368 [INFO] [Tarefa 1] Protótipo (FC) de n02483362 substituído (41 imagens de treino).
+2026-11-25 14:35:09,437 [INFO] [Tarefa 1] Protótipo (FC) de n01484850 substituído (144 imagens de treino).
+2026-11-25 14:35:10,064 [INFO] [Banco] n02410509: 180 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6548).
+2026-11-25 14:35:10,098 [INFO] [Banco] n01531178: 125 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4350).
+2026-11-25 14:35:10,132 [INFO] [Banco] n02233338: 74 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.6346).
+2026-11-25 14:35:10,166 [INFO] [Banco] n02066245: 60 vetores phi -> gaussiana (posto 32, variância média por dimensão 5.0349).
+2026-11-25 14:35:10,200 [INFO] [Banco] n02672831: 94 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1505).
+2026-11-25 14:35:10,233 [INFO] [Banco] n02088466: 41 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1664).
+2026-11-25 14:35:10,269 [INFO] [Banco] n02437616: 109 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.6040).
+2026-11-25 14:35:10,302 [INFO] [Banco] n01443537: 166 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.2365).
+2026-11-25 14:35:10,335 [INFO] [Banco] n02480495: 95 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4304).
+2026-11-25 14:35:10,370 [INFO] [Banco] n07697537: 157 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8824).
+2026-11-25 14:35:10,419 [INFO] [Banco] n02279972: 108 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1042).
+2026-11-25 14:35:10,453 [INFO] [Banco] n02108915: 131 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5221).
+2026-11-25 14:35:10,488 [INFO] [Banco] n01514859: 163 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0050).
+2026-11-25 14:35:10,521 [INFO] [Banco] n01494475: 139 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1879).
+2026-11-25 14:35:10,554 [INFO] [Banco] n02793495: 56 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.2845).
+2026-11-25 14:35:10,589 [INFO] [Banco] n04536866: 126 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6719).
+2026-11-25 14:35:10,628 [INFO] [Banco] n02364673: 99 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1044).
+2026-11-25 14:35:10,663 [INFO] [Banco] n02165456: 199 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.3305).
+2026-11-25 14:35:10,705 [INFO] [Banco] n02483362: 41 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.5598).
+2026-11-25 14:35:10,740 [INFO] [Banco] n01484850: 144 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8036).
+2026-11-25 14:35:10,935 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 1 ===
+2026-11-25 14:35:10,936 [INFO]    Acurácia CIL ................  52.54%
+2026-11-25 14:35:10,936 [INFO]    Vazamento (Lambda) ..........  35.05%
+2026-11-25 14:35:10,936 [INFO]    Vazamento balanceado ........  33.61%
+2026-11-25 14:35:10,936 [INFO]    Erro dentro da task (E_WP) ..  12.41%
+2026-11-25 14:35:10,936 [INFO]    Parcela do erro por vazamento  73.84%
+2026-11-25 14:35:10,936 [INFO]    Acurácia com oráculo de task   75.40%
+2026-11-25 14:35:10,936 [INFO]    Teto de ganho ...............  22.86 p.p.
+2026-11-25 14:35:10,936 [INFO]    Índice de direção D ......... 211.431
+2026-11-25 14:35:10,936 [INFO]    Spearman(L, j-i) recência ...   1.000
+2026-11-25 14:35:10,937 [INFO]    Spearman(L, S) semântica ....  -1.000
+2026-11-25 14:35:10,937 [INFO]      parcial, controlando j-i ..  -1.000
+2026-11-25 14:35:10,937 [INFO]    Vazamento após normalização .  18.62%
+2026-11-25 14:35:10,937 [INFO]    Parcela atribuível a escala .  46.87%
+2026-11-25 14:35:10,937 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:10,937 [INFO]      k = -1: 0.003
+2026-11-25 14:35:10,937 [INFO]      k = +1: 0.669
+2026-11-25 14:35:10,937 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:10,937 [INFO]      0.331 0.669
+2026-11-25 14:35:10,937 [INFO]      0.003 0.997
+2026-11-25 14:35:10,953 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 1 (notas padronizadas) ===
+2026-11-25 14:35:10,954 [INFO]    Acurácia CIL ................  66.46%
+2026-11-25 14:35:10,954 [INFO]    Vazamento (Lambda) ..........  18.62%
+2026-11-25 14:35:10,954 [INFO]    Vazamento balanceado ........  18.38%
+2026-11-25 14:35:10,954 [INFO]    Erro dentro da task (E_WP) ..  14.91%
+2026-11-25 14:35:10,954 [INFO]    Parcela do erro por vazamento  55.53%
+2026-11-25 14:35:10,954 [INFO]    Acurácia com oráculo de task   75.40%
+2026-11-25 14:35:10,954 [INFO]    Teto de ganho ...............   8.93 p.p.
+2026-11-25 14:35:10,954 [INFO]    Índice de direção D .........   1.903
+2026-11-25 14:35:10,954 [INFO]    Spearman(L, j-i) recência ...   1.000
+2026-11-25 14:35:10,954 [INFO]    Spearman(L, S) semântica ....  -1.000
+2026-11-25 14:35:10,954 [INFO]      parcial, controlando j-i ..  -1.000
+2026-11-25 14:35:10,954 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:10,955 [INFO]      k = -1: 0.127
+2026-11-25 14:35:10,955 [INFO]      k = +1: 0.241
+2026-11-25 14:35:10,955 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:10,955 [INFO]      0.759 0.241
+2026-11-25 14:35:10,955 [INFO]      0.127 0.873
+2026-11-25 14:35:11,014 [INFO] [Tarefa 1] Acurácia no teste acumulado após a tarefa: 52.54% (notas padronizadas: 66.46%)
+2026-11-25 14:35:11,541 [INFO] [Tarefa 2] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:35:11,541 [INFO] [Tarefa 2] Snapshots de θ_init (Adapter_2 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:35:11,568 [INFO] === Tarefa 2 (n03630383, n01774750, n03481172, n02966193, n02123045, n01847000, n04522168, n02106030, n09835506, n02802426, n02268443, n02009912, n02138441, n02480855, n02346627, n01806143, n03272010, n02486410, n07693725, n02071294): treinando Adapter_2 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:35:12,697 [INFO]    [Tarefa 2] Época [2/2] -> CE:1.7014 | L_LVQ:0.0000 | Acc treino: 76.60% | AAC acumulado: 39.47% | n03630383: 52.94% | n01774750: 82.14% | n03481172: 58.97% | n02966193: 81.48% | n02123045: 80.00% | n01847000: 74.29% | n04522168: 77.78% | n02106030: 73.68% | n09835506: 75.00% | n02802426: 80.00% | n02268443: 82.86% | n02009912: 92.86% | n02138441: 70.00% | n02480855: 62.50% | n02346627: 60.00% | n01806143: 95.65% | n03272010: 67.57% | n02486410: 53.85% | n07693725: 68.42% | n02071294: 80.00%
+2026-11-25 14:35:12,731 [INFO] [Tarefa 2] Adapter_2 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 39.47%; treino em 1s).
+2026-11-25 14:35:12,784 [INFO] [Tarefa 2] Protótipo (FC) de n03630383 substituído (55 imagens de treino).
+2026-11-25 14:35:12,854 [INFO] [Tarefa 2] Protótipo (FC) de n01774750 substituído (103 imagens de treino).
+2026-11-25 14:35:12,923 [INFO] [Tarefa 2] Protótipo (FC) de n03481172 substituído (118 imagens de treino).
+2026-11-25 14:35:12,986 [INFO] [Tarefa 2] Protótipo (FC) de n02966193 substituído (69 imagens de treino).
+2026-11-25 14:35:13,039 [INFO] [Tarefa 2] Protótipo (FC) de n02123045 substituído (106 imagens de treino).
+2026-11-25 14:35:13,106 [INFO] [Tarefa 2] Protótipo (FC) de n01847000 substituído (135 imagens de treino).
+2026-11-25 14:35:13,168 [INFO] [Tarefa 2] Protótipo (FC) de n04522168 substituído (120 imagens de treino).
+2026-11-25 14:35:13,232 [INFO] [Tarefa 2] Protótipo (FC) de n02106030 substituído (54 imagens de treino).
+2026-11-25 14:35:13,299 [INFO] [Tarefa 2] Protótipo (FC) de n09835506 substituído (117 imagens de treino).
+2026-11-25 14:35:13,370 [INFO] [Tarefa 2] Protótipo (FC) de n02802426 substituído (113 imagens de treino).
+2026-11-25 14:35:13,436 [INFO] [Tarefa 2] Protótipo (FC) de n02268443 substituído (171 imagens de treino).
+2026-11-25 14:35:13,494 [INFO] [Tarefa 2] Protótipo (FC) de n02009912 substituído (61 imagens de treino).
+2026-11-25 14:35:13,566 [INFO] [Tarefa 2] Protótipo (FC) de n02138441 substituído (111 imagens de treino).
+2026-11-25 14:35:13,632 [INFO] [Tarefa 2] Protótipo (FC) de n02480855 substituído (168 imagens de treino).
+2026-11-25 14:35:13,702 [INFO] [Tarefa 2] Protótipo (FC) de n02346627 substituído (70 imagens de treino).
+2026-11-25 14:35:13,769 [INFO] [Tarefa 2] Protótipo (FC) de n01806143 substituído (123 imagens de treino).
+2026-11-25 14:35:13,835 [INFO] [Tarefa 2] Protótipo (FC) de n03272010 substituído (102 imagens de treino).
+2026-11-25 14:35:13,901 [INFO] [Tarefa 2] Protótipo (FC) de n02486410 substituído (96 imagens de treino).
+2026-11-25 14:35:13,957 [INFO] [Tarefa 2] Protótipo (FC) de n07693725 substituído (65 imagens de treino).
+2026-11-25 14:35:14,009 [INFO] [Tarefa 2] Protótipo (FC) de n02071294 substituído (150 imagens de treino).
+2026-11-25 14:35:14,545 [INFO] [Banco] n03630383: 55 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.9111).
+2026-11-25 14:35:14,581 [INFO] [Banco] n01774750: 103 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4981).
+2026-11-25 14:35:14,615 [INFO] [Banco] n03481172: 118 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.4369).
+2026-11-25 14:35:14,650 [INFO] [Banco] n02966193: 69 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.6979).
+2026-11-25 14:35:14,681 [INFO] [Banco] n02123045: 106 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5850).
+2026-11-25 14:35:14,712 [INFO] [Banco] n01847000: 135 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0349).
+2026-11-25 14:35:14,747 [INFO] [Banco] n04522168: 120 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.9864).
+2026-11-25 14:35:14,777 [INFO] [Banco] n02106030: 54 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6973).
+2026-11-25 14:35:14,812 [INFO] [Banco] n09835506: 117 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5134).
+2026-11-25 14:35:14,847 [INFO] [Banco] n02802426: 113 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6560).
+2026-11-25 14:35:14,883 [INFO] [Banco] n02268443: 171 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.8919).
+2026-11-25 14:35:14,918 [INFO] [Banco] n02009912: 61 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9128).
+2026-11-25 14:35:14,951 [INFO] [Banco] n02138441: 111 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6180).
+2026-11-25 14:35:14,983 [INFO] [Banco] n02480855: 168 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8270).
+2026-11-25 14:35:15,016 [INFO] [Banco] n02346627: 70 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.2077).
+2026-11-25 14:35:15,046 [INFO] [Banco] n01806143: 123 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.6497).
+2026-11-25 14:35:15,081 [INFO] [Banco] n03272010: 102 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9298).
+2026-11-25 14:35:15,116 [INFO] [Banco] n02486410: 96 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8573).
+2026-11-25 14:35:15,150 [INFO] [Banco] n07693725: 65 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3422).
+2026-11-25 14:35:15,185 [INFO] [Banco] n02071294: 150 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.3351).
+2026-11-25 14:35:15,460 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 2 ===
+2026-11-25 14:35:15,460 [INFO]    Acurácia CIL ................  36.84%
+2026-11-25 14:35:15,461 [INFO]    Vazamento (Lambda) ..........  54.59%
+2026-11-25 14:35:15,461 [INFO]    Vazamento balanceado ........  52.90%
+2026-11-25 14:35:15,461 [INFO]    Erro dentro da task (E_WP) ..   8.56%
+2026-11-25 14:35:15,461 [INFO]    Parcela do erro por vazamento  86.44%
+2026-11-25 14:35:15,461 [INFO]    Acurácia com oráculo de task   74.99%
+2026-11-25 14:35:15,461 [INFO]    Teto de ganho ...............  38.14 p.p.
+2026-11-25 14:35:15,461 [INFO]    Índice de direção D ......... 239.442
+2026-11-25 14:35:15,461 [INFO]    Spearman(L, j-i) recência ...   0.821
+2026-11-25 14:35:15,461 [INFO]    Spearman(L, S) semântica ....  -0.174
+2026-11-25 14:35:15,466 [INFO]      parcial, controlando j-i ..   0.368
+2026-11-25 14:35:15,466 [INFO]    Vazamento após normalização .  32.38%
+2026-11-25 14:35:15,466 [INFO]    Parcela atribuível a escala .  40.68%
+2026-11-25 14:35:15,466 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:15,466 [INFO]      k = -2: 0.000
+2026-11-25 14:35:15,466 [INFO]      k = -1: 0.003
+2026-11-25 14:35:15,466 [INFO]      k = +1: 0.361
+2026-11-25 14:35:15,466 [INFO]      k = +2: 0.858
+2026-11-25 14:35:15,466 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:15,466 [INFO]      0.138 0.004 0.858
+2026-11-25 14:35:15,467 [INFO]      0.000 0.282 0.718
+2026-11-25 14:35:15,467 [INFO]      0.000 0.007 0.993
+2026-11-25 14:35:15,494 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 2 (notas padronizadas) ===
+2026-11-25 14:35:15,494 [INFO]    Acurácia CIL ................  57.65%
+2026-11-25 14:35:15,494 [INFO]    Vazamento (Lambda) ..........  32.38%
+2026-11-25 14:35:15,494 [INFO]    Vazamento balanceado ........  31.60%
+2026-11-25 14:35:15,494 [INFO]    Erro dentro da task (E_WP) ..   9.96%
+2026-11-25 14:35:15,495 [INFO]    Parcela do erro por vazamento  76.47%
+2026-11-25 14:35:15,495 [INFO]    Acurácia com oráculo de task   74.99%
+2026-11-25 14:35:15,495 [INFO]    Teto de ganho ...............  17.33 p.p.
+2026-11-25 14:35:15,495 [INFO]    Índice de direção D .........   6.931
+2026-11-25 14:35:15,495 [INFO]    Spearman(L, j-i) recência ...   0.736
+2026-11-25 14:35:15,495 [INFO]    Spearman(L, S) semântica ....   0.029
+2026-11-25 14:35:15,495 [INFO]      parcial, controlando j-i ..   0.581
+2026-11-25 14:35:15,495 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:15,495 [INFO]      k = -2: 0.018
+2026-11-25 14:35:15,495 [INFO]      k = -1: 0.051
+2026-11-25 14:35:15,495 [INFO]      k = +1: 0.198
+2026-11-25 14:35:15,495 [INFO]      k = +2: 0.433
+2026-11-25 14:35:15,495 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:15,495 [INFO]      0.537 0.030 0.433
+2026-11-25 14:35:15,495 [INFO]      0.060 0.574 0.366
+2026-11-25 14:35:15,496 [INFO]      0.018 0.041 0.941
+2026-11-25 14:35:15,727 [INFO] [Tarefa 2] Acurácia no teste acumulado após a tarefa: 36.84% (notas padronizadas: 57.65%)
+2026-11-25 14:35:16,270 [INFO] [Tarefa 3] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:35:16,270 [INFO] [Tarefa 3] Snapshots de θ_init (Adapter_3 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:35:16,366 [INFO] === Tarefa 3 (n01632777, n12267677, n03494278, n01614925, n02841315, n01498041, n01944390, n02106662, n03888257, n04487394, n07753275, n02106550, n02097298, n02091032, n02398521, n02110341, n03773504, n04389033, n07880968, n02106166): treinando Adapter_3 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:35:17,648 [INFO]    [Tarefa 3] Época [2/2] -> CE:2.0943 | L_LVQ:0.0000 | Acc treino: 76.15% | AAC acumulado: 19.54% | n01632777: 75.86% | n12267677: 72.97% | n03494278: 25.00% | n01614925: 92.68% | n02841315: 66.67% | n01498041: 68.18% | n01944390: 82.46% | n02106662: 67.74% | n03888257: 76.92% | n04487394: 87.50% | n07753275: 80.00% | n02106550: 80.00% | n02097298: 77.78% | n02091032: 63.64% | n02398521: 58.33% | n02110341: 86.96% | n03773504: 55.56% | n04389033: 95.83% | n07880968: 57.89% | n02106166: 70.59%
+2026-11-25 14:35:17,703 [INFO] [Tarefa 3] Adapter_3 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 19.54%; treino em 1s).
+2026-11-25 14:35:17,779 [INFO] [Tarefa 3] Protótipo (FC) de n01632777 substituído (122 imagens de treino).
+2026-11-25 14:35:17,847 [INFO] [Tarefa 3] Protótipo (FC) de n12267677 substituído (137 imagens de treino).
+2026-11-25 14:35:17,903 [INFO] [Tarefa 3] Protótipo (FC) de n03494278 substituído (55 imagens de treino).
+2026-11-25 14:35:17,962 [INFO] [Tarefa 3] Protótipo (FC) de n01614925 substituído (175 imagens de treino).
+2026-11-25 14:35:18,023 [INFO] [Tarefa 3] Protótipo (FC) de n02841315 substituído (91 imagens de treino).
+2026-11-25 14:35:18,088 [INFO] [Tarefa 3] Protótipo (FC) de n01498041 substituído (73 imagens de treino).
+2026-11-25 14:35:18,155 [INFO] [Tarefa 3] Protótipo (FC) de n01944390 substituído (185 imagens de treino).
+2026-11-25 14:35:18,220 [INFO] [Tarefa 3] Protótipo (FC) de n02106662 substituído (89 imagens de treino).
+2026-11-25 14:35:18,288 [INFO] [Tarefa 3] Protótipo (FC) de n03888257 substituído (87 imagens de treino).
+2026-11-25 14:35:18,355 [INFO] [Tarefa 3] Protótipo (FC) de n04487394 substituído (73 imagens de treino).
+2026-11-25 14:35:18,417 [INFO] [Tarefa 3] Protótipo (FC) de n07753275 substituído (145 imagens de treino).
+2026-11-25 14:35:18,480 [INFO] [Tarefa 3] Protótipo (FC) de n02106550 substituído (79 imagens de treino).
+2026-11-25 14:35:18,534 [INFO] [Tarefa 3] Protótipo (FC) de n02097298 substituído (77 imagens de treino).
+2026-11-25 14:35:18,591 [INFO] [Tarefa 3] Protótipo (FC) de n02091032 substituído (40 imagens de treino).
+2026-11-25 14:35:18,655 [INFO] [Tarefa 3] Protótipo (FC) de n02398521 substituído (119 imagens de treino).
+2026-11-25 14:35:18,722 [INFO] [Tarefa 3] Protótipo (FC) de n02110341 substituído (152 imagens de treino).
+2026-11-25 14:35:18,782 [INFO] [Tarefa 3] Protótipo (FC) de n03773504 substituído (71 imagens de treino).
+2026-11-25 14:35:18,854 [INFO] [Tarefa 3] Protótipo (FC) de n04389033 substituído (180 imagens de treino).
+2026-11-25 14:35:18,911 [INFO] [Tarefa 3] Protótipo (FC) de n07880968 substituído (43 imagens de treino).
+2026-11-25 14:35:18,974 [INFO] [Tarefa 3] Protótipo (FC) de n02106166 substituído (70 imagens de treino).
+2026-11-25 14:35:19,500 [INFO] [Banco] n01632777: 122 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1752).
+2026-11-25 14:35:19,534 [INFO] [Banco] n12267677: 137 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3614).
+2026-11-25 14:35:19,567 [INFO] [Banco] n03494278: 55 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.5300).
+2026-11-25 14:35:19,601 [INFO] [Banco] n01614925: 175 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1998).
+2026-11-25 14:35:19,637 [INFO] [Banco] n02841315: 91 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1261).
+2026-11-25 14:35:19,670 [INFO] [Banco] n01498041: 73 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.5256).
+2026-11-25 14:35:19,713 [INFO] [Banco] n01944390: 185 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3900).
+2026-11-25 14:35:19,750 [INFO] [Banco] n02106662: 89 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.3784).
+2026-11-25 14:35:19,778 [INFO] [Banco] n03888257: 87 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.6419).
+2026-11-25 14:35:19,811 [INFO] [Banco] n04487394: 73 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.2829).
+2026-11-25 14:35:19,854 [INFO] [Banco] n07753275: 145 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8422).
+2026-11-25 14:35:19,885 [INFO] [Banco] n02106550: 79 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.2420).
+2026-11-25 14:35:19,916 [INFO] [Banco] n02097298: 77 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4890).
+2026-11-25 14:35:19,948 [INFO] [Banco] n02091032: 40 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5463).
+2026-11-25 14:35:19,983 [INFO] [Banco] n02398521: 119 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.5142).
+2026-11-25 14:35:20,020 [INFO] [Banco] n02110341: 152 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7261).
+2026-11-25 14:35:20,052 [INFO] [Banco] n03773504: 71 vetores phi -> gaussiana (posto 32, variância média por dimensão 5.0474).
+2026-11-25 14:35:20,088 [INFO] [Banco] n04389033: 180 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7298).
+2026-11-25 14:35:20,116 [INFO] [Banco] n07880968: 43 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.9760).
+2026-11-25 14:35:20,146 [INFO] [Banco] n02106166: 70 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9910).
+2026-11-25 14:35:20,586 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 3 ===
+2026-11-25 14:35:20,586 [INFO]    Acurácia CIL ................  19.02%
+2026-11-25 14:35:20,586 [INFO]    Vazamento (Lambda) ..........  75.50%
+2026-11-25 14:35:20,586 [INFO]    Vazamento balanceado ........  73.35%
+2026-11-25 14:35:20,586 [INFO]    Erro dentro da task (E_WP) ..   5.48%
+2026-11-25 14:35:20,586 [INFO]    Parcela do erro por vazamento  93.23%
+2026-11-25 14:35:20,586 [INFO]    Acurácia com oráculo de task   75.30%
+2026-11-25 14:35:20,587 [INFO]    Teto de ganho ...............  56.29 p.p.
+2026-11-25 14:35:20,587 [INFO]    Índice de direção D .........     inf
+2026-11-25 14:35:20,587 [INFO]    Spearman(L, j-i) recência ...   0.654
+2026-11-25 14:35:20,587 [INFO]    Spearman(L, S) semântica ....   0.028
+2026-11-25 14:35:20,587 [INFO]      parcial, controlando j-i ..   0.267
+2026-11-25 14:35:20,587 [INFO]    Vazamento após normalização .  39.43%
+2026-11-25 14:35:20,587 [INFO]    Parcela atribuível a escala .  47.77%
+2026-11-25 14:35:20,587 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:20,587 [INFO]      k = -3: 0.000
+2026-11-25 14:35:20,587 [INFO]      k = -2: 0.000
+2026-11-25 14:35:20,587 [INFO]      k = -1: 0.000
+2026-11-25 14:35:20,588 [INFO]      k = +1: 0.319
+2026-11-25 14:35:20,588 [INFO]      k = +2: 0.491
+2026-11-25 14:35:20,588 [INFO]      k = +3: 0.994
+2026-11-25 14:35:20,588 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:20,588 [INFO]      0.006 0.000 0.000 0.994
+2026-11-25 14:35:20,588 [INFO]      0.000 0.017 0.000 0.983
+2026-11-25 14:35:20,588 [INFO]      0.000 0.000 0.043 0.957
+2026-11-25 14:35:20,588 [INFO]      0.000 0.000 0.000 1.000
+2026-11-25 14:35:20,671 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 3 (notas padronizadas) ===
+2026-11-25 14:35:20,671 [INFO]    Acurácia CIL ................  52.52%
+2026-11-25 14:35:20,671 [INFO]    Vazamento (Lambda) ..........  39.43%
+2026-11-25 14:35:20,671 [INFO]    Vazamento balanceado ........  38.51%
+2026-11-25 14:35:20,672 [INFO]    Erro dentro da task (E_WP) ..   8.05%
+2026-11-25 14:35:20,672 [INFO]    Parcela do erro por vazamento  83.05%
+2026-11-25 14:35:20,672 [INFO]    Acurácia com oráculo de task   75.30%
+2026-11-25 14:35:20,672 [INFO]    Teto de ganho ...............  22.78 p.p.
+2026-11-25 14:35:20,672 [INFO]    Índice de direção D .........   4.776
+2026-11-25 14:35:20,672 [INFO]    Spearman(L, j-i) recência ...   0.726
+2026-11-25 14:35:20,672 [INFO]    Spearman(L, S) semântica ....   0.294
+2026-11-25 14:35:20,672 [INFO]      parcial, controlando j-i ..   0.722
+2026-11-25 14:35:20,672 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:20,672 [INFO]      k = -3: 0.093
+2026-11-25 14:35:20,672 [INFO]      k = -2: 0.010
+2026-11-25 14:35:20,672 [INFO]      k = -1: 0.051
+2026-11-25 14:35:20,672 [INFO]      k = +1: 0.143
+2026-11-25 14:35:20,672 [INFO]      k = +2: 0.232
+2026-11-25 14:35:20,672 [INFO]      k = +3: 0.379
+2026-11-25 14:35:20,672 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:20,673 [INFO]      0.457 0.017 0.147 0.379
+2026-11-25 14:35:20,673 [INFO]      0.041 0.494 0.147 0.318
+2026-11-25 14:35:20,673 [INFO]      0.012 0.023 0.700 0.266
+2026-11-25 14:35:20,673 [INFO]      0.093 0.009 0.089 0.809
+2026-11-25 14:35:20,918 [INFO] [Tarefa 3] Acurácia no teste acumulado após a tarefa: 19.02% (notas padronizadas: 52.52%)
+2026-11-25 14:35:21,553 [INFO] [Tarefa 4] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:35:21,553 [INFO] [Tarefa 4] Snapshots de θ_init (Adapter_4 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:35:21,614 [INFO] === Tarefa 4 (n07768694, n01644373, n07749582, n02134084, n02113023, n07697313, n01748264, n03372029, n02526121, n03124170, n02356798, n02808440, n02909870, n02099712, n04409515, n02088094, n03649909, n02112137, n03498962, n02112018): treinando Adapter_4 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:35:23,120 [INFO]    [Tarefa 4] Época [2/2] -> CE:2.5785 | L_LVQ:0.0000 | Acc treino: 63.92% | AAC acumulado: 12.93% | n07768694: 78.95% | n01644373: 71.43% | n07749582: 75.86% | n02134084: 54.29% | n02113023: 50.00% | n07697313: 90.38% | n01748264: 65.38% | n03372029: 66.67% | n02526121: 41.18% | n03124170: 80.33% | n02356798: 45.45% | n02808440: 55.00% | n02909870: 54.84% | n02099712: 81.25% | n04409515: 69.57% | n02088094: 71.43% | n03649909: 88.00% | n02112137: 20.00% | n03498962: 57.89% | n02112018: 75.00%
+2026-11-25 14:35:23,173 [INFO] [Tarefa 4] Adapter_4 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 12.93%; treino em 2s).
+2026-11-25 14:35:23,247 [INFO] [Tarefa 4] Protótipo (FC) de n07768694 substituído (88 imagens de treino).
+2026-11-25 14:35:23,306 [INFO] [Tarefa 4] Protótipo (FC) de n01644373 substituído (149 imagens de treino).
+2026-11-25 14:35:23,377 [INFO] [Tarefa 4] Protótipo (FC) de n07749582 substituído (132 imagens de treino).
+2026-11-25 14:35:23,456 [INFO] [Tarefa 4] Protótipo (FC) de n02134084 substituído (175 imagens de treino).
+2026-11-25 14:35:23,530 [INFO] [Tarefa 4] Protótipo (FC) de n02113023 substituído (46 imagens de treino).
+2026-11-25 14:35:23,597 [INFO] [Tarefa 4] Protótipo (FC) de n07697313 substituído (210 imagens de treino).
+2026-11-25 14:35:23,658 [INFO] [Tarefa 4] Protótipo (FC) de n01748264 substituído (72 imagens de treino).
+2026-11-25 14:35:23,723 [INFO] [Tarefa 4] Protótipo (FC) de n03372029 substituído (110 imagens de treino).
+2026-11-25 14:35:23,783 [INFO] [Tarefa 4] Protótipo (FC) de n02526121 substituído (85 imagens de treino).
+2026-11-25 14:35:23,860 [INFO] [Tarefa 4] Protótipo (FC) de n03124170 substituído (207 imagens de treino).
+2026-11-25 14:35:23,924 [INFO] [Tarefa 4] Protótipo (FC) de n02356798 substituído (48 imagens de treino).
+2026-11-25 14:35:23,976 [INFO] [Tarefa 4] Protótipo (FC) de n02808440 substituído (88 imagens de treino).
+2026-11-25 14:35:24,030 [INFO] [Tarefa 4] Protótipo (FC) de n02909870 substituído (122 imagens de treino).
+2026-11-25 14:35:24,085 [INFO] [Tarefa 4] Protótipo (FC) de n02099712 substituído (52 imagens de treino).
+2026-11-25 14:35:24,138 [INFO] [Tarefa 4] Protótipo (FC) de n04409515 substituído (78 imagens de treino).
+2026-11-25 14:35:24,193 [INFO] [Tarefa 4] Protótipo (FC) de n02088094 substituído (59 imagens de treino).
+2026-11-25 14:35:24,247 [INFO] [Tarefa 4] Protótipo (FC) de n03649909 substituído (49 imagens de treino).
+2026-11-25 14:35:24,298 [INFO] [Tarefa 4] Protótipo (FC) de n02112137 substituído (41 imagens de treino).
+2026-11-25 14:35:24,357 [INFO] [Tarefa 4] Protótipo (FC) de n03498962 substituído (71 imagens de treino).
+2026-11-25 14:35:24,417 [INFO] [Tarefa 4] Protótipo (FC) de n02112018 substituído (75 imagens de treino).
+2026-11-25 14:35:24,925 [INFO] [Banco] n07768694: 88 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0680).
+2026-11-25 14:35:24,961 [INFO] [Banco] n01644373: 149 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6453).
+2026-11-25 14:35:24,996 [INFO] [Banco] n07749582: 132 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3630).
+2026-11-25 14:35:25,032 [INFO] [Banco] n02134084: 175 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0163).
+2026-11-25 14:35:25,066 [INFO] [Banco] n02113023: 46 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9086).
+2026-11-25 14:35:25,102 [INFO] [Banco] n07697313: 210 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6561).
+2026-11-25 14:35:25,136 [INFO] [Banco] n01748264: 72 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.2823).
+2026-11-25 14:35:25,171 [INFO] [Banco] n03372029: 110 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.2727).
+2026-11-25 14:35:25,207 [INFO] [Banco] n02526121: 85 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.7261).
+2026-11-25 14:35:25,241 [INFO] [Banco] n03124170: 207 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9297).
+2026-11-25 14:35:25,275 [INFO] [Banco] n02356798: 48 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.4884).
+2026-11-25 14:35:25,309 [INFO] [Banco] n02808440: 88 vetores phi -> gaussiana (posto 32, variância média por dimensão 5.0666).
+2026-11-25 14:35:25,342 [INFO] [Banco] n02909870: 122 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.7165).
+2026-11-25 14:35:25,376 [INFO] [Banco] n02099712: 52 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5684).
+2026-11-25 14:35:25,409 [INFO] [Banco] n04409515: 78 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9225).
+2026-11-25 14:35:25,444 [INFO] [Banco] n02088094: 59 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0095).
+2026-11-25 14:35:25,477 [INFO] [Banco] n03649909: 49 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9441).
+2026-11-25 14:35:25,513 [INFO] [Banco] n02112137: 41 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7137).
+2026-11-25 14:35:25,546 [INFO] [Banco] n03498962: 71 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.7590).
+2026-11-25 14:35:25,583 [INFO] [Banco] n02112018: 75 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.2559).
+2026-11-25 14:35:26,051 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 4 ===
+2026-11-25 14:35:26,052 [INFO]    Acurácia CIL ................  11.59%
+2026-11-25 14:35:26,052 [INFO]    Vazamento (Lambda) ..........  83.69%
+2026-11-25 14:35:26,052 [INFO]    Vazamento balanceado ........  80.00%
+2026-11-25 14:35:26,052 [INFO]    Erro dentro da task (E_WP) ..   4.72%
+2026-11-25 14:35:26,052 [INFO]    Parcela do erro por vazamento  94.66%
+2026-11-25 14:35:26,052 [INFO]    Acurácia com oráculo de task   74.61%
+2026-11-25 14:35:26,052 [INFO]    Teto de ganho ...............  63.02 p.p.
+2026-11-25 14:35:26,052 [INFO]    Índice de direção D .........     inf
+2026-11-25 14:35:26,053 [INFO]    Spearman(L, j-i) recência ...   0.548
+2026-11-25 14:35:26,053 [INFO]    Spearman(L, S) semântica ....   0.130
+2026-11-25 14:35:26,053 [INFO]      parcial, controlando j-i ..   0.216
+2026-11-25 14:35:26,053 [INFO]    Vazamento após normalização .  46.40%
+2026-11-25 14:35:26,053 [INFO]    Parcela atribuível a escala .  44.56%
+2026-11-25 14:35:26,053 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:26,053 [INFO]      k = -4: 0.000
+2026-11-25 14:35:26,053 [INFO]      k = -3: 0.000
+2026-11-25 14:35:26,053 [INFO]      k = -2: 0.000
+2026-11-25 14:35:26,053 [INFO]      k = -1: 0.000
+2026-11-25 14:35:26,053 [INFO]      k = +1: 0.250
+2026-11-25 14:35:26,053 [INFO]      k = +2: 0.333
+2026-11-25 14:35:26,054 [INFO]      k = +3: 0.500
+2026-11-25 14:35:26,054 [INFO]      k = +4: 1.000
+2026-11-25 14:35:26,054 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:26,054 [INFO]      0.000 0.000 0.000 0.000 1.000
+2026-11-25 14:35:26,054 [INFO]      0.000 0.000 0.000 0.000 1.000
+2026-11-25 14:35:26,054 [INFO]      0.000 0.000 0.000 0.000 1.000
+2026-11-25 14:35:26,054 [INFO]      0.000 0.000 0.000 0.000 1.000
+2026-11-25 14:35:26,054 [INFO]      0.000 0.000 0.000 0.000 1.000
+2026-11-25 14:35:26,073 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 4 (notas padronizadas) ===
+2026-11-25 14:35:26,073 [INFO]    Acurácia CIL ................  46.43%
+2026-11-25 14:35:26,073 [INFO]    Vazamento (Lambda) ..........  46.40%
+2026-11-25 14:35:26,073 [INFO]    Vazamento balanceado ........  45.49%
+2026-11-25 14:35:26,073 [INFO]    Erro dentro da task (E_WP) ..   7.17%
+2026-11-25 14:35:26,074 [INFO]    Parcela do erro por vazamento  86.62%
+2026-11-25 14:35:26,074 [INFO]    Acurácia com oráculo de task   74.61%
+2026-11-25 14:35:26,074 [INFO]    Teto de ganho ...............  28.17 p.p.
+2026-11-25 14:35:26,074 [INFO]    Índice de direção D .........   3.099
+2026-11-25 14:35:26,074 [INFO]    Spearman(L, j-i) recência ...   0.706
+2026-11-25 14:35:26,074 [INFO]    Spearman(L, S) semântica ....   0.456
+2026-11-25 14:35:26,074 [INFO]      parcial, controlando j-i ..   0.737
+2026-11-25 14:35:26,074 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:26,074 [INFO]      k = -4: 0.099
+2026-11-25 14:35:26,074 [INFO]      k = -3: 0.044
+2026-11-25 14:35:26,074 [INFO]      k = -2: 0.043
+2026-11-25 14:35:26,074 [INFO]      k = -1: 0.060
+2026-11-25 14:35:26,075 [INFO]      k = +1: 0.120
+2026-11-25 14:35:26,075 [INFO]      k = +2: 0.191
+2026-11-25 14:35:26,075 [INFO]      k = +3: 0.216
+2026-11-25 14:35:26,075 [INFO]      k = +4: 0.238
+2026-11-25 14:35:26,075 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:26,075 [INFO]      0.434 0.016 0.110 0.202 0.238
+2026-11-25 14:35:26,075 [INFO]      0.033 0.460 0.116 0.161 0.229
+2026-11-25 14:35:26,075 [INFO]      0.010 0.017 0.563 0.111 0.300
+2026-11-25 14:35:26,075 [INFO]      0.077 0.007 0.068 0.611 0.236
+2026-11-25 14:35:26,075 [INFO]      0.099 0.010 0.113 0.121 0.657
+2026-11-25 14:35:26,441 [INFO] [Tarefa 4] Acurácia no teste acumulado após a tarefa: 11.59% (notas padronizadas: 46.43%)
+2026-11-25 14:35:27,001 [INFO] [Tarefa 5] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:35:27,002 [INFO] [Tarefa 5] Snapshots de θ_init (Adapter_5 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:35:27,041 [INFO] === Tarefa 5 (n03424325, n02091134, n02130308, n02317335, n03930630, n02325366, n02119022, n07873807, n02128757, n01986214, n02701002, n03495258, n02395406, n02226429, n02113624, n02098286, n07734744, n04086273, n02114367, n01833805): treinando Adapter_5 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:35:29,011 [INFO]    [Tarefa 5] Época [2/2] -> CE:3.2580 | L_LVQ:0.0000 | Acc treino: 67.33% | AAC acumulado: 12.21% | n03424325: 83.33% | n02091134: 77.27% | n02130308: 80.00% | n02317335: 70.97% | n03930630: 100.00% | n02325366: 40.91% | n02119022: 52.78% | n07873807: 67.86% | n02128757: 69.23% | n01986214: 84.85% | n02701002: 63.16% | n03495258: 62.07% | n02395406: 61.82% | n02226429: 80.00% | n02113624: 71.43% | n02098286: 92.31% | n07734744: 76.54% | n04086273: 65.00% | n02114367: 76.92% | n01833805: 76.32%
+2026-11-25 14:35:29,064 [INFO] [Tarefa 5] Adapter_5 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 12.21%; treino em 2s).
+2026-11-25 14:35:29,135 [INFO] [Tarefa 5] Protótipo (FC) de n03424325 substituído (114 imagens de treino).
+2026-11-25 14:35:29,207 [INFO] [Tarefa 5] Protótipo (FC) de n02091134 substituído (85 imagens de treino).
+2026-11-25 14:35:29,281 [INFO] [Tarefa 5] Protótipo (FC) de n02130308 substituído (116 imagens de treino).
+2026-11-25 14:35:29,352 [INFO] [Tarefa 5] Protótipo (FC) de n02317335 substituído (121 imagens de treino).
+2026-11-25 14:35:29,422 [INFO] [Tarefa 5] Protótipo (FC) de n03930630 substituído (103 imagens de treino).
+2026-11-25 14:35:29,491 [INFO] [Tarefa 5] Protótipo (FC) de n02325366 substituído (51 imagens de treino).
+2026-11-25 14:35:29,562 [INFO] [Tarefa 5] Protótipo (FC) de n02119022 substituído (147 imagens de treino).
+2026-11-25 14:35:29,640 [INFO] [Tarefa 5] Protótipo (FC) de n07873807 substituído (108 imagens de treino).
+2026-11-25 14:35:29,717 [INFO] [Tarefa 5] Protótipo (FC) de n02128757 substituído (103 imagens de treino).
+2026-11-25 14:35:29,797 [INFO] [Tarefa 5] Protótipo (FC) de n01986214 substituído (103 imagens de treino).
+2026-11-25 14:35:29,867 [INFO] [Tarefa 5] Protótipo (FC) de n02701002 substituído (71 imagens de treino).
+2026-11-25 14:35:29,943 [INFO] [Tarefa 5] Protótipo (FC) de n03495258 substituído (94 imagens de treino).
+2026-11-25 14:35:30,021 [INFO] [Tarefa 5] Protótipo (FC) de n02395406 substituído (193 imagens de treino).
+2026-11-25 14:35:30,099 [INFO] [Tarefa 5] Protótipo (FC) de n02226429 substituído (122 imagens de treino).
+2026-11-25 14:35:30,164 [INFO] [Tarefa 5] Protótipo (FC) de n02113624 substituído (48 imagens de treino).
+2026-11-25 14:35:30,235 [INFO] [Tarefa 5] Protótipo (FC) de n02098286 substituído (55 imagens de treino).
+2026-11-25 14:35:30,311 [INFO] [Tarefa 5] Protótipo (FC) de n07734744 substituído (314 imagens de treino).
+2026-11-25 14:35:30,390 [INFO] [Tarefa 5] Protótipo (FC) de n04086273 substituído (148 imagens de treino).
+2026-11-25 14:35:30,460 [INFO] [Tarefa 5] Protótipo (FC) de n02114367 substituído (58 imagens de treino).
+2026-11-25 14:35:30,538 [INFO] [Tarefa 5] Protótipo (FC) de n01833805 substituído (243 imagens de treino).
+2026-11-25 14:35:31,251 [INFO] [Banco] n03424325: 114 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7212).
+2026-11-25 14:35:31,286 [INFO] [Banco] n02091134: 85 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9476).
+2026-11-25 14:35:31,319 [INFO] [Banco] n02130308: 116 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8466).
+2026-11-25 14:35:31,356 [INFO] [Banco] n02317335: 121 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0538).
+2026-11-25 14:35:31,388 [INFO] [Banco] n03930630: 103 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5047).
+2026-11-25 14:35:31,421 [INFO] [Banco] n02325366: 51 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1535).
+2026-11-25 14:35:31,456 [INFO] [Banco] n02119022: 147 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6810).
+2026-11-25 14:35:31,489 [INFO] [Banco] n07873807: 108 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.6899).
+2026-11-25 14:35:31,523 [INFO] [Banco] n02128757: 103 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.2912).
+2026-11-25 14:35:31,557 [INFO] [Banco] n01986214: 103 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1263).
+2026-11-25 14:35:31,591 [INFO] [Banco] n02701002: 71 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6968).
+2026-11-25 14:35:31,624 [INFO] [Banco] n03495258: 94 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7907).
+2026-11-25 14:35:31,656 [INFO] [Banco] n02395406: 193 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6082).
+2026-11-25 14:35:31,688 [INFO] [Banco] n02226429: 122 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8577).
+2026-11-25 14:35:31,719 [INFO] [Banco] n02113624: 48 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0515).
+2026-11-25 14:35:31,748 [INFO] [Banco] n02098286: 55 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8665).
+2026-11-25 14:35:31,782 [INFO] [Banco] n07734744: 314 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1690).
+2026-11-25 14:35:31,810 [INFO] [Banco] n04086273: 148 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6964).
+2026-11-25 14:35:31,843 [INFO] [Banco] n02114367: 58 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4645).
+2026-11-25 14:35:31,877 [INFO] [Banco] n01833805: 243 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0674).
+2026-11-25 14:35:32,596 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 5 ===
+2026-11-25 14:35:32,596 [INFO]    Acurácia CIL ................  13.39%
+2026-11-25 14:35:32,596 [INFO]    Vazamento (Lambda) ..........  81.73%
+2026-11-25 14:35:32,596 [INFO]    Vazamento balanceado ........  83.13%
+2026-11-25 14:35:32,596 [INFO]    Erro dentro da task (E_WP) ..   4.88%
+2026-11-25 14:35:32,596 [INFO]    Parcela do erro por vazamento  94.36%
+2026-11-25 14:35:32,597 [INFO]    Acurácia com oráculo de task   74.32%
+2026-11-25 14:35:32,597 [INFO]    Teto de ganho ...............  60.93 p.p.
+2026-11-25 14:35:32,597 [INFO]    Índice de direção D .........     inf
+2026-11-25 14:35:32,597 [INFO]    Spearman(L, j-i) recência ...   0.624
+2026-11-25 14:35:32,598 [INFO]    Spearman(L, S) semântica ....  -0.047
+2026-11-25 14:35:32,598 [INFO]      parcial, controlando j-i ..   0.033
+2026-11-25 14:35:32,598 [INFO]    Vazamento após normalização .  49.30%
+2026-11-25 14:35:32,598 [INFO]    Parcela atribuível a escala .  39.68%
+2026-11-25 14:35:32,598 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:32,598 [INFO]      k = -5: 0.000
+2026-11-25 14:35:32,598 [INFO]      k = -4: 0.000
+2026-11-25 14:35:32,598 [INFO]      k = -3: 0.000
+2026-11-25 14:35:32,598 [INFO]      k = -2: 0.000
+2026-11-25 14:35:32,598 [INFO]      k = -1: 0.000
+2026-11-25 14:35:32,598 [INFO]      k = +1: 0.199
+2026-11-25 14:35:32,598 [INFO]      k = +2: 0.249
+2026-11-25 14:35:32,599 [INFO]      k = +3: 0.333
+2026-11-25 14:35:32,599 [INFO]      k = +4: 0.501
+2026-11-25 14:35:32,599 [INFO]      k = +5: 0.999
+2026-11-25 14:35:32,599 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:32,599 [INFO]      0.000 0.000 0.000 0.000 0.001 0.999
+2026-11-25 14:35:32,599 [INFO]      0.000 0.000 0.000 0.000 0.000 1.000
+2026-11-25 14:35:32,599 [INFO]      0.000 0.000 0.000 0.000 0.002 0.998
+2026-11-25 14:35:32,599 [INFO]      0.000 0.000 0.000 0.000 0.005 0.995
+2026-11-25 14:35:32,599 [INFO]      0.000 0.000 0.000 0.000 0.012 0.988
+2026-11-25 14:35:32,599 [INFO]      0.000 0.000 0.000 0.000 0.000 1.000
+2026-11-25 14:35:32,625 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 5 (notas padronizadas) ===
+2026-11-25 14:35:32,625 [INFO]    Acurácia CIL ................  44.09%
+2026-11-25 14:35:32,625 [INFO]    Vazamento (Lambda) ..........  49.30%
+2026-11-25 14:35:32,625 [INFO]    Vazamento balanceado ........  49.15%
+2026-11-25 14:35:32,625 [INFO]    Erro dentro da task (E_WP) ..   6.61%
+2026-11-25 14:35:32,625 [INFO]    Parcela do erro por vazamento  88.17%
+2026-11-25 14:35:32,625 [INFO]    Acurácia com oráculo de task   74.32%
+2026-11-25 14:35:32,626 [INFO]    Teto de ganho ...............  30.23 p.p.
+2026-11-25 14:35:32,626 [INFO]    Índice de direção D .........   2.534
+2026-11-25 14:35:32,626 [INFO]    Spearman(L, j-i) recência ...   0.609
+2026-11-25 14:35:32,626 [INFO]    Spearman(L, S) semântica ....   0.284
+2026-11-25 14:35:32,626 [INFO]      parcial, controlando j-i ..   0.450
+2026-11-25 14:35:32,626 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:32,626 [INFO]      k = -5: 0.082
+2026-11-25 14:35:32,626 [INFO]      k = -4: 0.051
+2026-11-25 14:35:32,626 [INFO]      k = -3: 0.056
+2026-11-25 14:35:32,626 [INFO]      k = -2: 0.057
+2026-11-25 14:35:32,626 [INFO]      k = -1: 0.051
+2026-11-25 14:35:32,626 [INFO]      k = +1: 0.090
+2026-11-25 14:35:32,626 [INFO]      k = +2: 0.137
+2026-11-25 14:35:32,626 [INFO]      k = +3: 0.161
+2026-11-25 14:35:32,626 [INFO]      k = +4: 0.183
+2026-11-25 14:35:32,627 [INFO]      k = +5: 0.266
+2026-11-25 14:35:32,627 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:32,627 [INFO]      0.409 0.016 0.083 0.136 0.090 0.266
+2026-11-25 14:35:32,627 [INFO]      0.024 0.426 0.085 0.103 0.087 0.275
+2026-11-25 14:35:32,627 [INFO]      0.010 0.017 0.502 0.066 0.147 0.259
+2026-11-25 14:35:32,627 [INFO]      0.075 0.007 0.061 0.524 0.116 0.217
+2026-11-25 14:35:32,627 [INFO]      0.097 0.010 0.101 0.092 0.532 0.168
+2026-11-25 14:35:32,627 [INFO]      0.082 0.006 0.083 0.109 0.061 0.659
+2026-11-25 14:35:33,159 [INFO] [Tarefa 5] Acurácia no teste acumulado após a tarefa: 13.39% (notas padronizadas: 44.09%)
+2026-11-25 14:35:33,871 [INFO] [Tarefa 6] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:35:33,871 [INFO] [Tarefa 6] Snapshots de θ_init (Adapter_6 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:35:33,923 [INFO] === Tarefa 6 (n01784675, n02655020, n02510455, n02108089, n02906734, n04118538, n03710193, n02607072, n07714571, n02950826, n04310018, n02219486, n02190166, n02109525, n01677366, n04275548, n01694178, n04591713, n02110958, n02797295): treinando Adapter_6 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:35:36,367 [INFO]    [Tarefa 6] Época [2/2] -> CE:4.0514 | L_LVQ:0.0000 | Acc treino: 10.41% | AAC acumulado: 18.60% | n01784675: 81.48% | n02655020: 76.32% | n02510455: 77.78% | n02108089: 66.67% | n02906734: 80.49% | n04118538: 66.67% | n03710193: 63.16% | n02607072: 70.59% | n07714571: 80.95% | n02950826: 47.37% | n04310018: 88.00% | n02219486: 68.57% | n02190166: 56.52% | n02109525: 69.23% | n01677366: 66.67% | n04275548: 77.50% | n01694178: 90.48% | n04591713: 83.33% | n02110958: 68.52% | n02797295: 69.23%
+2026-11-25 14:35:36,389 [INFO] [Tarefa 6] Adapter_6 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 18.60%; treino em 2s).
+2026-11-25 14:35:36,436 [INFO] [Tarefa 6] Protótipo (FC) de n01784675 substituído (75 imagens de treino).
+2026-11-25 14:35:36,488 [INFO] [Tarefa 6] Protótipo (FC) de n02655020 substituído (125 imagens de treino).
+2026-11-25 14:35:36,541 [INFO] [Tarefa 6] Protótipo (FC) de n02510455 substituído (149 imagens de treino).
+2026-11-25 14:35:36,591 [INFO] [Tarefa 6] Protótipo (FC) de n02108089 substituído (59 imagens de treino).
+2026-11-25 14:35:36,646 [INFO] [Tarefa 6] Protótipo (FC) de n02906734 substituído (123 imagens de treino).
+2026-11-25 14:35:36,699 [INFO] [Tarefa 6] Protótipo (FC) de n04118538 substituído (57 imagens de treino).
+2026-11-25 14:35:36,760 [INFO] [Tarefa 6] Protótipo (FC) de n03710193 substituído (54 imagens de treino).
+2026-11-25 14:35:36,813 [INFO] [Tarefa 6] Protótipo (FC) de n02607072 substituído (125 imagens de treino).
+2026-11-25 14:35:36,856 [INFO] [Tarefa 6] Protótipo (FC) de n07714571 substituído (56 imagens de treino).
+2026-11-25 14:35:36,905 [INFO] [Tarefa 6] Protótipo (FC) de n02950826 substituído (49 imagens de treino).
+2026-11-25 14:35:36,958 [INFO] [Tarefa 6] Protótipo (FC) de n04310018 substituído (163 imagens de treino).
+2026-11-25 14:35:37,028 [INFO] [Tarefa 6] Protótipo (FC) de n02219486 substituído (119 imagens de treino).
+2026-11-25 14:35:37,095 [INFO] [Tarefa 6] Protótipo (FC) de n02190166 substituído (51 imagens de treino).
+2026-11-25 14:35:37,156 [INFO] [Tarefa 6] Protótipo (FC) de n02109525 substituído (34 imagens de treino).
+2026-11-25 14:35:37,210 [INFO] [Tarefa 6] Protótipo (FC) de n01677366 substituído (50 imagens de treino).
+2026-11-25 14:35:37,275 [INFO] [Tarefa 6] Protótipo (FC) de n04275548 substituído (96 imagens de treino).
+2026-11-25 14:35:37,365 [INFO] [Tarefa 6] Protótipo (FC) de n01694178 substituído (139 imagens de treino).
+2026-11-25 14:35:37,433 [INFO] [Tarefa 6] Protótipo (FC) de n04591713 substituído (85 imagens de treino).
+2026-11-25 14:35:37,496 [INFO] [Tarefa 6] Protótipo (FC) de n02110958 substituído (233 imagens de treino).
+2026-11-25 14:35:37,566 [INFO] [Tarefa 6] Protótipo (FC) de n02797295 substituído (69 imagens de treino).
+2026-11-25 14:35:38,074 [INFO] [Banco] n01784675: 75 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.4070).
+2026-11-25 14:35:38,110 [INFO] [Banco] n02655020: 125 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0943).
+2026-11-25 14:35:38,144 [INFO] [Banco] n02510455: 149 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.3392).
+2026-11-25 14:35:38,178 [INFO] [Banco] n02108089: 59 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4985).
+2026-11-25 14:35:38,213 [INFO] [Banco] n02906734: 123 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3389).
+2026-11-25 14:35:38,247 [INFO] [Banco] n04118538: 57 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.6125).
+2026-11-25 14:35:38,292 [INFO] [Banco] n03710193: 54 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.7411).
+2026-11-25 14:35:38,328 [INFO] [Banco] n02607072: 125 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1986).
+2026-11-25 14:35:38,362 [INFO] [Banco] n07714571: 56 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0205).
+2026-11-25 14:35:38,398 [INFO] [Banco] n02950826: 49 vetores phi -> gaussiana (posto 32, variância média por dimensão 5.0569).
+2026-11-25 14:35:38,433 [INFO] [Banco] n04310018: 163 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1469).
+2026-11-25 14:35:38,466 [INFO] [Banco] n02219486: 119 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0991).
+2026-11-25 14:35:38,501 [INFO] [Banco] n02190166: 51 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.4384).
+2026-11-25 14:35:38,534 [INFO] [Banco] n02109525: 34 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7950).
+2026-11-25 14:35:38,567 [INFO] [Banco] n01677366: 50 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9532).
+2026-11-25 14:35:38,601 [INFO] [Banco] n04275548: 96 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1808).
+2026-11-25 14:35:38,637 [INFO] [Banco] n01694178: 139 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3616).
+2026-11-25 14:35:38,670 [INFO] [Banco] n04591713: 85 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3711).
+2026-11-25 14:35:38,707 [INFO] [Banco] n02110958: 233 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6584).
+2026-11-25 14:35:38,741 [INFO] [Banco] n02797295: 69 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.6897).
+2026-11-25 14:35:39,440 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 6 ===
+2026-11-25 14:35:39,440 [INFO]    Acurácia CIL ................  18.37%
+2026-11-25 14:35:39,440 [INFO]    Vazamento (Lambda) ..........  77.08%
+2026-11-25 14:35:39,440 [INFO]    Vazamento balanceado ........  77.22%
+2026-11-25 14:35:39,440 [INFO]    Erro dentro da task (E_WP) ..   4.56%
+2026-11-25 14:35:39,440 [INFO]    Parcela do erro por vazamento  94.42%
+2026-11-25 14:35:39,441 [INFO]    Acurácia com oráculo de task   74.44%
+2026-11-25 14:35:39,441 [INFO]    Teto de ganho ...............  56.07 p.p.
+2026-11-25 14:35:39,441 [INFO]    Índice de direção D ......... 105.060
+2026-11-25 14:35:39,441 [INFO]    Spearman(L, j-i) recência ...   0.621
+2026-11-25 14:35:39,441 [INFO]    Spearman(L, S) semântica ....  -0.171
+2026-11-25 14:35:39,441 [INFO]      parcial, controlando j-i ..  -0.207
+2026-11-25 14:35:39,441 [INFO]    Vazamento após normalização .  50.64%
+2026-11-25 14:35:39,441 [INFO]    Parcela atribuível a escala .  34.30%
+2026-11-25 14:35:39,441 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:39,441 [INFO]      k = -6: 0.000
+2026-11-25 14:35:39,441 [INFO]      k = -5: 0.000
+2026-11-25 14:35:39,441 [INFO]      k = -4: 0.000
+2026-11-25 14:35:39,441 [INFO]      k = -3: 0.000
+2026-11-25 14:35:39,441 [INFO]      k = -2: 0.000
+2026-11-25 14:35:39,441 [INFO]      k = -1: 0.008
+2026-11-25 14:35:39,442 [INFO]      k = +1: 0.093
+2026-11-25 14:35:39,442 [INFO]      k = +2: 0.202
+2026-11-25 14:35:39,442 [INFO]      k = +3: 0.251
+2026-11-25 14:35:39,442 [INFO]      k = +4: 0.341
+2026-11-25 14:35:39,442 [INFO]      k = +5: 0.496
+2026-11-25 14:35:39,442 [INFO]      k = +6: 0.766
+2026-11-25 14:35:39,442 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:39,442 [INFO]      0.000 0.000 0.000 0.000 0.000 0.234 0.766
+2026-11-25 14:35:39,442 [INFO]      0.000 0.000 0.000 0.000 0.000 0.242 0.758
+2026-11-25 14:35:39,442 [INFO]      0.000 0.000 0.000 0.000 0.000 0.219 0.781
+2026-11-25 14:35:39,442 [INFO]      0.000 0.000 0.000 0.000 0.000 0.214 0.786
+2026-11-25 14:35:39,442 [INFO]      0.000 0.000 0.000 0.000 0.000 0.201 0.799
+2026-11-25 14:35:39,442 [INFO]      0.000 0.000 0.000 0.000 0.000 0.645 0.355
+2026-11-25 14:35:39,442 [INFO]      0.000 0.000 0.000 0.000 0.000 0.051 0.949
+2026-11-25 14:35:39,494 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 6 (notas padronizadas) ===
+2026-11-25 14:35:39,495 [INFO]    Acurácia CIL ................  43.33%
+2026-11-25 14:35:39,495 [INFO]    Vazamento (Lambda) ..........  50.64%
+2026-11-25 14:35:39,495 [INFO]    Vazamento balanceado ........  50.57%
+2026-11-25 14:35:39,495 [INFO]    Erro dentro da task (E_WP) ..   6.03%
+2026-11-25 14:35:39,495 [INFO]    Parcela do erro por vazamento  89.36%
+2026-11-25 14:35:39,495 [INFO]    Acurácia com oráculo de task   74.44%
+2026-11-25 14:35:39,495 [INFO]    Teto de ganho ...............  31.11 p.p.
+2026-11-25 14:35:39,495 [INFO]    Índice de direção D .........   1.672
+2026-11-25 14:35:39,495 [INFO]    Spearman(L, j-i) recência ...   0.257
+2026-11-25 14:35:39,496 [INFO]    Spearman(L, S) semântica ....   0.255
+2026-11-25 14:35:39,496 [INFO]      parcial, controlando j-i ..   0.268
+2026-11-25 14:35:39,496 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:39,496 [INFO]      k = -6: 0.053
+2026-11-25 14:35:39,496 [INFO]      k = -5: 0.060
+2026-11-25 14:35:39,496 [INFO]      k = -4: 0.061
+2026-11-25 14:35:39,496 [INFO]      k = -3: 0.068
+2026-11-25 14:35:39,496 [INFO]      k = -2: 0.063
+2026-11-25 14:35:39,496 [INFO]      k = -1: 0.063
+2026-11-25 14:35:39,496 [INFO]      k = +1: 0.076
+2026-11-25 14:35:39,496 [INFO]      k = +2: 0.107
+2026-11-25 14:35:39,496 [INFO]      k = +3: 0.128
+2026-11-25 14:35:39,496 [INFO]      k = +4: 0.121
+2026-11-25 14:35:39,496 [INFO]      k = +5: 0.149
+2026-11-25 14:35:39,496 [INFO]      k = +6: 0.052
+2026-11-25 14:35:39,496 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:39,496 [INFO]      0.406 0.016 0.081 0.134 0.071 0.239 0.052
+2026-11-25 14:35:39,497 [INFO]      0.024 0.424 0.084 0.095 0.074 0.241 0.059
+2026-11-25 14:35:39,497 [INFO]      0.010 0.017 0.488 0.063 0.137 0.233 0.053
+2026-11-25 14:35:39,497 [INFO]      0.072 0.004 0.061 0.506 0.098 0.189 0.070
+2026-11-25 14:35:39,497 [INFO]      0.094 0.010 0.101 0.090 0.509 0.162 0.033
+2026-11-25 14:35:39,497 [INFO]      0.079 0.006 0.083 0.109 0.050 0.641 0.032
+2026-11-25 14:35:39,497 [INFO]      0.053 0.042 0.083 0.107 0.091 0.139 0.485
+2026-11-25 14:35:39,989 [INFO] [Tarefa 6] Acurácia no teste acumulado após a tarefa: 18.37% (notas padronizadas: 43.33%)
+2026-11-25 14:35:40,724 [INFO] [Tarefa 7] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:35:40,724 [INFO] [Tarefa 7] Snapshots de θ_init (Adapter_7 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:35:40,813 [INFO] === Tarefa 7 (n01518878, n01843383, n03594945, n02823750, n02085620, n02088238, n02206856, n02939185, n02749479, n01820546, n02007558, n02102318, n02077923, n04254680, n09472597, n02951358, n03775071, n04192698, n02236044, n02129604): treinando Adapter_7 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:35:43,835 [INFO]    [Tarefa 7] Época [2/2] -> CE:4.1884 | L_LVQ:0.0000 | Acc treino: 29.05% | AAC acumulado: 17.25% | n01518878: 53.45% | n01843383: 69.44% | n03594945: 92.00% | n02823750: 73.68% | n02085620: 80.00% | n02088238: 62.96% | n02206856: 83.10% | n02939185: 70.59% | n02749479: 81.82% | n01820546: 73.08% | n02007558: 63.77% | n02102318: 71.88% | n02077923: 91.67% | n04254680: 86.84% | n09472597: 68.42% | n02951358: 61.11% | n03775071: 70.83% | n04192698: 67.74% | n02236044: 75.41% | n02129604: 87.18%
+2026-11-25 14:35:43,888 [INFO] [Tarefa 7] Adapter_7 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 17.25%; treino em 3s).
+2026-11-25 14:35:43,967 [INFO] [Tarefa 7] Protótipo (FC) de n01518878 substituído (128 imagens de treino).
+2026-11-25 14:35:44,042 [INFO] [Tarefa 7] Protótipo (FC) de n01843383 substituído (252 imagens de treino).
+2026-11-25 14:35:44,116 [INFO] [Tarefa 7] Protótipo (FC) de n03594945 substituído (101 imagens de treino).
+2026-11-25 14:35:44,186 [INFO] [Tarefa 7] Protótipo (FC) de n02823750 substituído (59 imagens de treino).
+2026-11-25 14:35:44,261 [INFO] [Tarefa 7] Protótipo (FC) de n02085620 substituído (113 imagens de treino).
+2026-11-25 14:35:44,343 [INFO] [Tarefa 7] Protótipo (FC) de n02088238 substituído (112 imagens de treino).
+2026-11-25 14:35:44,421 [INFO] [Tarefa 7] Protótipo (FC) de n02206856 substituído (279 imagens de treino).
+2026-11-25 14:35:44,496 [INFO] [Tarefa 7] Protótipo (FC) de n02939185 substituído (77 imagens de treino).
+2026-11-25 14:35:44,571 [INFO] [Tarefa 7] Protótipo (FC) de n02749479 substituído (64 imagens de treino).
+2026-11-25 14:35:44,643 [INFO] [Tarefa 7] Protótipo (FC) de n01820546 substituído (91 imagens de treino).
+2026-11-25 14:35:44,731 [INFO] [Tarefa 7] Protótipo (FC) de n02007558 substituído (277 imagens de treino).
+2026-11-25 14:35:44,810 [INFO] [Tarefa 7] Protótipo (FC) de n02102318 substituído (80 imagens de treino).
+2026-11-25 14:35:44,882 [INFO] [Tarefa 7] Protótipo (FC) de n02077923 substituído (61 imagens de treino).
+2026-11-25 14:35:44,958 [INFO] [Tarefa 7] Protótipo (FC) de n04254680 substituído (137 imagens de treino).
+2026-11-25 14:35:45,036 [INFO] [Tarefa 7] Protótipo (FC) de n09472597 substituído (156 imagens de treino).
+2026-11-25 14:35:45,108 [INFO] [Tarefa 7] Protótipo (FC) de n02951358 substituído (67 imagens de treino).
+2026-11-25 14:35:45,176 [INFO] [Tarefa 7] Protótipo (FC) de n03775071 substituído (48 imagens de treino).
+2026-11-25 14:35:45,250 [INFO] [Tarefa 7] Protótipo (FC) de n04192698 substituído (95 imagens de treino).
+2026-11-25 14:35:45,330 [INFO] [Tarefa 7] Protótipo (FC) de n02236044 substituído (170 imagens de treino).
+2026-11-25 14:35:45,410 [INFO] [Tarefa 7] Protótipo (FC) de n02129604 substituído (170 imagens de treino).
+2026-11-25 14:35:46,125 [INFO] [Banco] n01518878: 128 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3866).
+2026-11-25 14:35:46,161 [INFO] [Banco] n01843383: 252 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8177).
+2026-11-25 14:35:46,196 [INFO] [Banco] n03594945: 101 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1311).
+2026-11-25 14:35:46,229 [INFO] [Banco] n02823750: 59 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3127).
+2026-11-25 14:35:46,265 [INFO] [Banco] n02085620: 113 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8594).
+2026-11-25 14:35:46,300 [INFO] [Banco] n02088238: 112 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4862).
+2026-11-25 14:35:46,336 [INFO] [Banco] n02206856: 279 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5587).
+2026-11-25 14:35:46,369 [INFO] [Banco] n02939185: 77 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3798).
+2026-11-25 14:35:46,405 [INFO] [Banco] n02749479: 64 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8491).
+2026-11-25 14:35:46,439 [INFO] [Banco] n01820546: 91 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1364).
+2026-11-25 14:35:46,477 [INFO] [Banco] n02007558: 277 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0582).
+2026-11-25 14:35:46,509 [INFO] [Banco] n02102318: 80 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.3315).
+2026-11-25 14:35:46,541 [INFO] [Banco] n02077923: 61 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.5473).
+2026-11-25 14:35:46,587 [INFO] [Banco] n04254680: 137 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4442).
+2026-11-25 14:35:46,624 [INFO] [Banco] n09472597: 156 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.2720).
+2026-11-25 14:35:46,658 [INFO] [Banco] n02951358: 67 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.6944).
+2026-11-25 14:35:46,691 [INFO] [Banco] n03775071: 48 vetores phi -> gaussiana (posto 32, variância média por dimensão 5.0394).
+2026-11-25 14:35:46,725 [INFO] [Banco] n04192698: 95 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.5192).
+2026-11-25 14:35:46,760 [INFO] [Banco] n02236044: 170 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8708).
+2026-11-25 14:35:46,797 [INFO] [Banco] n02129604: 170 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.3475).
+2026-11-25 14:35:47,991 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 7 ===
+2026-11-25 14:35:47,992 [INFO]    Acurácia CIL ................  18.03%
+2026-11-25 14:35:47,992 [INFO]    Vazamento (Lambda) ..........  77.91%
+2026-11-25 14:35:47,992 [INFO]    Vazamento balanceado ........  79.86%
+2026-11-25 14:35:47,992 [INFO]    Erro dentro da task (E_WP) ..   4.07%
+2026-11-25 14:35:47,992 [INFO]    Parcela do erro por vazamento  95.04%
+2026-11-25 14:35:47,992 [INFO]    Acurácia com oráculo de task   74.37%
+2026-11-25 14:35:47,992 [INFO]    Teto de ganho ...............  56.34 p.p.
+2026-11-25 14:35:47,992 [INFO]    Índice de direção D ......... 664.308
+2026-11-25 14:35:47,992 [INFO]    Spearman(L, j-i) recência ...   0.671
+2026-11-25 14:35:47,992 [INFO]    Spearman(L, S) semântica ....   0.184
+2026-11-25 14:35:47,992 [INFO]      parcial, controlando j-i ..   0.088
+2026-11-25 14:35:47,993 [INFO]    Vazamento após normalização .  52.82%
+2026-11-25 14:35:47,993 [INFO]    Parcela atribuível a escala .  32.20%
+2026-11-25 14:35:47,993 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:47,993 [INFO]      k = -7: 0.000
+2026-11-25 14:35:47,999 [INFO]      k = -6: 0.000
+2026-11-25 14:35:47,999 [INFO]      k = -5: 0.000
+2026-11-25 14:35:47,999 [INFO]      k = -4: 0.000
+2026-11-25 14:35:47,999 [INFO]      k = -3: 0.000
+2026-11-25 14:35:47,999 [INFO]      k = -2: 0.000
+2026-11-25 14:35:47,999 [INFO]      k = -1: 0.001
+2026-11-25 14:35:47,999 [INFO]      k = +1: 0.083
+2026-11-25 14:35:47,999 [INFO]      k = +2: 0.146
+2026-11-25 14:35:47,999 [INFO]      k = +3: 0.201
+2026-11-25 14:35:47,999 [INFO]      k = +4: 0.239
+2026-11-25 14:35:48,000 [INFO]      k = +5: 0.332
+2026-11-25 14:35:48,000 [INFO]      k = +6: 0.500
+2026-11-25 14:35:48,000 [INFO]      k = +7: 0.961
+2026-11-25 14:35:48,000 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:48,000 [INFO]      0.000 0.000 0.000 0.000 0.000 0.004 0.035 0.961
+2026-11-25 14:35:48,000 [INFO]      0.000 0.000 0.000 0.000 0.000 0.002 0.033 0.965
+2026-11-25 14:35:48,000 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.041 0.959
+2026-11-25 14:35:48,000 [INFO]      0.000 0.000 0.000 0.000 0.000 0.009 0.079 0.912
+2026-11-25 14:35:48,000 [INFO]      0.000 0.000 0.000 0.000 0.000 0.002 0.072 0.926
+2026-11-25 14:35:48,000 [INFO]      0.000 0.000 0.000 0.000 0.000 0.182 0.021 0.797
+2026-11-25 14:35:48,000 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.439 0.561
+2026-11-25 14:35:48,001 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.010 0.990
+2026-11-25 14:35:48,079 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 7 (notas padronizadas) ===
+2026-11-25 14:35:48,080 [INFO]    Acurácia CIL ................  41.63%
+2026-11-25 14:35:48,080 [INFO]    Vazamento (Lambda) ..........  52.82%
+2026-11-25 14:35:48,080 [INFO]    Vazamento balanceado ........  52.70%
+2026-11-25 14:35:48,080 [INFO]    Erro dentro da task (E_WP) ..   5.54%
+2026-11-25 14:35:48,080 [INFO]    Parcela do erro por vazamento  90.50%
+2026-11-25 14:35:48,080 [INFO]    Acurácia com oráculo de task   74.37%
+2026-11-25 14:35:48,080 [INFO]    Teto de ganho ...............  32.73 p.p.
+2026-11-25 14:35:48,080 [INFO]    Índice de direção D .........   1.317
+2026-11-25 14:35:48,081 [INFO]    Spearman(L, j-i) recência ...   0.141
+2026-11-25 14:35:48,081 [INFO]    Spearman(L, S) semântica ....   0.267
+2026-11-25 14:35:48,081 [INFO]      parcial, controlando j-i ..   0.249
+2026-11-25 14:35:48,081 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:48,082 [INFO]      k = -7: 0.049
+2026-11-25 14:35:48,082 [INFO]      k = -6: 0.033
+2026-11-25 14:35:48,082 [INFO]      k = -5: 0.079
+2026-11-25 14:35:48,082 [INFO]      k = -4: 0.071
+2026-11-25 14:35:48,082 [INFO]      k = -3: 0.069
+2026-11-25 14:35:48,082 [INFO]      k = -2: 0.079
+2026-11-25 14:35:48,082 [INFO]      k = -1: 0.053
+2026-11-25 14:35:48,082 [INFO]      k = +1: 0.068
+2026-11-25 14:35:48,082 [INFO]      k = +2: 0.091
+2026-11-25 14:35:48,082 [INFO]      k = +3: 0.098
+2026-11-25 14:35:48,082 [INFO]      k = +4: 0.094
+2026-11-25 14:35:48,082 [INFO]      k = +5: 0.110
+2026-11-25 14:35:48,083 [INFO]      k = +6: 0.049
+2026-11-25 14:35:48,083 [INFO]      k = +7: 0.083
+2026-11-25 14:35:48,083 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:48,083 [INFO]      0.401 0.016 0.081 0.129 0.062 0.196 0.032 0.083
+2026-11-25 14:35:48,083 [INFO]      0.022 0.415 0.082 0.093 0.066 0.220 0.035 0.066
+2026-11-25 14:35:48,083 [INFO]      0.008 0.017 0.480 0.059 0.120 0.188 0.026 0.101
+2026-11-25 14:35:48,083 [INFO]      0.068 0.004 0.060 0.494 0.088 0.172 0.049 0.067
+2026-11-25 14:35:48,083 [INFO]      0.090 0.010 0.101 0.088 0.489 0.138 0.029 0.055
+2026-11-25 14:35:48,083 [INFO]      0.077 0.006 0.082 0.106 0.041 0.618 0.018 0.052
+2026-11-25 14:35:48,083 [INFO]      0.047 0.042 0.083 0.107 0.081 0.116 0.452 0.072
+2026-11-25 14:35:48,083 [INFO]      0.049 0.018 0.117 0.106 0.075 0.173 0.026 0.436
+2026-11-25 14:35:48,857 [INFO] [Tarefa 7] Acurácia no teste acumulado após a tarefa: 18.03% (notas padronizadas: 41.63%)
+2026-11-25 14:35:49,695 [INFO] [Tarefa 8] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:35:49,695 [INFO] [Tarefa 8] Snapshots de θ_init (Adapter_8 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:35:49,729 [INFO] === Tarefa 8 (n01855672, n02056570, n07718472, n03676483, n02051845, n02948072, n10565667, n03947888, n03602883, n04325704, n03452741, n02814860, n03467068, n02447366, n02094433, n01860187, n04133789, n02843684, n02092339, n04266014): treinando Adapter_8 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:35:52,824 [INFO]    [Tarefa 8] Época [2/2] -> CE:4.8280 | L_LVQ:0.0000 | Acc treino: 2.80% | AAC acumulado: 20.14% | n01855672: 37.04% | n02056570: 50.00% | n07718472: 58.33% | n03676483: 42.11% | n02051845: 37.04% | n02948072: 35.29% | n10565667: 52.38% | n03947888: 53.57% | n03602883: 71.43% | n04325704: 13.33% | n03452741: 80.00% | n02814860: 75.51% | n03467068: 73.33% | n02447366: 40.00% | n02094433: 76.47% | n01860187: 23.53% | n04133789: 66.67% | n02843684: 70.37% | n02092339: 62.50% | n04266014: 76.19%
+2026-11-25 14:35:52,858 [INFO] [Tarefa 8] Adapter_8 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 20.14%; treino em 3s).
+2026-11-25 14:35:52,909 [INFO] [Tarefa 8] Protótipo (FC) de n01855672 substituído (86 imagens de treino).
+2026-11-25 14:35:52,957 [INFO] [Tarefa 8] Protótipo (FC) de n02056570 substituído (59 imagens de treino).
+2026-11-25 14:35:53,058 [INFO] [Tarefa 8] Protótipo (FC) de n07718472 substituído (67 imagens de treino).
+2026-11-25 14:35:53,113 [INFO] [Tarefa 8] Protótipo (FC) de n03676483 substituído (54 imagens de treino).
+2026-11-25 14:35:53,202 [INFO] [Tarefa 8] Protótipo (FC) de n02051845 substituído (101 imagens de treino).
+2026-11-25 14:35:53,278 [INFO] [Tarefa 8] Protótipo (FC) de n02948072 substituído (194 imagens de treino).
+2026-11-25 14:35:53,334 [INFO] [Tarefa 8] Protótipo (FC) de n10565667 substituído (118 imagens de treino).
+2026-11-25 14:35:53,392 [INFO] [Tarefa 8] Protótipo (FC) de n03947888 substituído (88 imagens de treino).
+2026-11-25 14:35:53,451 [INFO] [Tarefa 8] Protótipo (FC) de n03602883 substituído (65 imagens de treino).
+2026-11-25 14:35:53,517 [INFO] [Tarefa 8] Protótipo (FC) de n04325704 substituído (61 imagens de treino).
+2026-11-25 14:35:53,568 [INFO] [Tarefa 8] Protótipo (FC) de n03452741 substituído (67 imagens de treino).
+2026-11-25 14:35:53,649 [INFO] [Tarefa 8] Protótipo (FC) de n02814860 substituído (149 imagens de treino).
+2026-11-25 14:35:53,700 [INFO] [Tarefa 8] Protótipo (FC) de n03467068 substituído (50 imagens de treino).
+2026-11-25 14:35:53,754 [INFO] [Tarefa 8] Protótipo (FC) de n02447366 substituído (85 imagens de treino).
+2026-11-25 14:35:53,806 [INFO] [Tarefa 8] Protótipo (FC) de n02094433 substituído (65 imagens de treino).
+2026-11-25 14:35:53,860 [INFO] [Tarefa 8] Protótipo (FC) de n01860187 substituído (58 imagens de treino).
+2026-11-25 14:35:53,914 [INFO] [Tarefa 8] Protótipo (FC) de n04133789 substituído (68 imagens de treino).
+2026-11-25 14:35:53,968 [INFO] [Tarefa 8] Protótipo (FC) de n02843684 substituído (93 imagens de treino).
+2026-11-25 14:35:54,022 [INFO] [Tarefa 8] Protótipo (FC) de n02092339 substituído (54 imagens de treino).
+2026-11-25 14:35:54,072 [INFO] [Tarefa 8] Protótipo (FC) de n04266014 substituído (169 imagens de treino).
+2026-11-25 14:35:54,572 [INFO] [Banco] n01855672: 86 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9832).
+2026-11-25 14:35:54,606 [INFO] [Banco] n02056570: 59 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3312).
+2026-11-25 14:35:54,640 [INFO] [Banco] n07718472: 67 vetores phi -> gaussiana (posto 32, variância média por dimensão 5.0605).
+2026-11-25 14:35:54,670 [INFO] [Banco] n03676483: 54 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.8617).
+2026-11-25 14:35:54,704 [INFO] [Banco] n02051845: 101 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9371).
+2026-11-25 14:35:54,736 [INFO] [Banco] n02948072: 194 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.7503).
+2026-11-25 14:35:54,769 [INFO] [Banco] n10565667: 118 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1009).
+2026-11-25 14:35:54,804 [INFO] [Banco] n03947888: 88 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6403).
+2026-11-25 14:35:54,836 [INFO] [Banco] n03602883: 65 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9074).
+2026-11-25 14:35:54,871 [INFO] [Banco] n04325704: 61 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.2728).
+2026-11-25 14:35:54,904 [INFO] [Banco] n03452741: 67 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1878).
+2026-11-25 14:35:54,941 [INFO] [Banco] n02814860: 149 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7790).
+2026-11-25 14:35:54,974 [INFO] [Banco] n03467068: 50 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.5012).
+2026-11-25 14:35:55,010 [INFO] [Banco] n02447366: 85 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7223).
+2026-11-25 14:35:55,043 [INFO] [Banco] n02094433: 65 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9686).
+2026-11-25 14:35:55,079 [INFO] [Banco] n01860187: 58 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6922).
+2026-11-25 14:35:55,113 [INFO] [Banco] n04133789: 68 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.6693).
+2026-11-25 14:35:55,147 [INFO] [Banco] n02843684: 93 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3940).
+2026-11-25 14:35:55,180 [INFO] [Banco] n02092339: 54 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5043).
+2026-11-25 14:35:55,216 [INFO] [Banco] n04266014: 169 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5562).
+2026-11-25 14:35:56,266 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 8 ===
+2026-11-25 14:35:56,266 [INFO]    Acurácia CIL ................  20.57%
+2026-11-25 14:35:56,267 [INFO]    Vazamento (Lambda) ..........  75.48%
+2026-11-25 14:35:56,267 [INFO]    Vazamento balanceado ........  76.04%
+2026-11-25 14:35:56,267 [INFO]    Erro dentro da task (E_WP) ..   3.95%
+2026-11-25 14:35:56,267 [INFO]    Parcela do erro por vazamento  95.03%
+2026-11-25 14:35:56,267 [INFO]    Acurácia com oráculo de task   74.41%
+2026-11-25 14:35:56,267 [INFO]    Teto de ganho ...............  53.85 p.p.
+2026-11-25 14:35:56,267 [INFO]    Índice de direção D .........  18.715
+2026-11-25 14:35:56,267 [INFO]    Spearman(L, j-i) recência ...   0.679
+2026-11-25 14:35:56,267 [INFO]    Spearman(L, S) semântica ....   0.149
+2026-11-25 14:35:56,267 [INFO]      parcial, controlando j-i ..   0.032
+2026-11-25 14:35:56,267 [INFO]    Vazamento após normalização .  53.31%
+2026-11-25 14:35:56,267 [INFO]    Parcela atribuível a escala .  29.37%
+2026-11-25 14:35:56,268 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:56,268 [INFO]      k = -8: 0.000
+2026-11-25 14:35:56,268 [INFO]      k = -7: 0.000
+2026-11-25 14:35:56,268 [INFO]      k = -6: 0.000
+2026-11-25 14:35:56,268 [INFO]      k = -5: 0.000
+2026-11-25 14:35:56,268 [INFO]      k = -4: 0.000
+2026-11-25 14:35:56,268 [INFO]      k = -3: 0.001
+2026-11-25 14:35:56,268 [INFO]      k = -2: 0.001
+2026-11-25 14:35:56,268 [INFO]      k = -1: 0.042
+2026-11-25 14:35:56,268 [INFO]      k = +1: 0.067
+2026-11-25 14:35:56,268 [INFO]      k = +2: 0.130
+2026-11-25 14:35:56,268 [INFO]      k = +3: 0.147
+2026-11-25 14:35:56,268 [INFO]      k = +4: 0.192
+2026-11-25 14:35:56,268 [INFO]      k = +5: 0.248
+2026-11-25 14:35:56,269 [INFO]      k = +6: 0.362
+2026-11-25 14:35:56,269 [INFO]      k = +7: 0.466
+2026-11-25 14:35:56,269 [INFO]      k = +8: 0.203
+2026-11-25 14:35:56,269 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:56,269 [INFO]      0.000 0.000 0.000 0.000 0.000 0.004 0.026 0.766 0.203
+2026-11-25 14:35:56,269 [INFO]      0.000 0.000 0.000 0.000 0.000 0.002 0.021 0.812 0.166
+2026-11-25 14:35:56,269 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.020 0.733 0.248
+2026-11-25 14:35:56,269 [INFO]      0.000 0.000 0.000 0.000 0.000 0.009 0.056 0.702 0.233
+2026-11-25 14:35:56,269 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.049 0.717 0.234
+2026-11-25 14:35:56,269 [INFO]      0.000 0.000 0.000 0.000 0.000 0.168 0.017 0.706 0.109
+2026-11-25 14:35:56,269 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.408 0.446 0.146
+2026-11-25 14:35:56,269 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.008 0.919 0.073
+2026-11-25 14:35:56,270 [INFO]      0.000 0.000 0.000 0.000 0.000 0.006 0.004 0.328 0.661
+2026-11-25 14:35:56,315 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 8 (notas padronizadas) ===
+2026-11-25 14:35:56,315 [INFO]    Acurácia CIL ................  41.30%
+2026-11-25 14:35:56,316 [INFO]    Vazamento (Lambda) ..........  53.31%
+2026-11-25 14:35:56,316 [INFO]    Vazamento balanceado ........  53.06%
+2026-11-25 14:35:56,316 [INFO]    Erro dentro da task (E_WP) ..   5.39%
+2026-11-25 14:35:56,316 [INFO]    Parcela do erro por vazamento  90.82%
+2026-11-25 14:35:56,316 [INFO]    Acurácia com oráculo de task   74.41%
+2026-11-25 14:35:56,316 [INFO]    Teto de ganho ...............  33.11 p.p.
+2026-11-25 14:35:56,316 [INFO]    Índice de direção D .........   1.129
+2026-11-25 14:35:56,316 [INFO]    Spearman(L, j-i) recência ...  -0.008
+2026-11-25 14:35:56,316 [INFO]    Spearman(L, S) semântica ....   0.260
+2026-11-25 14:35:56,316 [INFO]      parcial, controlando j-i ..   0.266
+2026-11-25 14:35:56,316 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:35:56,316 [INFO]      k = -8: 0.042
+2026-11-25 14:35:56,317 [INFO]      k = -7: 0.029
+2026-11-25 14:35:56,317 [INFO]      k = -6: 0.055
+2026-11-25 14:35:56,317 [INFO]      k = -5: 0.076
+2026-11-25 14:35:56,317 [INFO]      k = -4: 0.071
+2026-11-25 14:35:56,317 [INFO]      k = -3: 0.073
+2026-11-25 14:35:56,317 [INFO]      k = -2: 0.068
+2026-11-25 14:35:56,317 [INFO]      k = -1: 0.051
+2026-11-25 14:35:56,317 [INFO]      k = +1: 0.060
+2026-11-25 14:35:56,317 [INFO]      k = +2: 0.083
+2026-11-25 14:35:56,317 [INFO]      k = +3: 0.080
+2026-11-25 14:35:56,317 [INFO]      k = +4: 0.072
+2026-11-25 14:35:56,317 [INFO]      k = +5: 0.091
+2026-11-25 14:35:56,317 [INFO]      k = +6: 0.039
+2026-11-25 14:35:56,317 [INFO]      k = +7: 0.051
+2026-11-25 14:35:56,318 [INFO]      k = +8: 0.048
+2026-11-25 14:35:56,318 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:35:56,318 [INFO]      0.393 0.015 0.081 0.128 0.049 0.193 0.023 0.070 0.048
+2026-11-25 14:35:56,318 [INFO]      0.022 0.415 0.082 0.092 0.063 0.212 0.030 0.052 0.032
+2026-11-25 14:35:56,318 [INFO]      0.008 0.017 0.475 0.058 0.112 0.183 0.021 0.083 0.043
+2026-11-25 14:35:56,318 [INFO]      0.061 0.004 0.060 0.485 0.075 0.168 0.039 0.051 0.058
+2026-11-25 14:35:56,318 [INFO]      0.090 0.010 0.099 0.088 0.476 0.133 0.027 0.051 0.025
+2026-11-25 14:35:56,318 [INFO]      0.077 0.006 0.082 0.105 0.039 0.609 0.018 0.047 0.017
+2026-11-25 14:35:56,318 [INFO]      0.047 0.042 0.083 0.104 0.074 0.109 0.427 0.060 0.054
+2026-11-25 14:35:56,318 [INFO]      0.048 0.018 0.117 0.106 0.063 0.167 0.023 0.418 0.040
+2026-11-25 14:35:56,318 [INFO]      0.042 0.010 0.100 0.067 0.069 0.117 0.017 0.052 0.525
+2026-11-25 14:35:57,176 [INFO] [Tarefa 8] Acurácia no teste acumulado após a tarefa: 20.57% (notas padronizadas: 41.30%)
+2026-11-25 14:35:58,168 [INFO] [Tarefa 9] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:35:58,168 [INFO] [Tarefa 9] Snapshots de θ_init (Adapter_9 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:35:58,219 [INFO] === Tarefa 9 (n02110185, n01534433, n02769748, n02129165, n02992529, n04146614, n02481823, n02980441, n07695742, n02883205, n02096585, n02128385, n02363005, n02086240, n02391049, n07920052, n01983481, n07614500, n07720875, n04147183): treinando Adapter_9 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:36:02,114 [INFO]    [Tarefa 9] Época [2/2] -> CE:4.9421 | L_LVQ:0.0000 | Acc treino: 3.72% | AAC acumulado: 21.81% | n02110185: 60.00% | n01534433: 41.67% | n02769748: 31.82% | n02129165: 31.94% | n02992529: 35.71% | n04146614: 60.00% | n02481823: 54.17% | n02980441: 20.00% | n07695742: 64.29% | n02883205: 11.11% | n02096585: 69.23% | n02128385: 77.78% | n02363005: 21.88% | n02086240: 66.67% | n02391049: 62.16% | n07920052: 38.46% | n01983481: 57.14% | n07614500: 55.81% | n07720875: 72.73% | n04147183: 26.32%
+2026-11-25 14:36:02,179 [INFO] [Tarefa 9] Adapter_9 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 21.81%; treino em 4s).
+2026-11-25 14:36:02,242 [INFO] [Tarefa 9] Protótipo (FC) de n02110185 substituído (113 imagens de treino).
+2026-11-25 14:36:02,295 [INFO] [Tarefa 9] Protótipo (FC) de n01534433 substituído (40 imagens de treino).
+2026-11-25 14:36:02,354 [INFO] [Tarefa 9] Protótipo (FC) de n02769748 substituído (67 imagens de treino).
+2026-11-25 14:36:02,418 [INFO] [Tarefa 9] Protótipo (FC) de n02129165 substituído (235 imagens de treino).
+2026-11-25 14:36:02,473 [INFO] [Tarefa 9] Protótipo (FC) de n02992529 substituído (43 imagens de treino).
+2026-11-25 14:36:02,545 [INFO] [Tarefa 9] Protótipo (FC) de n04146614 substituído (95 imagens de treino).
+2026-11-25 14:36:02,624 [INFO] [Tarefa 9] Protótipo (FC) de n02481823 substituído (157 imagens de treino).
+2026-11-25 14:36:02,686 [INFO] [Tarefa 9] Protótipo (FC) de n02980441 substituído (102 imagens de treino).
+2026-11-25 14:36:02,745 [INFO] [Tarefa 9] Protótipo (FC) de n07695742 substituído (77 imagens de treino).
+2026-11-25 14:36:02,809 [INFO] [Tarefa 9] Protótipo (FC) de n02883205 substituído (99 imagens de treino).
+2026-11-25 14:36:02,874 [INFO] [Tarefa 9] Protótipo (FC) de n02096585 substituído (192 imagens de treino).
+2026-11-25 14:36:02,930 [INFO] [Tarefa 9] Protótipo (FC) de n02128385 substituído (36 imagens de treino).
+2026-11-25 14:36:02,986 [INFO] [Tarefa 9] Protótipo (FC) de n02363005 substituído (126 imagens de treino).
+2026-11-25 14:36:03,036 [INFO] [Tarefa 9] Protótipo (FC) de n02086240 substituído (51 imagens de treino).
+2026-11-25 14:36:03,105 [INFO] [Tarefa 9] Protótipo (FC) de n02391049 substituído (133 imagens de treino).
+2026-11-25 14:36:03,170 [INFO] [Tarefa 9] Protótipo (FC) de n07920052 substituído (60 imagens de treino).
+2026-11-25 14:36:03,242 [INFO] [Tarefa 9] Protótipo (FC) de n01983481 substituído (67 imagens de treino).
+2026-11-25 14:36:03,325 [INFO] [Tarefa 9] Protótipo (FC) de n07614500 substituído (182 imagens de treino).
+2026-11-25 14:36:03,379 [INFO] [Tarefa 9] Protótipo (FC) de n07720875 substituído (103 imagens de treino).
+2026-11-25 14:36:03,432 [INFO] [Tarefa 9] Protótipo (FC) de n04147183 substituído (66 imagens de treino).
+2026-11-25 14:36:03,987 [INFO] [Banco] n02110185: 113 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5573).
+2026-11-25 14:36:04,023 [INFO] [Banco] n01534433: 40 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.2695).
+2026-11-25 14:36:04,058 [INFO] [Banco] n02769748: 67 vetores phi -> gaussiana (posto 32, variância média por dimensão 5.1842).
+2026-11-25 14:36:04,095 [INFO] [Banco] n02129165: 235 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6414).
+2026-11-25 14:36:04,129 [INFO] [Banco] n02992529: 43 vetores phi -> gaussiana (posto 32, variância média por dimensão 5.2598).
+2026-11-25 14:36:04,164 [INFO] [Banco] n04146614: 95 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5207).
+2026-11-25 14:36:04,200 [INFO] [Banco] n02481823: 157 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9876).
+2026-11-25 14:36:04,235 [INFO] [Banco] n02980441: 102 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.4638).
+2026-11-25 14:36:04,270 [INFO] [Banco] n07695742: 77 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.2055).
+2026-11-25 14:36:04,306 [INFO] [Banco] n02883205: 99 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0904).
+2026-11-25 14:36:04,341 [INFO] [Banco] n02096585: 192 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6768).
+2026-11-25 14:36:04,374 [INFO] [Banco] n02128385: 36 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9372).
+2026-11-25 14:36:04,408 [INFO] [Banco] n02363005: 126 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3548).
+2026-11-25 14:36:04,441 [INFO] [Banco] n02086240: 51 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.3469).
+2026-11-25 14:36:04,476 [INFO] [Banco] n02391049: 133 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7621).
+2026-11-25 14:36:04,510 [INFO] [Banco] n07920052: 60 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5749).
+2026-11-25 14:36:04,544 [INFO] [Banco] n01983481: 67 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.3596).
+2026-11-25 14:36:04,579 [INFO] [Banco] n07614500: 182 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4532).
+2026-11-25 14:36:04,613 [INFO] [Banco] n07720875: 103 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7191).
+2026-11-25 14:36:04,649 [INFO] [Banco] n04147183: 66 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.3062).
+2026-11-25 14:36:06,920 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 9 ===
+2026-11-25 14:36:06,921 [INFO]    Acurácia CIL ................  22.18%
+2026-11-25 14:36:06,921 [INFO]    Vazamento (Lambda) ..........  73.95%
+2026-11-25 14:36:06,921 [INFO]    Vazamento balanceado ........  74.28%
+2026-11-25 14:36:06,921 [INFO]    Erro dentro da task (E_WP) ..   3.87%
+2026-11-25 14:36:06,921 [INFO]    Parcela do erro por vazamento  95.03%
+2026-11-25 14:36:06,922 [INFO]    Acurácia com oráculo de task   74.23%
+2026-11-25 14:36:06,922 [INFO]    Teto de ganho ...............  52.05 p.p.
+2026-11-25 14:36:06,922 [INFO]    Índice de direção D .........   8.730
+2026-11-25 14:36:06,922 [INFO]    Spearman(L, j-i) recência ...   0.703
+2026-11-25 14:36:06,922 [INFO]    Spearman(L, S) semântica ....   0.337
+2026-11-25 14:36:06,922 [INFO]      parcial, controlando j-i ..   0.154
+2026-11-25 14:36:06,922 [INFO]    Vazamento após normalização .  55.37%
+2026-11-25 14:36:06,922 [INFO]    Parcela atribuível a escala .  25.13%
+2026-11-25 14:36:06,922 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:36:06,922 [INFO]      k = -9: 0.000
+2026-11-25 14:36:06,923 [INFO]      k = -8: 0.000
+2026-11-25 14:36:06,923 [INFO]      k = -7: 0.000
+2026-11-25 14:36:06,923 [INFO]      k = -6: 0.000
+2026-11-25 14:36:06,923 [INFO]      k = -5: 0.000
+2026-11-25 14:36:06,923 [INFO]      k = -4: 0.000
+2026-11-25 14:36:06,923 [INFO]      k = -3: 0.001
+2026-11-25 14:36:06,923 [INFO]      k = -2: 0.040
+2026-11-25 14:36:06,923 [INFO]      k = -1: 0.048
+2026-11-25 14:36:06,923 [INFO]      k = +1: 0.059
+2026-11-25 14:36:06,923 [INFO]      k = +2: 0.105
+2026-11-25 14:36:06,923 [INFO]      k = +3: 0.117
+2026-11-25 14:36:06,924 [INFO]      k = +4: 0.157
+2026-11-25 14:36:06,924 [INFO]      k = +5: 0.198
+2026-11-25 14:36:06,924 [INFO]      k = +6: 0.267
+2026-11-25 14:36:06,924 [INFO]      k = +7: 0.337
+2026-11-25 14:36:06,924 [INFO]      k = +8: 0.189
+2026-11-25 14:36:06,924 [INFO]      k = +9: 0.075
+2026-11-25 14:36:06,924 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:36:06,924 [INFO]      0.000 0.000 0.000 0.000 0.000 0.001 0.023 0.717 0.183 0.075
+2026-11-25 14:36:06,924 [INFO]      0.000 0.000 0.000 0.000 0.000 0.002 0.008 0.650 0.146 0.195
+2026-11-25 14:36:06,924 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.010 0.619 0.223 0.149
+2026-11-25 14:36:06,924 [INFO]      0.000 0.000 0.000 0.000 0.000 0.002 0.035 0.578 0.212 0.173
+2026-11-25 14:36:06,925 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.041 0.616 0.193 0.150
+2026-11-25 14:36:06,925 [INFO]      0.000 0.000 0.000 0.000 0.000 0.138 0.009 0.606 0.086 0.161
+2026-11-25 14:36:06,925 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.371 0.404 0.141 0.084
+2026-11-25 14:36:06,925 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.007 0.874 0.066 0.053
+2026-11-25 14:36:06,925 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.308 0.638 0.054
+2026-11-25 14:36:06,925 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.007 0.321 0.121 0.551
+2026-11-25 14:36:06,976 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 9 (notas padronizadas) ===
+2026-11-25 14:36:06,977 [INFO]    Acurácia CIL ................  39.73%
+2026-11-25 14:36:06,977 [INFO]    Vazamento (Lambda) ..........  55.37%
+2026-11-25 14:36:06,977 [INFO]    Vazamento balanceado ........  55.20%
+2026-11-25 14:36:06,977 [INFO]    Erro dentro da task (E_WP) ..   4.90%
+2026-11-25 14:36:06,977 [INFO]    Parcela do erro por vazamento  91.87%
+2026-11-25 14:36:06,977 [INFO]    Acurácia com oráculo de task   74.23%
+2026-11-25 14:36:06,977 [INFO]    Teto de ganho ...............  34.50 p.p.
+2026-11-25 14:36:06,977 [INFO]    Índice de direção D .........   0.894
+2026-11-25 14:36:06,978 [INFO]    Spearman(L, j-i) recência ...  -0.201
+2026-11-25 14:36:06,978 [INFO]    Spearman(L, S) semântica ....   0.053
+2026-11-25 14:36:06,978 [INFO]      parcial, controlando j-i ..   0.130
+2026-11-25 14:36:06,978 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:36:06,978 [INFO]      k = -9: 0.048
+2026-11-25 14:36:06,978 [INFO]      k = -8: 0.049
+2026-11-25 14:36:06,978 [INFO]      k = -7: 0.063
+2026-11-25 14:36:06,978 [INFO]      k = -6: 0.063
+2026-11-25 14:36:06,978 [INFO]      k = -5: 0.076
+2026-11-25 14:36:06,978 [INFO]      k = -4: 0.084
+2026-11-25 14:36:06,978 [INFO]      k = -3: 0.067
+2026-11-25 14:36:06,978 [INFO]      k = -2: 0.064
+2026-11-25 14:36:06,978 [INFO]      k = -1: 0.052
+2026-11-25 14:36:06,979 [INFO]      k = +1: 0.054
+2026-11-25 14:36:06,979 [INFO]      k = +2: 0.073
+2026-11-25 14:36:06,979 [INFO]      k = +3: 0.070
+2026-11-25 14:36:06,979 [INFO]      k = +4: 0.058
+2026-11-25 14:36:06,979 [INFO]      k = +5: 0.074
+2026-11-25 14:36:06,979 [INFO]      k = +6: 0.031
+2026-11-25 14:36:06,979 [INFO]      k = +7: 0.041
+2026-11-25 14:36:06,979 [INFO]      k = +8: 0.037
+2026-11-25 14:36:06,979 [INFO]      k = +9: 0.004
+2026-11-25 14:36:06,979 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:36:06,979 [INFO]      0.392 0.015 0.081 0.128 0.048 0.193 0.022 0.070 0.048 0.004
+2026-11-25 14:36:06,979 [INFO]      0.022 0.410 0.081 0.092 0.063 0.198 0.028 0.049 0.030 0.027
+2026-11-25 14:36:06,979 [INFO]      0.008 0.017 0.469 0.058 0.107 0.170 0.021 0.083 0.043 0.025
+2026-11-25 14:36:06,979 [INFO]      0.061 0.004 0.060 0.482 0.075 0.163 0.035 0.051 0.058 0.012
+2026-11-25 14:36:06,980 [INFO]      0.090 0.010 0.099 0.088 0.474 0.129 0.027 0.051 0.023 0.008
+2026-11-25 14:36:06,980 [INFO]      0.077 0.006 0.082 0.105 0.039 0.602 0.018 0.047 0.017 0.008
+2026-11-25 14:36:06,980 [INFO]      0.047 0.042 0.083 0.102 0.069 0.109 0.411 0.060 0.054 0.023
+2026-11-25 14:36:06,980 [INFO]      0.048 0.018 0.117 0.106 0.063 0.160 0.021 0.412 0.040 0.016
+2026-11-25 14:36:06,980 [INFO]      0.042 0.010 0.100 0.067 0.069 0.115 0.017 0.052 0.519 0.008
+2026-11-25 14:36:06,980 [INFO]      0.048 0.057 0.131 0.086 0.078 0.149 0.033 0.048 0.059 0.311
+2026-11-25 14:36:08,014 [INFO] [Tarefa 9] Acurácia no teste acumulado após a tarefa: 22.18% (notas padronizadas: 39.73%)
+2026-11-25 14:36:08,014 [INFO] ============================================================
+2026-11-25 14:36:08,014 [INFO] === RESULTADO FINAL (10 Adapters + LVQ, score combinado) ===
+2026-11-25 14:36:09,080 [INFO]  > Acc tarefa 0 (n04347754, n03345487, n02099601, n01616318, n07714990, n02445715, n04465501, n02423022, n02088364, n04141076, n07753592, n02117135, n01770393, n07745940, n01910747, n01630670, n04552348, n01882714, n02113799, n07742313): 0.00%
+2026-11-25 14:36:09,183 [INFO]  > Acc tarefa 1 (n02410509, n01531178, n02233338, n02066245, n02672831, n02088466, n02437616, n01443537, n02480495, n07697537, n02279972, n02108915, n01514859, n01494475, n02793495, n04536866, n02364673, n02165456, n02483362, n01484850): 0.00%
+2026-11-25 14:36:09,275 [INFO]  > Acc tarefa 2 (n03630383, n01774750, n03481172, n02966193, n02123045, n01847000, n04522168, n02106030, n09835506, n02802426, n02268443, n02009912, n02138441, n02480855, n02346627, n01806143, n03272010, n02486410, n07693725, n02071294): 0.00%
+2026-11-25 14:36:09,364 [INFO]  > Acc tarefa 3 (n01632777, n12267677, n03494278, n01614925, n02841315, n01498041, n01944390, n02106662, n03888257, n04487394, n07753275, n02106550, n02097298, n02091032, n02398521, n02110341, n03773504, n04389033, n07880968, n02106166): 0.00%
+2026-11-25 14:36:09,449 [INFO]  > Acc tarefa 4 (n07768694, n01644373, n07749582, n02134084, n02113023, n07697313, n01748264, n03372029, n02526121, n03124170, n02356798, n02808440, n02909870, n02099712, n04409515, n02088094, n03649909, n02112137, n03498962, n02112018): 0.00%
+2026-11-25 14:36:09,549 [INFO]  > Acc tarefa 5 (n03424325, n02091134, n02130308, n02317335, n03930630, n02325366, n02119022, n07873807, n02128757, n01986214, n02701002, n03495258, n02395406, n02226429, n02113624, n02098286, n07734744, n04086273, n02114367, n01833805): 13.48%
+2026-11-25 14:36:09,659 [INFO]  > Acc tarefa 6 (n01784675, n02655020, n02510455, n02108089, n02906734, n04118538, n03710193, n02607072, n07714571, n02950826, n04310018, n02219486, n02190166, n02109525, n01677366, n04275548, n01694178, n04591713, n02110958, n02797295): 35.50%
+2026-11-25 14:36:09,780 [INFO]  > Acc tarefa 7 (n01518878, n01843383, n03594945, n02823750, n02085620, n02088238, n02206856, n02939185, n02749479, n01820546, n02007558, n02102318, n02077923, n04254680, n09472597, n02951358, n03775071, n04192698, n02236044, n02129604): 66.67%
+2026-11-25 14:36:09,854 [INFO]  > Acc tarefa 8 (n01855672, n02056570, n07718472, n03676483, n02051845, n02948072, n10565667, n03947888, n03602883, n04325704, n03452741, n02814860, n03467068, n02447366, n02094433, n01860187, n04133789, n02843684, n02092339, n04266014): 56.49%
+2026-11-25 14:36:09,943 [INFO]  > Acc tarefa 9 (n02110185, n01534433, n02769748, n02129165, n02992529, n04146614, n02481823, n02980441, n07695742, n02883205, n02096585, n02128385, n02363005, n02086240, n02391049, n07920052, n01983481, n07614500, n07720875, n04147183): 49.05%
+2026-11-25 14:36:09,943 [INFO]  > AAC (10 tarefas): 22.12%
+2026-11-25 14:36:09,943 [INFO]  > AAC incremental (média das acurácias após cada tarefa): 28.89%
+2026-11-25 14:36:10,863 [INFO]  > Acurácia final padronizada (10 tarefas): 39.87% | AAC incremental padronizada: 50.95% | por tarefa: [37.3, 38.4, 39.4, 42.0, 40.0, 49.7, 38.5, 36.5, 46.9, 29.9]
+2026-11-25 14:36:10,942 [INFO] === MÉTRICAS DE VAZAMENTO — final ===
+2026-11-25 14:36:10,943 [INFO]    Acurácia CIL ................  22.18%
+2026-11-25 14:36:10,943 [INFO]    Vazamento (Lambda) ..........  73.95%
+2026-11-25 14:36:10,943 [INFO]    Vazamento balanceado ........  74.28%
+2026-11-25 14:36:10,943 [INFO]    Erro dentro da task (E_WP) ..   3.87%
+2026-11-25 14:36:10,943 [INFO]    Parcela do erro por vazamento  95.03%
+2026-11-25 14:36:10,943 [INFO]    Acurácia com oráculo de task   74.23%
+2026-11-25 14:36:10,943 [INFO]    Teto de ganho ...............  52.05 p.p.
+2026-11-25 14:36:10,943 [INFO]    Índice de direção D .........   8.730
+2026-11-25 14:36:10,943 [INFO]    Spearman(L, j-i) recência ...   0.703
+2026-11-25 14:36:10,943 [INFO]    Spearman(L, S) semântica ....   0.337
+2026-11-25 14:36:10,944 [INFO]      parcial, controlando j-i ..   0.154
+2026-11-25 14:36:10,944 [INFO]    Vazamento após normalização .  55.37%
+2026-11-25 14:36:10,944 [INFO]    Parcela atribuível a escala .  25.13%
+2026-11-25 14:36:10,944 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:36:10,944 [INFO]      k = -9: 0.000
+2026-11-25 14:36:10,944 [INFO]      k = -8: 0.000
+2026-11-25 14:36:10,944 [INFO]      k = -7: 0.000
+2026-11-25 14:36:10,944 [INFO]      k = -6: 0.000
+2026-11-25 14:36:10,944 [INFO]      k = -5: 0.000
+2026-11-25 14:36:10,944 [INFO]      k = -4: 0.000
+2026-11-25 14:36:10,944 [INFO]      k = -3: 0.001
+2026-11-25 14:36:10,944 [INFO]      k = -2: 0.040
+2026-11-25 14:36:10,945 [INFO]      k = -1: 0.048
+2026-11-25 14:36:10,945 [INFO]      k = +1: 0.059
+2026-11-25 14:36:10,945 [INFO]      k = +2: 0.105
+2026-11-25 14:36:10,945 [INFO]      k = +3: 0.117
+2026-11-25 14:36:10,945 [INFO]      k = +4: 0.157
+2026-11-25 14:36:10,945 [INFO]      k = +5: 0.198
+2026-11-25 14:36:10,945 [INFO]      k = +6: 0.267
+2026-11-25 14:36:10,945 [INFO]      k = +7: 0.337
+2026-11-25 14:36:10,945 [INFO]      k = +8: 0.189
+2026-11-25 14:36:10,945 [INFO]      k = +9: 0.075
+2026-11-25 14:36:10,945 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:36:10,945 [INFO]      0.000 0.000 0.000 0.000 0.000 0.001 0.023 0.717 0.183 0.075
+2026-11-25 14:36:10,945 [INFO]      0.000 0.000 0.000 0.000 0.000 0.002 0.008 0.650 0.146 0.195
+2026-11-25 14:36:10,945 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.010 0.619 0.223 0.149
+2026-11-25 14:36:10,945 [INFO]      0.000 0.000 0.000 0.000 0.000 0.002 0.035 0.578 0.212 0.173
+2026-11-25 14:36:10,945 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.041 0.616 0.193 0.150
+2026-11-25 14:36:10,946 [INFO]      0.000 0.000 0.000 0.000 0.000 0.138 0.009 0.606 0.086 0.161
+2026-11-25 14:36:10,946 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.371 0.404 0.141 0.084
+2026-11-25 14:36:10,946 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.007 0.874 0.066 0.053
+2026-11-25 14:36:10,946 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.000 0.308 0.638 0.054
+2026-11-25 14:36:10,946 [INFO]      0.000 0.000 0.000 0.000 0.000 0.000 0.007 0.321 0.121 0.551
+2026-11-25 14:36:11,024 [INFO] === MÉTRICAS DE VAZAMENTO — final (notas padronizadas) ===
+2026-11-25 14:36:11,024 [INFO]    Acurácia CIL ................  39.73%
+2026-11-25 14:36:11,025 [INFO]    Vazamento (Lambda) ..........  55.37%
+2026-11-25 14:36:11,025 [INFO]    Vazamento balanceado ........  55.20%
+2026-11-25 14:36:11,025 [INFO]    Erro dentro da task (E_WP) ..   4.90%
+2026-11-25 14:36:11,033 [INFO]    Parcela do erro por vazamento  91.87%
+2026-11-25 14:36:11,033 [INFO]    Acurácia com oráculo de task   74.23%
+2026-11-25 14:36:11,033 [INFO]    Teto de ganho ...............  34.50 p.p.
+2026-11-25 14:36:11,033 [INFO]    Índice de direção D .........   0.894
+2026-11-25 14:36:11,033 [INFO]    Spearman(L, j-i) recência ...  -0.201
+2026-11-25 14:36:11,033 [INFO]    Spearman(L, S) semântica ....   0.053
+2026-11-25 14:36:11,033 [INFO]      parcial, controlando j-i ..   0.130
+2026-11-25 14:36:11,033 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:36:11,033 [INFO]      k = -9: 0.048
+2026-11-25 14:36:11,033 [INFO]      k = -8: 0.049
+2026-11-25 14:36:11,033 [INFO]      k = -7: 0.063
+2026-11-25 14:36:11,034 [INFO]      k = -6: 0.063
+2026-11-25 14:36:11,034 [INFO]      k = -5: 0.076
+2026-11-25 14:36:11,034 [INFO]      k = -4: 0.084
+2026-11-25 14:36:11,034 [INFO]      k = -3: 0.067
+2026-11-25 14:36:11,034 [INFO]      k = -2: 0.064
+2026-11-25 14:36:11,034 [INFO]      k = -1: 0.052
+2026-11-25 14:36:11,034 [INFO]      k = +1: 0.054
+2026-11-25 14:36:11,034 [INFO]      k = +2: 0.073
+2026-11-25 14:36:11,034 [INFO]      k = +3: 0.070
+2026-11-25 14:36:11,034 [INFO]      k = +4: 0.058
+2026-11-25 14:36:11,034 [INFO]      k = +5: 0.074
+2026-11-25 14:36:11,034 [INFO]      k = +6: 0.031
+2026-11-25 14:36:11,034 [INFO]      k = +7: 0.041
+2026-11-25 14:36:11,034 [INFO]      k = +8: 0.037
+2026-11-25 14:36:11,034 [INFO]      k = +9: 0.004
+2026-11-25 14:36:11,035 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:36:11,035 [INFO]      0.392 0.015 0.081 0.128 0.048 0.193 0.022 0.070 0.048 0.004
+2026-11-25 14:36:11,035 [INFO]      0.022 0.410 0.081 0.092 0.063 0.198 0.028 0.049 0.030 0.027
+2026-11-25 14:36:11,035 [INFO]      0.008 0.017 0.469 0.058 0.107 0.170 0.021 0.083 0.043 0.025
+2026-11-25 14:36:11,035 [INFO]      0.061 0.004 0.060 0.482 0.075 0.163 0.035 0.051 0.058 0.012
+2026-11-25 14:36:11,035 [INFO]      0.090 0.010 0.099 0.088 0.474 0.129 0.027 0.051 0.023 0.008
+2026-11-25 14:36:11,035 [INFO]      0.077 0.006 0.082 0.105 0.039 0.602 0.018 0.047 0.017 0.008
+2026-11-25 14:36:11,035 [INFO]      0.047 0.042 0.083 0.102 0.069 0.109 0.411 0.060 0.054 0.023
+2026-11-25 14:36:11,035 [INFO]      0.048 0.018 0.117 0.106 0.063 0.160 0.021 0.412 0.040 0.016
+2026-11-25 14:36:11,035 [INFO]      0.042 0.010 0.100 0.067 0.069 0.115 0.017 0.052 0.519 0.008
+2026-11-25 14:36:11,035 [INFO]      0.048 0.057 0.131 0.086 0.078 0.149 0.033 0.048 0.059 0.311
+2026-11-25 14:36:11,036 [INFO]  > [Fase B] DE = 3.495707685609712 | esquecimento médio = 53.041252714704214 (padronizado: 15.94409973813666) | memória do banco por classe = 99.1 KB
+2026-11-25 14:36:11,138 [INFO] === MÉTRICAS DE VAZAMENTO — final (estatísticas da validação) (notas padronizadas) ===
+2026-11-25 14:36:11,138 [INFO]    Acurácia CIL ................  40.58%
+2026-11-25 14:36:11,138 [INFO]    Vazamento (Lambda) ..........  54.38%
+2026-11-25 14:36:11,138 [INFO]    Vazamento balanceado ........  53.75%
+2026-11-25 14:36:11,139 [INFO]    Erro dentro da task (E_WP) ..   5.03%
+2026-11-25 14:36:11,139 [INFO]    Parcela do erro por vazamento  91.53%
+2026-11-25 14:36:11,139 [INFO]    Acurácia com oráculo de task   74.23%
+2026-11-25 14:36:11,139 [INFO]    Teto de ganho ...............  33.65 p.p.
+2026-11-25 14:36:11,139 [INFO]    Índice de direção D .........   0.857
+2026-11-25 14:36:11,139 [INFO]    Spearman(L, j-i) recência ...  -0.107
+2026-11-25 14:36:11,139 [INFO]    Spearman(L, S) semântica ....   0.086
+2026-11-25 14:36:11,139 [INFO]      parcial, controlando j-i ..   0.130
+2026-11-25 14:36:11,139 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:36:11,139 [INFO]      k = -9: 0.043
+2026-11-25 14:36:11,140 [INFO]      k = -8: 0.043
+2026-11-25 14:36:11,140 [INFO]      k = -7: 0.081
+2026-11-25 14:36:11,140 [INFO]      k = -6: 0.071
+2026-11-25 14:36:11,140 [INFO]      k = -5: 0.090
+2026-11-25 14:36:11,140 [INFO]      k = -4: 0.074
+2026-11-25 14:36:11,140 [INFO]      k = -3: 0.063
+2026-11-25 14:36:11,140 [INFO]      k = -2: 0.054
+2026-11-25 14:36:11,140 [INFO]      k = -1: 0.053
+2026-11-25 14:36:11,140 [INFO]      k = +1: 0.054
+2026-11-25 14:36:11,140 [INFO]      k = +2: 0.077
+2026-11-25 14:36:11,140 [INFO]      k = +3: 0.051
+2026-11-25 14:36:11,141 [INFO]      k = +4: 0.046
+2026-11-25 14:36:11,141 [INFO]      k = +5: 0.056
+2026-11-25 14:36:11,141 [INFO]      k = +6: 0.043
+2026-11-25 14:36:11,145 [INFO]      k = +7: 0.041
+2026-11-25 14:36:11,145 [INFO]      k = +8: 0.066
+2026-11-25 14:36:11,145 [INFO]      k = +9: 0.039
+2026-11-25 14:36:11,146 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:36:11,146 [INFO]      0.389 0.012 0.145 0.094 0.087 0.071 0.058 0.035 0.070 0.039
+2026-11-25 14:36:11,146 [INFO]      0.024 0.424 0.136 0.078 0.076 0.076 0.070 0.016 0.040 0.062
+2026-11-25 14:36:11,146 [INFO]      0.007 0.015 0.583 0.038 0.137 0.054 0.035 0.025 0.058 0.050
+2026-11-25 14:36:11,146 [INFO]      0.068 0.009 0.105 0.450 0.105 0.086 0.054 0.011 0.074 0.039
+2026-11-25 14:36:11,146 [INFO]      0.090 0.010 0.158 0.045 0.534 0.045 0.035 0.012 0.031 0.039
+2026-11-25 14:36:11,146 [INFO]      0.088 0.011 0.153 0.083 0.091 0.456 0.036 0.021 0.026 0.035
+2026-11-25 14:36:11,146 [INFO]      0.058 0.032 0.141 0.056 0.072 0.040 0.475 0.019 0.065 0.042
+2026-11-25 14:36:11,146 [INFO]      0.058 0.015 0.188 0.070 0.077 0.055 0.069 0.357 0.063 0.049
+2026-11-25 14:36:11,146 [INFO]      0.040 0.006 0.163 0.046 0.079 0.029 0.042 0.017 0.544 0.033
+2026-11-25 14:36:11,146 [INFO]      0.043 0.047 0.178 0.048 0.095 0.050 0.047 0.010 0.067 0.415
+2026-11-25 14:36:11,683 [INFO]  [Checkpoint] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/checkpoints/checkpoint_baseline_estatval_teste_cenario5_imagenet_r_inc20_vit_seed1993_20261125_143454.pt
+2026-11-25 14:36:11,706 [INFO]  [JSON] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/results/results_baseline_estatval_teste_cenario5_imagenet_r_inc20_vit_seed1993_20261125_143454.json

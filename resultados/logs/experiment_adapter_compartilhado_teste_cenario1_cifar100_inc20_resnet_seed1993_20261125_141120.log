@@ -1,0 +1,511 @@
+2026-11-25 14:11:20,704 [INFO] [Reprodutibilidade] Seed=1993 (random, numpy, torch, cudnn determinístico). Esta mesma seed também controla o sorteio das classes por tarefa.
+2026-11-25 14:11:20,705 [INFO] [Configuração] dataset=cifar100 | num_tasks=auto | classes_por_tarefa=20 | batch_size=48 | otimizador=SGD | device=cuda:0 | pseudo_negativos=nenhum
+2026-11-25 14:11:20,705 [INFO] === [Nova Estratégia 2] Generalização da Estratégia 26 — auto tarefas x 20 classes, dataset=cifar100, seed=1993 ===
+2026-11-25 14:11:28,369 [INFO] [Dataset] cifar100 carregado — 100 classes, 50000 imagens de treino, 10000 imagens de teste, entrada [64, 64].
+2026-11-25 14:11:28,370 [INFO] [Tarefas] num_tasks automático: 100 classes / 20 = 5 tarefas
+2026-11-25 14:11:28,371 [INFO] [Partição de tarefas] Tarefa 0: classes originais [68, 56, 78, 8, 23, 84, 90, 65, 74, 76, 40, 89, 3, 92, 55, 9, 26, 80, 43, 38] -> ['road', 'palm_tree', 'snake', 'bicycle', 'cloud', 'table', 'train', 'rabbit', 'shrew', 'skyscraper', 'lamp', 'tractor', 'bear', 'tulip', 'otter', 'bottle', 'crab', 'squirrel', 'lion', 'kangaroo']
+2026-11-25 14:11:28,371 [INFO] [Partição de tarefas] Tarefa 1: classes originais [58, 70, 77, 1, 85, 19, 17, 50, 28, 53, 13, 81, 45, 82, 6, 59, 83, 16, 15, 44] -> ['pickup_truck', 'rose', 'snail', 'aquarium_fish', 'tank', 'cattle', 'castle', 'mouse', 'cup', 'orange', 'bus', 'streetcar', 'lobster', 'sunflower', 'bee', 'pine_tree', 'sweet_pepper', 'can', 'camel', 'lizard']
+2026-11-25 14:11:28,371 [INFO] [Partição de tarefas] Tarefa 2: classes originais [91, 41, 72, 60, 79, 52, 20, 10, 31, 54, 37, 95, 14, 71, 96, 98, 97, 2, 64, 66] -> ['trout', 'lawn_mower', 'seal', 'plain', 'spider', 'oak_tree', 'chair', 'bowl', 'elephant', 'orchid', 'house', 'whale', 'butterfly', 'sea', 'willow_tree', 'woman', 'wolf', 'baby', 'possum', 'raccoon']
+2026-11-25 14:11:28,371 [INFO] [Partição de tarefas] Tarefa 3: classes originais [42, 22, 35, 86, 24, 34, 87, 21, 99, 0, 88, 27, 18, 94, 11, 12, 47, 25, 30, 46] -> ['leopard', 'clock', 'girl', 'telephone', 'cockroach', 'fox', 'television', 'chimpanzee', 'worm', 'apple', 'tiger', 'crocodile', 'caterpillar', 'wardrobe', 'boy', 'bridge', 'maple_tree', 'couch', 'dolphin', 'man']
+2026-11-25 14:11:28,371 [INFO] [Partição de tarefas] Tarefa 4: classes originais [62, 69, 36, 61, 7, 63, 75, 5, 32, 4, 51, 48, 73, 93, 39, 67, 29, 49, 57, 33] -> ['poppy', 'rocket', 'hamster', 'plate', 'beetle', 'porcupine', 'skunk', 'bed', 'flatfish', 'beaver', 'mushroom', 'motorcycle', 'shark', 'turtle', 'keyboard', 'ray', 'dinosaur', 'mountain', 'pear', 'forest']
+2026-11-25 14:11:28,882 [INFO] [Backbone] ResNet-18 pré-treinada no ImageNet, congelada desde a criação.
+2026-11-25 14:11:29,902 [INFO] [Cache phi] lido de /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/cache_phi/cifar100_b94f09bd43.pt
+2026-11-25 14:11:29,929 [INFO] [Cache phi] ATIVO: os Adapters treinam sobre phi pré-calculado.
+2026-11-25 14:11:30,291 [INFO] [Mapa LVQ] Grade hexagonal 20x80=1600 unidades (5 blocos de linha x 20 blocos de coluna, 16 unidades/classe).
+2026-11-25 14:11:30,360 [INFO] [Estratégia 2] Pseudo-negativos: modo=nenhum ("nenhum" reproduz a Nova Estratégia 1).
+2026-11-25 14:11:31,152 [INFO] [Tarefa 0] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:11:31,152 [INFO] [Tarefa 0] Snapshots de θ_init (Adapter_0 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:11:31,165 [INFO] === Tarefa 0 (road, palm_tree, snake, bicycle, cloud, table, train, rabbit, shrew, skyscraper, lamp, tractor, bear, tulip, otter, bottle, crab, squirrel, lion, kangaroo): treinando Adapter_0 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:11:33,549 [INFO]    [Tarefa 0] Época [2/2] -> CE:1.1837 | L_LVQ:0.0000 | Acc treino: 63.69% | AAC acumulado: 65.05% | road: 88.00% | palm_tree: 87.00% | snake: 75.00% | bicycle: 66.00% | cloud: 91.00% | table: 67.00% | train: 70.00% | rabbit: 37.00% | shrew: 53.00% | skyscraper: 83.00% | lamp: 61.00% | tractor: 76.00% | bear: 53.00% | tulip: 90.00% | otter: 28.00% | bottle: 73.00% | crab: 56.00% | squirrel: 26.00% | lion: 71.00% | kangaroo: 50.00%
+2026-11-25 14:11:33,562 [INFO] [Tarefa 0] Adapter_0 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 65.05%; treino em 2s). [Adapter compartilhado: volta a ser treinado na próxima tarefa]
+2026-11-25 14:11:33,769 [INFO] [Tarefa 0] Protótipo (FC) de road substituído (500 imagens de treino).
+2026-11-25 14:11:33,940 [INFO] [Tarefa 0] Protótipo (FC) de palm_tree substituído (500 imagens de treino).
+2026-11-25 14:11:34,099 [INFO] [Tarefa 0] Protótipo (FC) de snake substituído (500 imagens de treino).
+2026-11-25 14:11:34,276 [INFO] [Tarefa 0] Protótipo (FC) de bicycle substituído (500 imagens de treino).
+2026-11-25 14:11:34,444 [INFO] [Tarefa 0] Protótipo (FC) de cloud substituído (500 imagens de treino).
+2026-11-25 14:11:34,617 [INFO] [Tarefa 0] Protótipo (FC) de table substituído (500 imagens de treino).
+2026-11-25 14:11:34,901 [INFO] [Tarefa 0] Protótipo (FC) de train substituído (500 imagens de treino).
+2026-11-25 14:11:35,158 [INFO] [Tarefa 0] Protótipo (FC) de rabbit substituído (500 imagens de treino).
+2026-11-25 14:11:35,394 [INFO] [Tarefa 0] Protótipo (FC) de shrew substituído (500 imagens de treino).
+2026-11-25 14:11:35,643 [INFO] [Tarefa 0] Protótipo (FC) de skyscraper substituído (500 imagens de treino).
+2026-11-25 14:11:35,858 [INFO] [Tarefa 0] Protótipo (FC) de lamp substituído (500 imagens de treino).
+2026-11-25 14:11:36,131 [INFO] [Tarefa 0] Protótipo (FC) de tractor substituído (500 imagens de treino).
+2026-11-25 14:11:36,388 [INFO] [Tarefa 0] Protótipo (FC) de bear substituído (500 imagens de treino).
+2026-11-25 14:11:36,626 [INFO] [Tarefa 0] Protótipo (FC) de tulip substituído (500 imagens de treino).
+2026-11-25 14:11:36,799 [INFO] [Tarefa 0] Protótipo (FC) de otter substituído (500 imagens de treino).
+2026-11-25 14:11:37,000 [INFO] [Tarefa 0] Protótipo (FC) de bottle substituído (500 imagens de treino).
+2026-11-25 14:11:37,166 [INFO] [Tarefa 0] Protótipo (FC) de crab substituído (500 imagens de treino).
+2026-11-25 14:11:37,336 [INFO] [Tarefa 0] Protótipo (FC) de squirrel substituído (500 imagens de treino).
+2026-11-25 14:11:37,522 [INFO] [Tarefa 0] Protótipo (FC) de lion substituído (500 imagens de treino).
+2026-11-25 14:11:37,700 [INFO] [Tarefa 0] Protótipo (FC) de kangaroo substituído (500 imagens de treino).
+2026-11-25 14:11:38,941 [INFO] [Banco] road: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.0965).
+2026-11-25 14:11:38,960 [INFO] [Banco] palm_tree: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.4406).
+2026-11-25 14:11:38,978 [INFO] [Banco] snake: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.7866).
+2026-11-25 14:11:38,996 [INFO] [Banco] bicycle: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.0930).
+2026-11-25 14:11:39,015 [INFO] [Banco] cloud: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.5313).
+2026-11-25 14:11:39,033 [INFO] [Banco] table: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8331).
+2026-11-25 14:11:39,052 [INFO] [Banco] train: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6297).
+2026-11-25 14:11:39,070 [INFO] [Banco] rabbit: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9725).
+2026-11-25 14:11:39,089 [INFO] [Banco] shrew: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8993).
+2026-11-25 14:11:39,108 [INFO] [Banco] skyscraper: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.7535).
+2026-11-25 14:11:39,127 [INFO] [Banco] lamp: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9308).
+2026-11-25 14:11:39,146 [INFO] [Banco] tractor: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2340).
+2026-11-25 14:11:39,163 [INFO] [Banco] bear: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8829).
+2026-11-25 14:11:39,180 [INFO] [Banco] tulip: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.1564).
+2026-11-25 14:11:39,198 [INFO] [Banco] otter: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.0222).
+2026-11-25 14:11:39,215 [INFO] [Banco] bottle: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9186).
+2026-11-25 14:11:39,232 [INFO] [Banco] crab: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.2754).
+2026-11-25 14:11:39,250 [INFO] [Banco] squirrel: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.0561).
+2026-11-25 14:11:39,267 [INFO] [Banco] lion: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1456).
+2026-11-25 14:11:39,285 [INFO] [Banco] kangaroo: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.2707).
+2026-11-25 14:11:39,613 [INFO] [Tarefa 0] Adapter compartilhado: μ_k, σ_k das tarefas 0..0 recalculados com o Adapter atual sobre 256 amostras do banco por classe.
+2026-11-25 14:11:39,667 [INFO] [Tarefa 0] Acurácia no teste acumulado após a tarefa: 64.80% (notas padronizadas: 64.80%)
+2026-11-25 14:11:39,761 [INFO] [Tarefa 1] Adapter COMPARTILHADO: o Adapter único continua sendo treinado (as classes antigas passam a ser pontuadas por ele, com os protótipos antigos fixos).
+2026-11-25 14:11:40,034 [INFO] [Tarefa 1] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:11:40,049 [INFO] [Tarefa 1] Snapshots de θ_init (Adapter_1 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:11:40,060 [INFO] === Tarefa 1 (pickup_truck, rose, snail, aquarium_fish, tank, cattle, castle, mouse, cup, orange, bus, streetcar, lobster, sunflower, bee, pine_tree, sweet_pepper, can, camel, lizard): treinando Adapter_1 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:11:42,579 [INFO]    [Tarefa 1] Época [2/2] -> CE:1.3131 | L_LVQ:0.0000 | Acc treino: 63.53% | AAC acumulado: 33.10% | pickup_truck: 53.00% | rose: 78.00% | snail: 58.00% | aquarium_fish: 48.00% | tank: 45.00% | cattle: 48.00% | castle: 83.00% | mouse: 47.00% | cup: 80.00% | orange: 89.00% | bus: 37.00% | streetcar: 66.00% | lobster: 35.00% | sunflower: 85.00% | bee: 53.00% | pine_tree: 82.00% | sweet_pepper: 48.00% | can: 88.00% | camel: 61.00% | lizard: 60.00%
+2026-11-25 14:11:42,589 [INFO] [Tarefa 1] Adapter_1 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 33.10%; treino em 3s). [Adapter compartilhado: volta a ser treinado na próxima tarefa]
+2026-11-25 14:11:42,751 [INFO] [Tarefa 1] Protótipo (FC) de pickup_truck substituído (500 imagens de treino).
+2026-11-25 14:11:42,902 [INFO] [Tarefa 1] Protótipo (FC) de rose substituído (500 imagens de treino).
+2026-11-25 14:11:43,049 [INFO] [Tarefa 1] Protótipo (FC) de snail substituído (500 imagens de treino).
+2026-11-25 14:11:43,202 [INFO] [Tarefa 1] Protótipo (FC) de aquarium_fish substituído (500 imagens de treino).
+2026-11-25 14:11:43,488 [INFO] [Tarefa 1] Protótipo (FC) de tank substituído (500 imagens de treino).
+2026-11-25 14:11:43,723 [INFO] [Tarefa 1] Protótipo (FC) de cattle substituído (500 imagens de treino).
+2026-11-25 14:11:43,912 [INFO] [Tarefa 1] Protótipo (FC) de castle substituído (500 imagens de treino).
+2026-11-25 14:11:44,117 [INFO] [Tarefa 1] Protótipo (FC) de mouse substituído (500 imagens de treino).
+2026-11-25 14:11:44,374 [INFO] [Tarefa 1] Protótipo (FC) de cup substituído (500 imagens de treino).
+2026-11-25 14:11:44,628 [INFO] [Tarefa 1] Protótipo (FC) de orange substituído (500 imagens de treino).
+2026-11-25 14:11:44,800 [INFO] [Tarefa 1] Protótipo (FC) de bus substituído (500 imagens de treino).
+2026-11-25 14:11:44,970 [INFO] [Tarefa 1] Protótipo (FC) de streetcar substituído (500 imagens de treino).
+2026-11-25 14:11:45,158 [INFO] [Tarefa 1] Protótipo (FC) de lobster substituído (500 imagens de treino).
+2026-11-25 14:11:45,344 [INFO] [Tarefa 1] Protótipo (FC) de sunflower substituído (500 imagens de treino).
+2026-11-25 14:11:45,528 [INFO] [Tarefa 1] Protótipo (FC) de bee substituído (500 imagens de treino).
+2026-11-25 14:11:45,724 [INFO] [Tarefa 1] Protótipo (FC) de pine_tree substituído (500 imagens de treino).
+2026-11-25 14:11:45,908 [INFO] [Tarefa 1] Protótipo (FC) de sweet_pepper substituído (500 imagens de treino).
+2026-11-25 14:11:46,105 [INFO] [Tarefa 1] Protótipo (FC) de can substituído (500 imagens de treino).
+2026-11-25 14:11:46,290 [INFO] [Tarefa 1] Protótipo (FC) de camel substituído (500 imagens de treino).
+2026-11-25 14:11:46,481 [INFO] [Tarefa 1] Protótipo (FC) de lizard substituído (500 imagens de treino).
+2026-11-25 14:11:47,665 [INFO] [Banco] pickup_truck: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.1547).
+2026-11-25 14:11:47,685 [INFO] [Banco] rose: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.0103).
+2026-11-25 14:11:47,704 [INFO] [Banco] snail: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8133).
+2026-11-25 14:11:47,723 [INFO] [Banco] aquarium_fish: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8431).
+2026-11-25 14:11:47,741 [INFO] [Banco] tank: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.0746).
+2026-11-25 14:11:47,759 [INFO] [Banco] cattle: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.0781).
+2026-11-25 14:11:47,776 [INFO] [Banco] castle: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.5884).
+2026-11-25 14:11:47,796 [INFO] [Banco] mouse: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4933).
+2026-11-25 14:11:47,816 [INFO] [Banco] cup: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9627).
+2026-11-25 14:11:47,834 [INFO] [Banco] orange: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8217).
+2026-11-25 14:11:47,851 [INFO] [Banco] bus: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.4985).
+2026-11-25 14:11:47,869 [INFO] [Banco] streetcar: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2670).
+2026-11-25 14:11:47,887 [INFO] [Banco] lobster: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1696).
+2026-11-25 14:11:47,904 [INFO] [Banco] sunflower: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6353).
+2026-11-25 14:11:47,922 [INFO] [Banco] bee: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1037).
+2026-11-25 14:11:47,939 [INFO] [Banco] pine_tree: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.4862).
+2026-11-25 14:11:47,956 [INFO] [Banco] sweet_pepper: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9227).
+2026-11-25 14:11:47,974 [INFO] [Banco] can: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5987).
+2026-11-25 14:11:47,992 [INFO] [Banco] camel: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.4114).
+2026-11-25 14:11:48,009 [INFO] [Banco] lizard: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6553).
+2026-11-25 14:11:48,376 [INFO] [Tarefa 1] Adapter compartilhado: μ_k, σ_k das tarefas 0..1 recalculados com o Adapter atual sobre 256 amostras do banco por classe.
+2026-11-25 14:11:48,576 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 1 ===
+2026-11-25 14:11:48,577 [INFO]    Acurácia CIL ................  33.23%
+2026-11-25 14:11:48,577 [INFO]    Vazamento (Lambda) ..........  48.18%
+2026-11-25 14:11:48,577 [INFO]    Vazamento balanceado ........  48.18%
+2026-11-25 14:11:48,577 [INFO]    Erro dentro da task (E_WP) ..  18.60%
+2026-11-25 14:11:48,577 [INFO]    Parcela do erro por vazamento  72.15%
+2026-11-25 14:11:48,577 [INFO]    Acurácia com oráculo de task   53.57%
+2026-11-25 14:11:48,577 [INFO]    Teto de ganho ...............  20.35 p.p.
+2026-11-25 14:11:48,577 [INFO]    Índice de direção D ......... 1926.000
+2026-11-25 14:11:48,577 [INFO]    Spearman(L, j-i) recência ...   1.000
+2026-11-25 14:11:48,577 [INFO]    Spearman(L, S) semântica ....   1.000
+2026-11-25 14:11:48,577 [INFO]      parcial, controlando j-i ..   1.000
+2026-11-25 14:11:48,578 [INFO]    Vazamento após normalização .  36.93%
+2026-11-25 14:11:48,578 [INFO]    Parcela atribuível a escala .  23.35%
+2026-11-25 14:11:48,578 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:11:48,578 [INFO]      k = -1: 0.001
+2026-11-25 14:11:48,578 [INFO]      k = +1: 0.963
+2026-11-25 14:11:48,578 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:11:48,578 [INFO]      0.037 0.963
+2026-11-25 14:11:48,578 [INFO]      0.001 1.000
+2026-11-25 14:11:48,609 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 1 (notas padronizadas) ===
+2026-11-25 14:11:48,609 [INFO]    Acurácia CIL ................  34.45%
+2026-11-25 14:11:48,609 [INFO]    Vazamento (Lambda) ..........  36.93%
+2026-11-25 14:11:48,609 [INFO]    Vazamento balanceado ........  36.92%
+2026-11-25 14:11:48,609 [INFO]    Erro dentro da task (E_WP) ..  28.62%
+2026-11-25 14:11:48,609 [INFO]    Parcela do erro por vazamento  56.33%
+2026-11-25 14:11:48,609 [INFO]    Acurácia com oráculo de task   53.57%
+2026-11-25 14:11:48,610 [INFO]    Teto de ganho ...............  19.12 p.p.
+2026-11-25 14:11:48,610 [INFO]    Índice de direção D .........   0.144
+2026-11-25 14:11:48,610 [INFO]    Spearman(L, j-i) recência ...  -1.000
+2026-11-25 14:11:48,610 [INFO]    Spearman(L, S) semântica ....  -1.000
+2026-11-25 14:11:48,610 [INFO]      parcial, controlando j-i ..  -1.000
+2026-11-25 14:11:48,610 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:11:48,610 [INFO]      k = -1: 0.645
+2026-11-25 14:11:48,610 [INFO]      k = +1: 0.093
+2026-11-25 14:11:48,610 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:11:48,610 [INFO]      0.907 0.093
+2026-11-25 14:11:48,610 [INFO]      0.645 0.354
+2026-11-25 14:11:48,948 [INFO] [Tarefa 1] Acurácia no teste acumulado após a tarefa: 33.23% (notas padronizadas: 34.45%)
+2026-11-25 14:11:49,141 [INFO] [Tarefa 2] Adapter COMPARTILHADO: o Adapter único continua sendo treinado (as classes antigas passam a ser pontuadas por ele, com os protótipos antigos fixos).
+2026-11-25 14:11:49,406 [INFO] [Tarefa 2] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:11:49,406 [INFO] [Tarefa 2] Snapshots de θ_init (Adapter_2 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:11:49,418 [INFO] === Tarefa 2 (trout, lawn_mower, seal, plain, spider, oak_tree, chair, bowl, elephant, orchid, house, whale, butterfly, sea, willow_tree, woman, wolf, baby, possum, raccoon): treinando Adapter_2 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:11:53,056 [INFO]    [Tarefa 2] Época [2/2] -> CE:2.0575 | L_LVQ:0.0000 | Acc treino: 55.81% | AAC acumulado: 21.05% | trout: 38.00% | lawn_mower: 79.00% | seal: 25.00% | plain: 52.00% | spider: 49.00% | oak_tree: 79.00% | chair: 87.00% | bowl: 76.00% | elephant: 50.00% | orchid: 79.00% | house: 65.00% | whale: 67.00% | butterfly: 30.00% | sea: 71.00% | willow_tree: 37.00% | woman: 52.00% | wolf: 46.00% | baby: 56.00% | possum: 22.00% | raccoon: 15.00%
+2026-11-25 14:11:53,067 [INFO] [Tarefa 2] Adapter_2 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 21.05%; treino em 4s). [Adapter compartilhado: volta a ser treinado na próxima tarefa]
+2026-11-25 14:11:53,236 [INFO] [Tarefa 2] Protótipo (FC) de trout substituído (500 imagens de treino).
+2026-11-25 14:11:53,418 [INFO] [Tarefa 2] Protótipo (FC) de lawn_mower substituído (500 imagens de treino).
+2026-11-25 14:11:53,667 [INFO] [Tarefa 2] Protótipo (FC) de seal substituído (500 imagens de treino).
+2026-11-25 14:11:53,879 [INFO] [Tarefa 2] Protótipo (FC) de plain substituído (500 imagens de treino).
+2026-11-25 14:11:54,041 [INFO] [Tarefa 2] Protótipo (FC) de spider substituído (500 imagens de treino).
+2026-11-25 14:11:54,212 [INFO] [Tarefa 2] Protótipo (FC) de oak_tree substituído (500 imagens de treino).
+2026-11-25 14:11:54,398 [INFO] [Tarefa 2] Protótipo (FC) de chair substituído (500 imagens de treino).
+2026-11-25 14:11:54,578 [INFO] [Tarefa 2] Protótipo (FC) de bowl substituído (500 imagens de treino).
+2026-11-25 14:11:54,773 [INFO] [Tarefa 2] Protótipo (FC) de elephant substituído (500 imagens de treino).
+2026-11-25 14:11:54,950 [INFO] [Tarefa 2] Protótipo (FC) de orchid substituído (500 imagens de treino).
+2026-11-25 14:11:55,145 [INFO] [Tarefa 2] Protótipo (FC) de house substituído (500 imagens de treino).
+2026-11-25 14:11:55,319 [INFO] [Tarefa 2] Protótipo (FC) de whale substituído (500 imagens de treino).
+2026-11-25 14:11:55,502 [INFO] [Tarefa 2] Protótipo (FC) de butterfly substituído (500 imagens de treino).
+2026-11-25 14:11:55,711 [INFO] [Tarefa 2] Protótipo (FC) de sea substituído (500 imagens de treino).
+2026-11-25 14:11:55,889 [INFO] [Tarefa 2] Protótipo (FC) de willow_tree substituído (500 imagens de treino).
+2026-11-25 14:11:56,055 [INFO] [Tarefa 2] Protótipo (FC) de woman substituído (500 imagens de treino).
+2026-11-25 14:11:56,242 [INFO] [Tarefa 2] Protótipo (FC) de wolf substituído (500 imagens de treino).
+2026-11-25 14:11:56,446 [INFO] [Tarefa 2] Protótipo (FC) de baby substituído (500 imagens de treino).
+2026-11-25 14:11:56,632 [INFO] [Tarefa 2] Protótipo (FC) de possum substituído (500 imagens de treino).
+2026-11-25 14:11:56,845 [INFO] [Tarefa 2] Protótipo (FC) de raccoon substituído (500 imagens de treino).
+2026-11-25 14:11:58,108 [INFO] [Banco] trout: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8087).
+2026-11-25 14:11:58,128 [INFO] [Banco] lawn_mower: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8877).
+2026-11-25 14:11:58,146 [INFO] [Banco] seal: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9687).
+2026-11-25 14:11:58,165 [INFO] [Banco] plain: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.6912).
+2026-11-25 14:11:58,183 [INFO] [Banco] spider: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5142).
+2026-11-25 14:11:58,201 [INFO] [Banco] oak_tree: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 0.9712).
+2026-11-25 14:11:58,220 [INFO] [Banco] chair: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.4128).
+2026-11-25 14:11:58,238 [INFO] [Banco] bowl: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1487).
+2026-11-25 14:11:58,256 [INFO] [Banco] elephant: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1523).
+2026-11-25 14:11:58,274 [INFO] [Banco] orchid: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.6217).
+2026-11-25 14:11:58,293 [INFO] [Banco] house: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.7425).
+2026-11-25 14:11:58,311 [INFO] [Banco] whale: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9005).
+2026-11-25 14:11:58,330 [INFO] [Banco] butterfly: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5858).
+2026-11-25 14:11:58,348 [INFO] [Banco] sea: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.8895).
+2026-11-25 14:11:58,365 [INFO] [Banco] willow_tree: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.3743).
+2026-11-25 14:11:58,383 [INFO] [Banco] woman: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2370).
+2026-11-25 14:11:58,400 [INFO] [Banco] wolf: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.2957).
+2026-11-25 14:11:58,417 [INFO] [Banco] baby: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.4940).
+2026-11-25 14:11:58,434 [INFO] [Banco] possum: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.1178).
+2026-11-25 14:11:58,452 [INFO] [Banco] raccoon: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.7991).
+2026-11-25 14:11:58,911 [INFO] [Tarefa 2] Adapter compartilhado: μ_k, σ_k das tarefas 0..2 recalculados com o Adapter atual sobre 256 amostras do banco por classe.
+2026-11-25 14:11:59,213 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 2 ===
+2026-11-25 14:11:59,213 [INFO]    Acurácia CIL ................  20.92%
+2026-11-25 14:11:59,213 [INFO]    Vazamento (Lambda) ..........  62.92%
+2026-11-25 14:11:59,213 [INFO]    Vazamento balanceado ........  62.92%
+2026-11-25 14:11:59,213 [INFO]    Erro dentro da task (E_WP) ..  16.17%
+2026-11-25 14:11:59,213 [INFO]    Parcela do erro por vazamento  79.56%
+2026-11-25 14:11:59,213 [INFO]    Acurácia com oráculo de task   41.22%
+2026-11-25 14:11:59,213 [INFO]    Teto de ganho ...............  20.30 p.p.
+2026-11-25 14:11:59,213 [INFO]    Índice de direção D .........  79.319
+2026-11-25 14:11:59,213 [INFO]    Spearman(L, j-i) recência ...   0.940
+2026-11-25 14:11:59,213 [INFO]    Spearman(L, S) semântica ....   0.261
+2026-11-25 14:11:59,214 [INFO]      parcial, controlando j-i ..  -0.939
+2026-11-25 14:11:59,214 [INFO]    Vazamento após normalização .  56.93%
+2026-11-25 14:11:59,214 [INFO]    Parcela atribuível a escala .   9.51%
+2026-11-25 14:11:59,214 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:11:59,214 [INFO]      k = -2: 0.000
+2026-11-25 14:11:59,214 [INFO]      k = -1: 0.012
+2026-11-25 14:11:59,214 [INFO]      k = +1: 0.453
+2026-11-25 14:11:59,222 [INFO]      k = +2: 0.958
+2026-11-25 14:11:59,222 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:11:59,223 [INFO]      0.000 0.043 0.958
+2026-11-25 14:11:59,223 [INFO]      0.000 0.136 0.864
+2026-11-25 14:11:59,223 [INFO]      0.000 0.024 0.977
+2026-11-25 14:11:59,276 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 2 (notas padronizadas) ===
+2026-11-25 14:11:59,276 [INFO]    Acurácia CIL ................  17.15%
+2026-11-25 14:11:59,276 [INFO]    Vazamento (Lambda) ..........  56.93%
+2026-11-25 14:11:59,276 [INFO]    Vazamento balanceado ........  56.93%
+2026-11-25 14:11:59,276 [INFO]    Erro dentro da task (E_WP) ..  25.92%
+2026-11-25 14:11:59,276 [INFO]    Parcela do erro por vazamento  68.72%
+2026-11-25 14:11:59,277 [INFO]    Acurácia com oráculo de task   41.22%
+2026-11-25 14:11:59,277 [INFO]    Teto de ganho ...............  24.07 p.p.
+2026-11-25 14:11:59,277 [INFO]    Índice de direção D .........   0.355
+2026-11-25 14:11:59,277 [INFO]    Spearman(L, j-i) recência ...  -0.765
+2026-11-25 14:11:59,277 [INFO]    Spearman(L, S) semântica ....  -0.429
+2026-11-25 14:11:59,277 [INFO]      parcial, controlando j-i ..  -0.002
+2026-11-25 14:11:59,277 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:11:59,277 [INFO]      k = -2: 0.512
+2026-11-25 14:11:59,277 [INFO]      k = -1: 0.374
+2026-11-25 14:11:59,277 [INFO]      k = +1: 0.206
+2026-11-25 14:11:59,277 [INFO]      k = +2: 0.036
+2026-11-25 14:11:59,277 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:11:59,277 [INFO]      0.568 0.396 0.036
+2026-11-25 14:11:59,277 [INFO]      0.344 0.641 0.015
+2026-11-25 14:11:59,277 [INFO]      0.512 0.405 0.083
+2026-11-25 14:11:59,791 [INFO] [Tarefa 2] Acurácia no teste acumulado após a tarefa: 20.92% (notas padronizadas: 17.15%)
+2026-11-25 14:12:00,022 [INFO] [Tarefa 3] Adapter COMPARTILHADO: o Adapter único continua sendo treinado (as classes antigas passam a ser pontuadas por ele, com os protótipos antigos fixos).
+2026-11-25 14:12:00,297 [INFO] [Tarefa 3] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:12:00,297 [INFO] [Tarefa 3] Snapshots de θ_init (Adapter_3 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:12:00,311 [INFO] === Tarefa 3 (leopard, clock, girl, telephone, cockroach, fox, television, chimpanzee, worm, apple, tiger, crocodile, caterpillar, wardrobe, boy, bridge, maple_tree, couch, dolphin, man): treinando Adapter_3 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:12:04,951 [INFO]    [Tarefa 3] Época [2/2] -> CE:2.7072 | L_LVQ:0.0000 | Acc treino: 45.08% | AAC acumulado: 17.55% | leopard: 53.00% | clock: 55.00% | girl: 13.00% | telephone: 50.00% | cockroach: 49.00% | fox: 28.00% | television: 60.00% | chimpanzee: 37.00% | worm: 46.00% | apple: 94.00% | tiger: 34.00% | crocodile: 40.00% | caterpillar: 30.00% | wardrobe: 72.00% | boy: 11.00% | bridge: 58.00% | maple_tree: 54.00% | couch: 33.00% | dolphin: 53.00% | man: 23.00%
+2026-11-25 14:12:04,960 [INFO] [Tarefa 3] Adapter_3 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 17.55%; treino em 5s). [Adapter compartilhado: volta a ser treinado na próxima tarefa]
+2026-11-25 14:12:05,149 [INFO] [Tarefa 3] Protótipo (FC) de leopard substituído (500 imagens de treino).
+2026-11-25 14:12:05,364 [INFO] [Tarefa 3] Protótipo (FC) de clock substituído (500 imagens de treino).
+2026-11-25 14:12:05,560 [INFO] [Tarefa 3] Protótipo (FC) de girl substituído (500 imagens de treino).
+2026-11-25 14:12:05,730 [INFO] [Tarefa 3] Protótipo (FC) de telephone substituído (500 imagens de treino).
+2026-11-25 14:12:05,935 [INFO] [Tarefa 3] Protótipo (FC) de cockroach substituído (500 imagens de treino).
+2026-11-25 14:12:06,156 [INFO] [Tarefa 3] Protótipo (FC) de fox substituído (500 imagens de treino).
+2026-11-25 14:12:06,407 [INFO] [Tarefa 3] Protótipo (FC) de television substituído (500 imagens de treino).
+2026-11-25 14:12:06,616 [INFO] [Tarefa 3] Protótipo (FC) de chimpanzee substituído (500 imagens de treino).
+2026-11-25 14:12:06,819 [INFO] [Tarefa 3] Protótipo (FC) de worm substituído (500 imagens de treino).
+2026-11-25 14:12:07,043 [INFO] [Tarefa 3] Protótipo (FC) de apple substituído (500 imagens de treino).
+2026-11-25 14:12:07,261 [INFO] [Tarefa 3] Protótipo (FC) de tiger substituído (500 imagens de treino).
+2026-11-25 14:12:07,472 [INFO] [Tarefa 3] Protótipo (FC) de crocodile substituído (500 imagens de treino).
+2026-11-25 14:12:07,655 [INFO] [Tarefa 3] Protótipo (FC) de caterpillar substituído (500 imagens de treino).
+2026-11-25 14:12:07,834 [INFO] [Tarefa 3] Protótipo (FC) de wardrobe substituído (500 imagens de treino).
+2026-11-25 14:12:08,031 [INFO] [Tarefa 3] Protótipo (FC) de boy substituído (500 imagens de treino).
+2026-11-25 14:12:08,234 [INFO] [Tarefa 3] Protótipo (FC) de bridge substituído (500 imagens de treino).
+2026-11-25 14:12:08,431 [INFO] [Tarefa 3] Protótipo (FC) de maple_tree substituído (500 imagens de treino).
+2026-11-25 14:12:08,622 [INFO] [Tarefa 3] Protótipo (FC) de couch substituído (500 imagens de treino).
+2026-11-25 14:12:08,814 [INFO] [Tarefa 3] Protótipo (FC) de dolphin substituído (500 imagens de treino).
+2026-11-25 14:12:08,992 [INFO] [Tarefa 3] Protótipo (FC) de man substituído (500 imagens de treino).
+2026-11-25 14:12:10,182 [INFO] [Banco] leopard: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.5694).
+2026-11-25 14:12:10,201 [INFO] [Banco] clock: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.7899).
+2026-11-25 14:12:10,220 [INFO] [Banco] girl: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.1679).
+2026-11-25 14:12:10,238 [INFO] [Banco] telephone: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5806).
+2026-11-25 14:12:10,256 [INFO] [Banco] cockroach: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.3637).
+2026-11-25 14:12:10,275 [INFO] [Banco] fox: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.9228).
+2026-11-25 14:12:10,293 [INFO] [Banco] television: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.1719).
+2026-11-25 14:12:10,312 [INFO] [Banco] chimpanzee: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6271).
+2026-11-25 14:12:10,330 [INFO] [Banco] worm: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.3002).
+2026-11-25 14:12:10,348 [INFO] [Banco] apple: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9822).
+2026-11-25 14:12:10,366 [INFO] [Banco] tiger: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6004).
+2026-11-25 14:12:10,383 [INFO] [Banco] crocodile: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6240).
+2026-11-25 14:12:10,400 [INFO] [Banco] caterpillar: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5646).
+2026-11-25 14:12:10,418 [INFO] [Banco] wardrobe: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.7915).
+2026-11-25 14:12:10,435 [INFO] [Banco] boy: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.1922).
+2026-11-25 14:12:10,462 [INFO] [Banco] bridge: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2326).
+2026-11-25 14:12:10,479 [INFO] [Banco] maple_tree: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.5386).
+2026-11-25 14:12:10,497 [INFO] [Banco] couch: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5454).
+2026-11-25 14:12:10,522 [INFO] [Banco] dolphin: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5609).
+2026-11-25 14:12:10,539 [INFO] [Banco] man: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.9496).
+2026-11-25 14:12:11,432 [INFO] [Tarefa 3] Adapter compartilhado: μ_k, σ_k das tarefas 0..3 recalculados com o Adapter atual sobre 256 amostras do banco por classe.
+2026-11-25 14:12:12,027 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 3 ===
+2026-11-25 14:12:12,027 [INFO]    Acurácia CIL ................  17.50%
+2026-11-25 14:12:12,027 [INFO]    Vazamento (Lambda) ..........  69.30%
+2026-11-25 14:12:12,027 [INFO]    Vazamento balanceado ........  69.30%
+2026-11-25 14:12:12,027 [INFO]    Erro dentro da task (E_WP) ..  13.20%
+2026-11-25 14:12:12,027 [INFO]    Parcela do erro por vazamento  84.00%
+2026-11-25 14:12:12,027 [INFO]    Acurácia com oráculo de task   37.04%
+2026-11-25 14:12:12,027 [INFO]    Teto de ganho ...............  19.54 p.p.
+2026-11-25 14:12:12,027 [INFO]    Índice de direção D .........  12.295
+2026-11-25 14:12:12,027 [INFO]    Spearman(L, j-i) recência ...   0.817
+2026-11-25 14:12:12,028 [INFO]    Spearman(L, S) semântica ....  -0.011
+2026-11-25 14:12:12,028 [INFO]      parcial, controlando j-i ..  -0.637
+2026-11-25 14:12:12,028 [INFO]    Vazamento após normalização .  69.66%
+2026-11-25 14:12:12,028 [INFO]    Parcela atribuível a escala .  -0.52%
+2026-11-25 14:12:12,028 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:12:12,028 [INFO]      k = -3: 0.000
+2026-11-25 14:12:12,028 [INFO]      k = -2: 0.000
+2026-11-25 14:12:12,028 [INFO]      k = -1: 0.069
+2026-11-25 14:12:12,028 [INFO]      k = +1: 0.275
+2026-11-25 14:12:12,028 [INFO]      k = +2: 0.486
+2026-11-25 14:12:12,028 [INFO]      k = +3: 0.765
+2026-11-25 14:12:12,028 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:12:12,029 [INFO]      0.000 0.000 0.234 0.765
+2026-11-25 14:12:12,029 [INFO]      0.000 0.000 0.262 0.738
+2026-11-25 14:12:12,029 [INFO]      0.000 0.000 0.436 0.564
+2026-11-25 14:12:12,029 [INFO]      0.000 0.000 0.208 0.791
+2026-11-25 14:12:12,083 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 3 (notas padronizadas) ===
+2026-11-25 14:12:12,083 [INFO]    Acurácia CIL ................  11.12%
+2026-11-25 14:12:12,083 [INFO]    Vazamento (Lambda) ..........  69.66%
+2026-11-25 14:12:12,084 [INFO]    Vazamento balanceado ........  69.66%
+2026-11-25 14:12:12,084 [INFO]    Erro dentro da task (E_WP) ..  19.21%
+2026-11-25 14:12:12,084 [INFO]    Parcela do erro por vazamento  78.38%
+2026-11-25 14:12:12,084 [INFO]    Acurácia com oráculo de task   37.04%
+2026-11-25 14:12:12,084 [INFO]    Teto de ganho ...............  25.91 p.p.
+2026-11-25 14:12:12,084 [INFO]    Índice de direção D .........   0.369
+2026-11-25 14:12:12,084 [INFO]    Spearman(L, j-i) recência ...  -0.676
+2026-11-25 14:12:12,084 [INFO]    Spearman(L, S) semântica ....   0.063
+2026-11-25 14:12:12,084 [INFO]      parcial, controlando j-i ..   0.492
+2026-11-25 14:12:12,084 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:12:12,084 [INFO]      k = -3: 0.391
+2026-11-25 14:12:12,084 [INFO]      k = -2: 0.380
+2026-11-25 14:12:12,084 [INFO]      k = -1: 0.295
+2026-11-25 14:12:12,084 [INFO]      k = +1: 0.227
+2026-11-25 14:12:12,084 [INFO]      k = +2: 0.028
+2026-11-25 14:12:12,085 [INFO]      k = +3: 0.012
+2026-11-25 14:12:12,085 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:12:12,085 [INFO]      0.324 0.619 0.045 0.012
+2026-11-25 14:12:12,085 [INFO]      0.275 0.669 0.044 0.012
+2026-11-25 14:12:12,085 [INFO]      0.319 0.493 0.169 0.019
+2026-11-25 14:12:12,085 [INFO]      0.391 0.442 0.116 0.051
+2026-11-25 14:12:12,788 [INFO] [Tarefa 3] Acurácia no teste acumulado após a tarefa: 17.50% (notas padronizadas: 11.12%)
+2026-11-25 14:12:13,124 [INFO] [Tarefa 4] Adapter COMPARTILHADO: o Adapter único continua sendo treinado (as classes antigas passam a ser pontuadas por ele, com os protótipos antigos fixos).
+2026-11-25 14:12:13,464 [INFO] [Tarefa 4] Classes novas iniciadas pela média das saídas do Adapter novo (= média de phi, adapter residual).
+2026-11-25 14:12:13,465 [INFO] [Tarefa 4] Snapshots de θ_init (Adapter_4 e unidades LVQ da tarefa) capturados antes do treino (diagnóstico de negação).
+2026-11-25 14:12:13,474 [INFO] === Tarefa 4 (poppy, rocket, hamster, plate, beetle, porcupine, skunk, bed, flatfish, beaver, mushroom, motorcycle, shark, turtle, keyboard, ray, dinosaur, mountain, pear, forest): treinando Adapter_4 (PERMANENTE) + unidades LVQ da tarefa ===
+2026-11-25 14:12:18,718 [INFO]    [Tarefa 4] Época [2/2] -> CE:3.4357 | L_LVQ:0.0000 | Acc treino: 41.02% | AAC acumulado: 13.80% | poppy: 77.00% | rocket: 45.00% | hamster: 40.00% | plate: 64.00% | beetle: 24.00% | porcupine: 10.00% | skunk: 32.00% | bed: 32.00% | flatfish: 33.00% | beaver: 29.00% | mushroom: 14.00% | motorcycle: 70.00% | shark: 33.00% | turtle: 13.00% | keyboard: 66.00% | ray: 12.00% | dinosaur: 18.00% | mountain: 64.00% | pear: 46.00% | forest: 46.00%
+2026-11-25 14:12:18,732 [INFO] [Tarefa 4] Adapter_4 CONGELADO e MANTIDO; unidades LVQ da tarefa CONGELADAS (AAC diagnóstica final: 13.80%; treino em 5s). [Adapter compartilhado: volta a ser treinado na próxima tarefa]
+2026-11-25 14:12:18,925 [INFO] [Tarefa 4] Protótipo (FC) de poppy substituído (500 imagens de treino).
+2026-11-25 14:12:19,128 [INFO] [Tarefa 4] Protótipo (FC) de rocket substituído (500 imagens de treino).
+2026-11-25 14:12:19,319 [INFO] [Tarefa 4] Protótipo (FC) de hamster substituído (500 imagens de treino).
+2026-11-25 14:12:19,543 [INFO] [Tarefa 4] Protótipo (FC) de plate substituído (500 imagens de treino).
+2026-11-25 14:12:19,731 [INFO] [Tarefa 4] Protótipo (FC) de beetle substituído (500 imagens de treino).
+2026-11-25 14:12:19,924 [INFO] [Tarefa 4] Protótipo (FC) de porcupine substituído (500 imagens de treino).
+2026-11-25 14:12:20,124 [INFO] [Tarefa 4] Protótipo (FC) de skunk substituído (500 imagens de treino).
+2026-11-25 14:12:20,315 [INFO] [Tarefa 4] Protótipo (FC) de bed substituído (500 imagens de treino).
+2026-11-25 14:12:20,598 [INFO] [Tarefa 4] Protótipo (FC) de flatfish substituído (500 imagens de treino).
+2026-11-25 14:12:20,831 [INFO] [Tarefa 4] Protótipo (FC) de beaver substituído (500 imagens de treino).
+2026-11-25 14:12:21,118 [INFO] [Tarefa 4] Protótipo (FC) de mushroom substituído (500 imagens de treino).
+2026-11-25 14:12:21,383 [INFO] [Tarefa 4] Protótipo (FC) de motorcycle substituído (500 imagens de treino).
+2026-11-25 14:12:21,626 [INFO] [Tarefa 4] Protótipo (FC) de shark substituído (500 imagens de treino).
+2026-11-25 14:12:21,840 [INFO] [Tarefa 4] Protótipo (FC) de turtle substituído (500 imagens de treino).
+2026-11-25 14:12:22,010 [INFO] [Tarefa 4] Protótipo (FC) de keyboard substituído (500 imagens de treino).
+2026-11-25 14:12:22,245 [INFO] [Tarefa 4] Protótipo (FC) de ray substituído (500 imagens de treino).
+2026-11-25 14:12:22,499 [INFO] [Tarefa 4] Protótipo (FC) de dinosaur substituído (500 imagens de treino).
+2026-11-25 14:12:22,694 [INFO] [Tarefa 4] Protótipo (FC) de mountain substituído (500 imagens de treino).
+2026-11-25 14:12:22,862 [INFO] [Tarefa 4] Protótipo (FC) de pear substituído (500 imagens de treino).
+2026-11-25 14:12:23,045 [INFO] [Tarefa 4] Protótipo (FC) de forest substituído (500 imagens de treino).
+2026-11-25 14:12:24,569 [INFO] [Banco] poppy: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.4140).
+2026-11-25 14:12:24,589 [INFO] [Banco] rocket: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.9164).
+2026-11-25 14:12:24,607 [INFO] [Banco] hamster: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 4.7144).
+2026-11-25 14:12:24,626 [INFO] [Banco] plate: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5519).
+2026-11-25 14:12:24,645 [INFO] [Banco] beetle: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1929).
+2026-11-25 14:12:24,663 [INFO] [Banco] porcupine: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.8366).
+2026-11-25 14:12:24,701 [INFO] [Banco] skunk: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.7799).
+2026-11-25 14:12:24,720 [INFO] [Banco] bed: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2209).
+2026-11-25 14:12:24,738 [INFO] [Banco] flatfish: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8886).
+2026-11-25 14:12:24,756 [INFO] [Banco] beaver: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.2588).
+2026-11-25 14:12:24,773 [INFO] [Banco] mushroom: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6120).
+2026-11-25 14:12:24,790 [INFO] [Banco] motorcycle: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.2678).
+2026-11-25 14:12:24,808 [INFO] [Banco] shark: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.5340).
+2026-11-25 14:12:24,825 [INFO] [Banco] turtle: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.8101).
+2026-11-25 14:12:24,842 [INFO] [Banco] keyboard: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.6947).
+2026-11-25 14:12:24,860 [INFO] [Banco] ray: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 2.6936).
+2026-11-25 14:12:24,877 [INFO] [Banco] dinosaur: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.1077).
+2026-11-25 14:12:24,895 [INFO] [Banco] mountain: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.6091).
+2026-11-25 14:12:24,912 [INFO] [Banco] pear: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 3.2774).
+2026-11-25 14:12:24,929 [INFO] [Banco] forest: 500 vetores phi -> gaussiana (posto 32, variância média por dimensão 1.5337).
+2026-11-25 14:12:25,759 [INFO] [Tarefa 4] Adapter compartilhado: μ_k, σ_k das tarefas 0..4 recalculados com o Adapter atual sobre 256 amostras do banco por classe.
+2026-11-25 14:12:26,783 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 4 ===
+2026-11-25 14:12:26,783 [INFO]    Acurácia CIL ................  13.76%
+2026-11-25 14:12:26,783 [INFO]    Vazamento (Lambda) ..........  73.82%
+2026-11-25 14:12:26,783 [INFO]    Vazamento balanceado ........  73.82%
+2026-11-25 14:12:26,783 [INFO]    Erro dentro da task (E_WP) ..  12.42%
+2026-11-25 14:12:26,783 [INFO]    Parcela do erro por vazamento  85.60%
+2026-11-25 14:12:26,783 [INFO]    Acurácia com oráculo de task   31.04%
+2026-11-25 14:12:26,783 [INFO]    Teto de ganho ...............  17.28 p.p.
+2026-11-25 14:12:26,784 [INFO]    Índice de direção D .........  20.459
+2026-11-25 14:12:26,784 [INFO]    Spearman(L, j-i) recência ...   0.785
+2026-11-25 14:12:26,784 [INFO]    Spearman(L, S) semântica ....   0.127
+2026-11-25 14:12:26,784 [INFO]      parcial, controlando j-i ..  -0.365
+2026-11-25 14:12:26,784 [INFO]    Vazamento após normalização .  74.84%
+2026-11-25 14:12:26,784 [INFO]    Parcela atribuível a escala .  -1.38%
+2026-11-25 14:12:26,784 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:12:26,784 [INFO]      k = -4: 0.000
+2026-11-25 14:12:26,784 [INFO]      k = -3: 0.000
+2026-11-25 14:12:26,784 [INFO]      k = -2: 0.005
+2026-11-25 14:12:26,784 [INFO]      k = -1: 0.039
+2026-11-25 14:12:26,784 [INFO]      k = +1: 0.210
+2026-11-25 14:12:26,785 [INFO]      k = +2: 0.302
+2026-11-25 14:12:26,785 [INFO]      k = +3: 0.501
+2026-11-25 14:12:26,785 [INFO]      k = +4: 0.770
+2026-11-25 14:12:26,785 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:12:26,801 [INFO]      0.000 0.000 0.013 0.216 0.770
+2026-11-25 14:12:26,801 [INFO]      0.000 0.000 0.012 0.202 0.786
+2026-11-25 14:12:26,801 [INFO]      0.000 0.000 0.028 0.282 0.690
+2026-11-25 14:12:26,801 [INFO]      0.000 0.000 0.006 0.447 0.547
+2026-11-25 14:12:26,801 [INFO]      0.000 0.000 0.015 0.150 0.834
+2026-11-25 14:12:26,920 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 4 (notas padronizadas) ===
+2026-11-25 14:12:26,921 [INFO]    Acurácia CIL ................   8.44%
+2026-11-25 14:12:26,921 [INFO]    Vazamento (Lambda) ..........  74.84%
+2026-11-25 14:12:26,921 [INFO]    Vazamento balanceado ........  74.84%
+2026-11-25 14:12:26,921 [INFO]    Erro dentro da task (E_WP) ..  16.72%
+2026-11-25 14:12:26,921 [INFO]    Parcela do erro por vazamento  81.74%
+2026-11-25 14:12:26,921 [INFO]    Acurácia com oráculo de task   31.04%
+2026-11-25 14:12:26,921 [INFO]    Teto de ganho ...............  22.60 p.p.
+2026-11-25 14:12:26,921 [INFO]    Índice de direção D .........   0.412
+2026-11-25 14:12:26,921 [INFO]    Spearman(L, j-i) recência ...  -0.716
+2026-11-25 14:12:26,921 [INFO]    Spearman(L, S) semântica ....  -0.044
+2026-11-25 14:12:26,921 [INFO]      parcial, controlando j-i ..   0.408
+2026-11-25 14:12:26,922 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:12:26,922 [INFO]      k = -4: 0.211
+2026-11-25 14:12:26,922 [INFO]      k = -3: 0.400
+2026-11-25 14:12:26,922 [INFO]      k = -2: 0.260
+2026-11-25 14:12:26,922 [INFO]      k = -1: 0.215
+2026-11-25 14:12:26,922 [INFO]      k = +1: 0.198
+2026-11-25 14:12:26,922 [INFO]      k = +2: 0.064
+2026-11-25 14:12:26,922 [INFO]      k = +3: 0.040
+2026-11-25 14:12:26,922 [INFO]      k = +4: 0.025
+2026-11-25 14:12:26,922 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:12:26,922 [INFO]      0.228 0.584 0.098 0.067 0.025
+2026-11-25 14:12:26,922 [INFO]      0.185 0.603 0.118 0.081 0.014
+2026-11-25 14:12:26,923 [INFO]      0.240 0.497 0.163 0.085 0.015
+2026-11-25 14:12:26,923 [INFO]      0.277 0.384 0.107 0.226 0.007
+2026-11-25 14:12:26,923 [INFO]      0.211 0.522 0.157 0.070 0.040
+2026-11-25 14:12:28,021 [INFO] [Tarefa 4] Acurácia no teste acumulado após a tarefa: 13.76% (notas padronizadas: 8.44%)
+2026-11-25 14:12:28,021 [INFO] ============================================================
+2026-11-25 14:12:28,021 [INFO] === RESULTADO FINAL (5 Adapters + LVQ, score combinado) ===
+2026-11-25 14:12:29,009 [INFO]  > Acc tarefa 0 (road, palm_tree, snake, bicycle, cloud, table, train, rabbit, shrew, skyscraper, lamp, tractor, bear, tulip, otter, bottle, crab, squirrel, lion, kangaroo): 0.00%
+2026-11-25 14:12:29,169 [INFO]  > Acc tarefa 1 (pickup_truck, rose, snail, aquarium_fish, tank, cattle, castle, mouse, cup, orange, bus, streetcar, lobster, sunflower, bee, pine_tree, sweet_pepper, can, camel, lizard): 0.00%
+2026-11-25 14:12:29,319 [INFO]  > Acc tarefa 2 (trout, lawn_mower, seal, plain, spider, oak_tree, chair, bowl, elephant, orchid, house, whale, butterfly, sea, willow_tree, woman, wolf, baby, possum, raccoon): 1.30%
+2026-11-25 14:12:29,454 [INFO]  > Acc tarefa 3 (leopard, clock, girl, telephone, cockroach, fox, television, chimpanzee, worm, apple, tiger, crocodile, caterpillar, wardrobe, boy, bridge, maple_tree, couch, dolphin, man): 29.70%
+2026-11-25 14:12:29,591 [INFO]  > Acc tarefa 4 (poppy, rocket, hamster, plate, beetle, porcupine, skunk, bed, flatfish, beaver, mushroom, motorcycle, shark, turtle, keyboard, ray, dinosaur, mountain, pear, forest): 37.80%
+2026-11-25 14:12:29,591 [INFO]  > AAC (5 tarefas): 13.76%
+2026-11-25 14:12:29,591 [INFO]  > AAC incremental (média das acurácias após cada tarefa): 30.04%
+2026-11-25 14:12:30,355 [INFO]  > Acurácia final padronizada (5 tarefas): 8.44% | AAC incremental padronizada: 27.19% | por tarefa: [3.8, 12.0, 8.3, 14.8, 3.3]
+2026-11-25 14:12:31,234 [INFO] === MÉTRICAS DE VAZAMENTO — final ===
+2026-11-25 14:12:31,234 [INFO]    Acurácia CIL ................  13.76%
+2026-11-25 14:12:31,235 [INFO]    Vazamento (Lambda) ..........  73.82%
+2026-11-25 14:12:31,235 [INFO]    Vazamento balanceado ........  73.82%
+2026-11-25 14:12:31,235 [INFO]    Erro dentro da task (E_WP) ..  12.42%
+2026-11-25 14:12:31,235 [INFO]    Parcela do erro por vazamento  85.60%
+2026-11-25 14:12:31,235 [INFO]    Acurácia com oráculo de task   31.04%
+2026-11-25 14:12:31,235 [INFO]    Teto de ganho ...............  17.28 p.p.
+2026-11-25 14:12:31,235 [INFO]    Índice de direção D .........  20.459
+2026-11-25 14:12:31,235 [INFO]    Spearman(L, j-i) recência ...   0.785
+2026-11-25 14:12:31,235 [INFO]    Spearman(L, S) semântica ....   0.127
+2026-11-25 14:12:31,235 [INFO]      parcial, controlando j-i ..  -0.365
+2026-11-25 14:12:31,235 [INFO]    Vazamento após normalização .  74.84%
+2026-11-25 14:12:31,236 [INFO]    Parcela atribuível a escala .  -1.38%
+2026-11-25 14:12:31,236 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:12:31,236 [INFO]      k = -4: 0.000
+2026-11-25 14:12:31,236 [INFO]      k = -3: 0.000
+2026-11-25 14:12:31,236 [INFO]      k = -2: 0.005
+2026-11-25 14:12:31,236 [INFO]      k = -1: 0.039
+2026-11-25 14:12:31,236 [INFO]      k = +1: 0.210
+2026-11-25 14:12:31,236 [INFO]      k = +2: 0.302
+2026-11-25 14:12:31,236 [INFO]      k = +3: 0.501
+2026-11-25 14:12:31,236 [INFO]      k = +4: 0.770
+2026-11-25 14:12:31,236 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:12:31,237 [INFO]      0.000 0.000 0.013 0.216 0.770
+2026-11-25 14:12:31,237 [INFO]      0.000 0.000 0.012 0.202 0.786
+2026-11-25 14:12:31,237 [INFO]      0.000 0.000 0.028 0.282 0.690
+2026-11-25 14:12:31,237 [INFO]      0.000 0.000 0.006 0.447 0.547
+2026-11-25 14:12:31,237 [INFO]      0.000 0.000 0.015 0.150 0.834
+2026-11-25 14:12:31,321 [INFO] === MÉTRICAS DE VAZAMENTO — final (notas padronizadas) ===
+2026-11-25 14:12:31,321 [INFO]    Acurácia CIL ................   8.44%
+2026-11-25 14:12:31,321 [INFO]    Vazamento (Lambda) ..........  74.84%
+2026-11-25 14:12:31,321 [INFO]    Vazamento balanceado ........  74.84%
+2026-11-25 14:12:31,321 [INFO]    Erro dentro da task (E_WP) ..  16.72%
+2026-11-25 14:12:31,321 [INFO]    Parcela do erro por vazamento  81.74%
+2026-11-25 14:12:31,321 [INFO]    Acurácia com oráculo de task   31.04%
+2026-11-25 14:12:31,321 [INFO]    Teto de ganho ...............  22.60 p.p.
+2026-11-25 14:12:31,331 [INFO]    Índice de direção D .........   0.412
+2026-11-25 14:12:31,331 [INFO]    Spearman(L, j-i) recência ...  -0.716
+2026-11-25 14:12:31,331 [INFO]    Spearman(L, S) semântica ....  -0.044
+2026-11-25 14:12:31,331 [INFO]      parcial, controlando j-i ..   0.408
+2026-11-25 14:12:31,331 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-25 14:12:31,331 [INFO]      k = -4: 0.211
+2026-11-25 14:12:31,331 [INFO]      k = -3: 0.400
+2026-11-25 14:12:31,332 [INFO]      k = -2: 0.260
+2026-11-25 14:12:31,332 [INFO]      k = -1: 0.215
+2026-11-25 14:12:31,332 [INFO]      k = +1: 0.198
+2026-11-25 14:12:31,332 [INFO]      k = +2: 0.064
+2026-11-25 14:12:31,332 [INFO]      k = +3: 0.040
+2026-11-25 14:12:31,332 [INFO]      k = +4: 0.025
+2026-11-25 14:12:31,332 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-25 14:12:31,332 [INFO]      0.228 0.584 0.098 0.067 0.025
+2026-11-25 14:12:31,332 [INFO]      0.185 0.603 0.118 0.081 0.014
+2026-11-25 14:12:31,332 [INFO]      0.240 0.497 0.163 0.085 0.015
+2026-11-25 14:12:31,332 [INFO]      0.277 0.384 0.107 0.226 0.007
+2026-11-25 14:12:31,332 [INFO]      0.211 0.522 0.157 0.070 0.040
+2026-11-25 14:12:31,333 [INFO]  > [Fase B] DE = 7.380519550072602 | esquecimento médio = 48.75 (padronizado: 21.5375) | memória do banco por classe = 66.1 KB
+2026-11-25 14:12:31,557 [INFO]  [Checkpoint] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/checkpoints/checkpoint_adapter_compartilhado_teste_cenario1_cifar100_inc20_resnet_seed1993_20261125_141120.pt
+2026-11-25 14:12:31,564 [INFO]  [JSON] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/results/results_adapter_compartilhado_teste_cenario1_cifar100_inc20_resnet_seed1993_20261125_141120.json

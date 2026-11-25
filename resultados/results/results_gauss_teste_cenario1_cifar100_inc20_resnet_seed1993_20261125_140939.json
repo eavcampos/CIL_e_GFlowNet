@@ -1,0 +1,2139 @@
+{
+    "estrategia": "nova_estrategia_2",
+    "id_execucao": "gauss_teste_cenario1_cifar100_inc20_resnet_seed1993_20261125_140939",
+    "nome_config": "gauss_teste_cenario1_cifar100_inc20_resnet",
+    "arquivo_config": "/home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/_configs_teste/config_gauss_teste.json",
+    "configuracao_efetiva": {
+        "seed": 1993,
+        "dataset": "cifar100",
+        "num_tasks": 5,
+        "classes_por_tarefa": 20,
+        "batch_size": 48,
+        "epochs_por_tarefa": 2,
+        "embedding_dim": 512,
+        "r_adapter": 64,
+        "lambda_lvq": 0.0,
+        "alpha_lvq": 0.0,
+        "tau_lvq": 1.0,
+        "som_linhas": 20,
+        "som_colunas": 80,
+        "otimizador": {
+            "tipo": "SGD",
+            "lr": 0.01,
+            "momentum": 0.9,
+            "weight_decay": 0.0,
+            "nesterov": false,
+            "nota": "tipo aceita 'SGD' (default), 'Adam', 'AdamW' ou 'RMSprop'. Hiperparâmetros não aplicáveis ao tipo escolhido são ignorados (ex.: 'momentum' é ignorado para Adam/AdamW, que usam 'betas' opcional)."
+        },
+        "adapter_residual": true,
+        "escala_logits": 16.0,
+        "init_classes_novas": "media_phi",
+        "atualizar_prototipos_novos": true,
+        "parada_antecipada": {
+            "ativo": false
+        },
+        "cache_phi": true,
+        "padronizar_notas": true,
+        "avaliar_teste_a_cada": 5,
+        "backbone": "resnet18",
+        "transformacao": null,
+        "adapter_compartilhado": false,
+        "fracao_estatisticas_validacao": 0.0,
+        "diagnosticos_extras": false,
+        "weight_decay_adapter": 0.0001,
+        "perfil": "cenario1_cifar100_inc20_resnet",
+        "pseudo_negativos": {
+            "modo": "gauss",
+            "nota_modo": "'nenhum' reproduz a Nova Estratégia 1 (linha de base); 'gauss' = sorteio direto das gaussianas; 'is' = amostragem por importância focada onde há vazamento (recomendado começar por aqui); 'gfn' = GFlowNet híbrida com buffer do 'is' (só se o ESS do 'is' ficar muito baixo).",
+            "por_lote": 48,
+            "nota_por_lote": "Pseudo-negativos somados a cada lote real (default = batch_size).",
+            "lambda_pn": 0.5,
+            "nota_lambda_pn": "Peso da CE dos pseudo-negativos na perda total.",
+            "beta": 5.0,
+            "nota_beta": "Usado em 'is' e 'gfn'. Peso exp(beta * margem), margem = melhor score de classe nova - score da própria classe antiga (scores em [-1, 1]). beta = 0 equivale a 'gauss'; beta grande concentra tudo no pior ponto e derruba o ESS.",
+            "n_proposta": 4096,
+            "rank_cov": 32,
+            "encolhimento": 0.001,
+            "relu": true,
+            "nota_relu": "phi da ResNet-18 sai de ReLU + avgpool (não negativo); a gaussiana não é. relu=true aplica ReLU aos phi sintéticos antes de usá-los.",
+            "gfn": {
+                "passos": 4,
+                "oculta": 256,
+                "lr": 0.001,
+                "lr_logZ": 0.1,
+                "lote": 128,
+                "atualizacoes_por_lote": 1,
+                "fracao_buffer": 0.25,
+                "exploracao": 1.3
+            },
+            "nota_teste_rapido": "Para um primeiro teste de execução: treino.epochs_por_tarefa = 2 (mantendo 5 x 20). Isso já exercita todas as fronteiras, o banco com 80 classes e os gráficos de 100 classes.",
+            "nota_n_proposta": "Propostas da amostragem por importância por lote. Com até 80 classes antigas (tarefa 4), 4096 dá ~50 propostas por classe antiga; com 1024 seriam ~13, e o ESS ficaria instável.",
+            "margem_padronizada": false
+        }
+    },
+    "ambiente": {
+        "torch": "2.4.0",
+        "torchvision": "0.19.0",
+        "timm": null,
+        "python": "3.11.9",
+        "gpu": "NVIDIA RTX A6000"
+    },
+    "particao_tarefas": {
+        "classes_originais_por_tarefa": [
+            [
+                68,
+                56,
+                78,
+                8,
+                23,
+                84,
+                90,
+                65,
+                74,
+                76,
+                40,
+                89,
+                3,
+                92,
+                55,
+                9,
+                26,
+                80,
+                43,
+                38
+            ],
+            [
+                58,
+                70,
+                77,
+                1,
+                85,
+                19,
+                17,
+                50,
+                28,
+                53,
+                13,
+                81,
+                45,
+                82,
+                6,
+                59,
+                83,
+                16,
+                15,
+                44
+            ],
+            [
+                91,
+                41,
+                72,
+                60,
+                79,
+                52,
+                20,
+                10,
+                31,
+                54,
+                37,
+                95,
+                14,
+                71,
+                96,
+                98,
+                97,
+                2,
+                64,
+                66
+            ],
+            [
+                42,
+                22,
+                35,
+                86,
+                24,
+                34,
+                87,
+                21,
+                99,
+                0,
+                88,
+                27,
+                18,
+                94,
+                11,
+                12,
+                47,
+                25,
+                30,
+                46
+            ],
+            [
+                62,
+                69,
+                36,
+                61,
+                7,
+                63,
+                75,
+                5,
+                32,
+                4,
+                51,
+                48,
+                73,
+                93,
+                39,
+                67,
+                29,
+                49,
+                57,
+                33
+            ]
+        ],
+        "nomes_por_tarefa": [
+            [
+                "road",
+                "palm_tree",
+                "snake",
+                "bicycle",
+                "cloud",
+                "table",
+                "train",
+                "rabbit",
+                "shrew",
+                "skyscraper",
+                "lamp",
+                "tractor",
+                "bear",
+                "tulip",
+                "otter",
+                "bottle",
+                "crab",
+                "squirrel",
+                "lion",
+                "kangaroo"
+            ],
+            [
+                "pickup_truck",
+                "rose",
+                "snail",
+                "aquarium_fish",
+                "tank",
+                "cattle",
+                "castle",
+                "mouse",
+                "cup",
+                "orange",
+                "bus",
+                "streetcar",
+                "lobster",
+                "sunflower",
+                "bee",
+                "pine_tree",
+                "sweet_pepper",
+                "can",
+                "camel",
+                "lizard"
+            ],
+            [
+                "trout",
+                "lawn_mower",
+                "seal",
+                "plain",
+                "spider",
+                "oak_tree",
+                "chair",
+                "bowl",
+                "elephant",
+                "orchid",
+                "house",
+                "whale",
+                "butterfly",
+                "sea",
+                "willow_tree",
+                "woman",
+                "wolf",
+                "baby",
+                "possum",
+                "raccoon"
+            ],
+            [
+                "leopard",
+                "clock",
+                "girl",
+                "telephone",
+                "cockroach",
+                "fox",
+                "television",
+                "chimpanzee",
+                "worm",
+                "apple",
+                "tiger",
+                "crocodile",
+                "caterpillar",
+                "wardrobe",
+                "boy",
+                "bridge",
+                "maple_tree",
+                "couch",
+                "dolphin",
+                "man"
+            ],
+            [
+                "poppy",
+                "rocket",
+                "hamster",
+                "plate",
+                "beetle",
+                "porcupine",
+                "skunk",
+                "bed",
+                "flatfish",
+                "beaver",
+                "mushroom",
+                "motorcycle",
+                "shark",
+                "turtle",
+                "keyboard",
+                "ray",
+                "dinosaur",
+                "mountain",
+                "pear",
+                "forest"
+            ]
+        ]
+    },
+    "tarefas": {
+        "0": {
+            "classes": [
+                "road",
+                "palm_tree",
+                "snake",
+                "bicycle",
+                "cloud",
+                "table",
+                "train",
+                "rabbit",
+                "shrew",
+                "skyscraper",
+                "lamp",
+                "tractor",
+                "bear",
+                "tulip",
+                "otter",
+                "bottle",
+                "crab",
+                "squirrel",
+                "lion",
+                "kangaroo"
+            ],
+            "historico_treino": [
+                {
+                    "epoca": 1,
+                    "loss_ce": 1.4642955097198487,
+                    "loss_lvq": 0.0,
+                    "acc_treino": 61.89,
+                    "acc_por_classe": {
+                        "road": 85.0,
+                        "palm_tree": 80.0,
+                        "snake": 73.0,
+                        "bicycle": 63.0,
+                        "cloud": 88.0,
+                        "table": 63.0,
+                        "train": 59.0,
+                        "rabbit": 30.0,
+                        "shrew": 51.0,
+                        "skyscraper": 79.0,
+                        "lamp": 61.0,
+                        "tractor": 68.0,
+                        "bear": 53.0,
+                        "tulip": 88.0,
+                        "otter": 22.0,
+                        "bottle": 72.0,
+                        "crab": 54.0,
+                        "squirrel": 36.0,
+                        "lion": 76.0,
+                        "kangaroo": 53.0
+                    },
+                    "acc_por_tarefa": [
+                        62.7
+                    ],
+                    "aac": 62.7
+                },
+                {
+                    "epoca": 2,
+                    "loss_ce": 1.1837256287574769,
+                    "loss_lvq": 0.0,
+                    "acc_treino": 63.690000000000005,
+                    "acc_por_classe": {
+                        "road": 88.0,
+                        "palm_tree": 87.0,
+                        "snake": 75.0,
+                        "bicycle": 66.0,
+                        "cloud": 91.0,
+                        "table": 67.0,
+                        "train": 70.0,
+                        "rabbit": 37.0,
+                        "shrew": 53.0,
+                        "skyscraper": 83.0,
+                        "lamp": 61.0,
+                        "tractor": 76.0,
+                        "bear": 53.0,
+                        "tulip": 90.0,
+                        "otter": 28.0,
+                        "bottle": 73.0,
+                        "crab": 56.0,
+                        "squirrel": 26.0,
+                        "lion": 71.0,
+                        "kangaroo": 50.0
+                    },
+                    "acc_por_tarefa": [
+                        65.05
+                    ],
+                    "aac": 65.05
+                }
+            ],
+            "parada_antecipada": null,
+            "tempo_treino_s": 2.5178654193878174
+        },
+        "1": {
+            "classes": [
+                "pickup_truck",
+                "rose",
+                "snail",
+                "aquarium_fish",
+                "tank",
+                "cattle",
+                "castle",
+                "mouse",
+                "cup",
+                "orange",
+                "bus",
+                "streetcar",
+                "lobster",
+                "sunflower",
+                "bee",
+                "pine_tree",
+                "sweet_pepper",
+                "can",
+                "camel",
+                "lizard"
+            ],
+            "historico_treino": [
+                {
+                    "epoca": 1,
+                    "loss_ce": 1.5909832195281983,
+                    "loss_lvq": 0.0,
+                    "acc_treino": 53.14,
+                    "acc_por_classe": {
+                        "road": 64.0,
+                        "palm_tree": 47.0,
+                        "snake": 47.0,
+                        "bicycle": 54.0,
+                        "cloud": 76.0,
+                        "table": 36.0,
+                        "train": 14.0,
+                        "rabbit": 8.0,
+                        "shrew": 3.0,
+                        "skyscraper": 60.0,
+                        "lamp": 12.0,
+                        "tractor": 38.0,
+                        "bear": 4.0,
+                        "tulip": 6.0,
+                        "otter": 4.0,
+                        "bottle": 46.0,
+                        "crab": 13.0,
+                        "squirrel": 3.0,
+                        "lion": 27.0,
+                        "kangaroo": 4.0,
+                        "pickup_truck": 49.0,
+                        "rose": 81.0,
+                        "snail": 61.0,
+                        "aquarium_fish": 60.0,
+                        "tank": 62.0,
+                        "cattle": 47.0,
+                        "castle": 82.0,
+                        "mouse": 48.0,
+                        "cup": 76.0,
+                        "orange": 91.0,
+                        "bus": 32.0,
+                        "streetcar": 60.0,
+                        "lobster": 48.0,
+                        "sunflower": 78.0,
+                        "bee": 48.0,
+                        "pine_tree": 73.0,
+                        "sweet_pepper": 54.0,
+                        "can": 86.0,
+                        "camel": 64.0,
+                        "lizard": 62.0
+                    },
+                    "acc_por_tarefa": [
+                        28.3,
+                        63.1
+                    ],
+                    "aac": 45.7,
+                    "loss_pn": 1.8193846801251317,
+                    "pseudo_negativos": {
+                        "ess_frac": null,
+                        "frac_vaza": 0.34070973787189385,
+                        "margem_media": -0.06979883768463187,
+                        "logZ_is": null,
+                        "logZ_gfn": null,
+                        "perda_tb": null
+                    }
+                },
+                {
+                    "epoca": 2,
+                    "loss_ce": 1.2864490485191344,
+                    "loss_lvq": 0.0,
+                    "acc_treino": 60.33,
+                    "acc_por_classe": {
+                        "road": 40.0,
+                        "palm_tree": 36.0,
+                        "snake": 33.0,
+                        "bicycle": 44.0,
+                        "cloud": 62.0,
+                        "table": 32.0,
+                        "train": 8.0,
+                        "rabbit": 1.0,
+                        "shrew": 3.0,
+                        "skyscraper": 42.0,
+                        "lamp": 8.0,
+                        "tractor": 27.0,
+                        "bear": 2.0,
+                        "tulip": 1.0,
+                        "otter": 0.0,
+                        "bottle": 34.0,
+                        "crab": 6.0,
+                        "squirrel": 2.0,
+                        "lion": 12.0,
+                        "kangaroo": 3.0,
+                        "pickup_truck": 47.0,
+                        "rose": 84.0,
+                        "snail": 72.0,
+                        "aquarium_fish": 60.0,
+                        "tank": 61.0,
+                        "cattle": 50.0,
+                        "castle": 87.0,
+                        "mouse": 40.0,
+                        "cup": 76.0,
+                        "orange": 91.0,
+                        "bus": 36.0,
+                        "streetcar": 63.0,
+                        "lobster": 36.0,
+                        "sunflower": 84.0,
+                        "bee": 49.0,
+                        "pine_tree": 86.0,
+                        "sweet_pepper": 54.0,
+                        "can": 86.0,
+                        "camel": 58.0,
+                        "lizard": 64.0
+                    },
+                    "acc_por_tarefa": [
+                        19.8,
+                        64.2
+                    ],
+                    "aac": 42.0,
+                    "loss_pn": 1.146263751972235,
+                    "pseudo_negativos": {
+                        "ess_frac": null,
+                        "frac_vaza": 0.2161084594802138,
+                        "margem_media": -0.1258703357580176,
+                        "logZ_is": null,
+                        "logZ_gfn": null,
+                        "perda_tb": null
+                    }
+                }
+            ],
+            "parada_antecipada": null,
+            "tempo_treino_s": 6.949848413467407
+        },
+        "2": {
+            "classes": [
+                "trout",
+                "lawn_mower",
+                "seal",
+                "plain",
+                "spider",
+                "oak_tree",
+                "chair",
+                "bowl",
+                "elephant",
+                "orchid",
+                "house",
+                "whale",
+                "butterfly",
+                "sea",
+                "willow_tree",
+                "woman",
+                "wolf",
+                "baby",
+                "possum",
+                "raccoon"
+            ],
+            "historico_treino": [
+                {
+                    "epoca": 1,
+                    "loss_ce": 1.6743526647567748,
+                    "loss_lvq": 0.0,
+                    "acc_treino": 53.54,
+                    "acc_por_classe": {
+                        "road": 14.0,
+                        "palm_tree": 19.0,
+                        "snake": 24.0,
+                        "bicycle": 18.0,
+                        "cloud": 22.0,
+                        "table": 5.0,
+                        "train": 1.0,
+                        "rabbit": 0.0,
+                        "shrew": 0.0,
+                        "skyscraper": 29.0,
+                        "lamp": 0.0,
+                        "tractor": 9.0,
+                        "bear": 0.0,
+                        "tulip": 1.0,
+                        "otter": 0.0,
+                        "bottle": 26.0,
+                        "crab": 4.0,
+                        "squirrel": 0.0,
+                        "lion": 4.0,
+                        "kangaroo": 0.0,
+                        "pickup_truck": 39.0,
+                        "rose": 38.0,
+                        "snail": 26.0,
+                        "aquarium_fish": 24.0,
+                        "tank": 35.0,
+                        "cattle": 23.0,
+                        "castle": 52.0,
+                        "mouse": 3.0,
+                        "cup": 49.0,
+                        "orange": 77.0,
+                        "bus": 29.0,
+                        "streetcar": 45.0,
+                        "lobster": 14.0,
+                        "sunflower": 68.0,
+                        "bee": 13.0,
+                        "pine_tree": 21.0,
+                        "sweet_pepper": 35.0,
+                        "can": 61.0,
+                        "camel": 22.0,
+                        "lizard": 27.0,
+                        "trout": 50.0,
+                        "lawn_mower": 78.0,
+                        "seal": 42.0,
+                        "plain": 62.0,
+                        "spider": 44.0,
+                        "oak_tree": 75.0,
+                        "chair": 91.0,
+                        "bowl": 81.0,
+                        "elephant": 57.0,
+                        "orchid": 84.0,
+                        "house": 57.0,
+                        "whale": 79.0,
+                        "butterfly": 56.0,
+                        "sea": 77.0,
+                        "willow_tree": 53.0,
+                        "woman": 61.0,
+                        "wolf": 50.0,
+                        "baby": 66.0,
+                        "possum": 32.0,
+                        "raccoon": 42.0
+                    },
+                    "acc_por_tarefa": [
+                        8.8,
+                        35.05,
+                        61.85
+                    ],
+                    "aac": 35.23333333333333,
+                    "loss_pn": 2.953709848759847,
+                    "pseudo_negativos": {
+                        "ess_frac": null,
+                        "frac_vaza": 0.5519338275114315,
+                        "margem_media": 0.03700045478164272,
+                        "logZ_is": null,
+                        "logZ_gfn": null,
+                        "perda_tb": null
+                    }
+                },
+                {
+                    "epoca": 2,
+                    "loss_ce": 1.4909417674064636,
+                    "loss_lvq": 0.0,
+                    "acc_treino": 58.68,
+                    "acc_por_classe": {
+                        "road": 2.0,
+                        "palm_tree": 17.0,
+                        "snake": 19.0,
+                        "bicycle": 11.0,
+                        "cloud": 11.0,
+                        "table": 1.0,
+                        "train": 1.0,
+                        "rabbit": 0.0,
+                        "shrew": 0.0,
+                        "skyscraper": 11.0,
+                        "lamp": 0.0,
+                        "tractor": 4.0,
+                        "bear": 0.0,
+                        "tulip": 1.0,
+                        "otter": 0.0,
+                        "bottle": 20.0,
+                        "crab": 2.0,
+                        "squirrel": 0.0,
+                        "lion": 1.0,
+                        "kangaroo": 0.0,
+                        "pickup_truck": 29.0,
+                        "rose": 13.0,
+                        "snail": 9.0,
+                        "aquarium_fish": 3.0,
+                        "tank": 22.0,
+                        "cattle": 12.0,
+                        "castle": 17.0,
+                        "mouse": 1.0,
+                        "cup": 36.0,
+                        "orange": 72.0,
+                        "bus": 23.0,
+                        "streetcar": 28.0,
+                        "lobster": 5.0,
+                        "sunflower": 58.0,
+                        "bee": 3.0,
+                        "pine_tree": 10.0,
+                        "sweet_pepper": 22.0,
+                        "can": 47.0,
+                        "camel": 7.0,
+                        "lizard": 5.0,
+                        "trout": 58.0,
+                        "lawn_mower": 83.0,
+                        "seal": 33.0,
+                        "plain": 69.0,
+                        "spider": 56.0,
+                        "oak_tree": 85.0,
+                        "chair": 91.0,
+                        "bowl": 82.0,
+                        "elephant": 65.0,
+                        "orchid": 89.0,
+                        "house": 78.0,
+                        "whale": 78.0,
+                        "butterfly": 60.0,
+                        "sea": 82.0,
+                        "willow_tree": 45.0,
+                        "woman": 58.0,
+                        "wolf": 54.0,
+                        "baby": 66.0,
+                        "possum": 38.0,
+                        "raccoon": 45.0
+                    },
+                    "acc_por_tarefa": [
+                        5.05,
+                        21.1,
+                        65.75
+                    ],
+                    "aac": 30.633333333333336,
+                    "loss_pn": 2.5609928917086298,
+                    "pseudo_negativos": {
+                        "ess_frac": null,
+                        "frac_vaza": 0.43899522914270467,
+                        "margem_media": -0.005282731818637652,
+                        "logZ_is": null,
+                        "logZ_gfn": null,
+                        "perda_tb": null
+                    }
+                }
+            ],
+            "parada_antecipada": null,
+            "tempo_treino_s": 8.036112546920776
+        },
+        "3": {
+            "classes": [
+                "leopard",
+                "clock",
+                "girl",
+                "telephone",
+                "cockroach",
+                "fox",
+                "television",
+                "chimpanzee",
+                "worm",
+                "apple",
+                "tiger",
+                "crocodile",
+                "caterpillar",
+                "wardrobe",
+                "boy",
+                "bridge",
+                "maple_tree",
+                "couch",
+                "dolphin",
+                "man"
+            ],
+            "historico_treino": [
+                {
+                    "epoca": 1,
+                    "loss_ce": 1.593651605796814,
+                    "loss_lvq": 0.0,
+                    "acc_treino": 60.92999999999999,
+                    "acc_por_classe": {
+                        "road": 2.0,
+                        "palm_tree": 6.0,
+                        "snake": 1.0,
+                        "bicycle": 4.0,
+                        "cloud": 7.0,
+                        "table": 0.0,
+                        "train": 0.0,
+                        "rabbit": 0.0,
+                        "shrew": 0.0,
+                        "skyscraper": 7.0,
+                        "lamp": 0.0,
+                        "tractor": 1.0,
+                        "bear": 0.0,
+                        "tulip": 1.0,
+                        "otter": 0.0,
+                        "bottle": 20.0,
+                        "crab": 0.0,
+                        "squirrel": 0.0,
+                        "lion": 0.0,
+                        "kangaroo": 0.0,
+                        "pickup_truck": 25.0,
+                        "rose": 11.0,
+                        "snail": 1.0,
+                        "aquarium_fish": 2.0,
+                        "tank": 9.0,
+                        "cattle": 4.0,
+                        "castle": 13.0,
+                        "mouse": 0.0,
+                        "cup": 35.0,
+                        "orange": 43.0,
+                        "bus": 16.0,
+                        "streetcar": 20.0,
+                        "lobster": 2.0,
+                        "sunflower": 50.0,
+                        "bee": 3.0,
+                        "pine_tree": 4.0,
+                        "sweet_pepper": 9.0,
+                        "can": 29.0,
+                        "camel": 3.0,
+                        "lizard": 0.0,
+                        "trout": 20.0,
+                        "lawn_mower": 76.0,
+                        "seal": 17.0,
+                        "plain": 65.0,
+                        "spider": 15.0,
+                        "oak_tree": 50.0,
+                        "chair": 69.0,
+                        "bowl": 49.0,
+                        "elephant": 40.0,
+                        "orchid": 80.0,
+                        "house": 47.0,
+                        "whale": 46.0,
+                        "butterfly": 27.0,
+                        "sea": 71.0,
+                        "willow_tree": 6.0,
+                        "woman": 1.0,
+                        "wolf": 34.0,
+                        "baby": 25.0,
+                        "possum": 22.0,
+                        "raccoon": 18.0,
+                        "leopard": 57.0,
+                        "clock": 70.0,
+                        "girl": 45.0,
+                        "telephone": 67.0,
+                        "cockroach": 81.0,
+                        "fox": 61.0,
+                        "television": 70.0,
+                        "chimpanzee": 69.0,
+                        "worm": 75.0,
+                        "apple": 89.0,
+                        "tiger": 51.0,
+                        "crocodile": 65.0,
+                        "caterpillar": 77.0,
+                        "wardrobe": 87.0,
+                        "boy": 36.0,
+                        "bridge": 62.0,
+                        "maple_tree": 70.0,
+                        "couch": 49.0,
+                        "dolphin": 68.0,
+                        "man": 64.0
+                    },
+                    "acc_por_tarefa": [
+                        2.45,
+                        13.95,
+                        38.9,
+                        65.65
+                    ],
+                    "aac": 30.2375,
+                    "loss_pn": 3.7747642355102102,
+                    "pseudo_negativos": {
+                        "ess_frac": null,
+                        "frac_vaza": 0.7126196357622101,
+                        "margem_media": 0.10428812402037628,
+                        "logZ_is": null,
+                        "logZ_gfn": null,
+                        "perda_tb": null
+                    }
+                },
+                {
+                    "epoca": 2,
+                    "loss_ce": 1.5455166667938232,
+                    "loss_lvq": 0.0,
+                    "acc_treino": 62.8,
+                    "acc_por_classe": {
+                        "road": 2.0,
+                        "palm_tree": 5.0,
+                        "snake": 2.0,
+                        "bicycle": 3.0,
+                        "cloud": 6.0,
+                        "table": 0.0,
+                        "train": 0.0,
+                        "rabbit": 0.0,
+                        "shrew": 0.0,
+                        "skyscraper": 9.0,
+                        "lamp": 0.0,
+                        "tractor": 1.0,
+                        "bear": 0.0,
+                        "tulip": 1.0,
+                        "otter": 0.0,
+                        "bottle": 16.0,
+                        "crab": 0.0,
+                        "squirrel": 0.0,
+                        "lion": 0.0,
+                        "kangaroo": 0.0,
+                        "pickup_truck": 23.0,
+                        "rose": 11.0,
+                        "snail": 2.0,
+                        "aquarium_fish": 2.0,
+                        "tank": 5.0,
+                        "cattle": 3.0,
+                        "castle": 10.0,
+                        "mouse": 0.0,
+                        "cup": 32.0,
+                        "orange": 43.0,
+                        "bus": 17.0,
+                        "streetcar": 16.0,
+                        "lobster": 2.0,
+                        "sunflower": 50.0,
+                        "bee": 2.0,
+                        "pine_tree": 3.0,
+                        "sweet_pepper": 8.0,
+                        "can": 17.0,
+                        "camel": 4.0,
+                        "lizard": 0.0,
+                        "trout": 20.0,
+                        "lawn_mower": 69.0,
+                        "seal": 19.0,
+                        "plain": 61.0,
+                        "spider": 10.0,
+                        "oak_tree": 23.0,
+                        "chair": 56.0,
+                        "bowl": 39.0,
+                        "elephant": 39.0,
+                        "orchid": 78.0,
+                        "house": 30.0,
+                        "whale": 30.0,
+                        "butterfly": 22.0,
+                        "sea": 68.0,
+                        "willow_tree": 2.0,
+                        "woman": 0.0,
+                        "wolf": 29.0,
+                        "baby": 14.0,
+                        "possum": 21.0,
+                        "raccoon": 15.0,
+                        "leopard": 55.0,
+                        "clock": 66.0,
+                        "girl": 50.0,
+                        "telephone": 66.0,
+                        "cockroach": 80.0,
+                        "fox": 60.0,
+                        "television": 72.0,
+                        "chimpanzee": 71.0,
+                        "worm": 76.0,
+                        "apple": 94.0,
+                        "tiger": 55.0,
+                        "crocodile": 70.0,
+                        "caterpillar": 76.0,
+                        "wardrobe": 87.0,
+                        "boy": 31.0,
+                        "bridge": 70.0,
+                        "maple_tree": 82.0,
+                        "couch": 59.0,
+                        "dolphin": 71.0,
+                        "man": 61.0
+                    },
+                    "acc_por_tarefa": [
+                        2.25,
+                        12.5,
+                        32.25,
+                        67.6
+                    ],
+                    "aac": 28.65,
+                    "loss_pn": 3.4889394632366857,
+                    "pseudo_negativos": {
+                        "ess_frac": null,
+                        "frac_vaza": 0.6176236257598731,
+                        "margem_media": 0.06819552773137412,
+                        "logZ_is": null,
+                        "logZ_gfn": null,
+                        "perda_tb": null
+                    }
+                }
+            ],
+            "parada_antecipada": null,
+            "tempo_treino_s": 9.144547462463379
+        },
+        "4": {
+            "classes": [
+                "poppy",
+                "rocket",
+                "hamster",
+                "plate",
+                "beetle",
+                "porcupine",
+                "skunk",
+                "bed",
+                "flatfish",
+                "beaver",
+                "mushroom",
+                "motorcycle",
+                "shark",
+                "turtle",
+                "keyboard",
+                "ray",
+                "dinosaur",
+                "mountain",
+                "pear",
+                "forest"
+            ],
+            "historico_treino": [
+                {
+                    "epoca": 1,
+                    "loss_ce": 1.9803288673400878,
+                    "loss_lvq": 0.0,
+                    "acc_treino": 55.400000000000006,
+                    "acc_por_classe": {
+                        "road": 0.0,
+                        "palm_tree": 4.0,
+                        "snake": 0.0,
+                        "bicycle": 0.0,
+                        "cloud": 0.0,
+                        "table": 0.0,
+                        "train": 0.0,
+                        "rabbit": 0.0,
+                        "shrew": 0.0,
+                        "skyscraper": 1.0,
+                        "lamp": 0.0,
+                        "tractor": 0.0,
+                        "bear": 0.0,
+                        "tulip": 0.0,
+                        "otter": 0.0,
+                        "bottle": 4.0,
+                        "crab": 0.0,
+                        "squirrel": 0.0,
+                        "lion": 0.0,
+                        "kangaroo": 0.0,
+                        "pickup_truck": 10.0,
+                        "rose": 2.0,
+                        "snail": 0.0,
+                        "aquarium_fish": 0.0,
+                        "tank": 3.0,
+                        "cattle": 1.0,
+                        "castle": 5.0,
+                        "mouse": 0.0,
+                        "cup": 19.0,
+                        "orange": 20.0,
+                        "bus": 5.0,
+                        "streetcar": 5.0,
+                        "lobster": 0.0,
+                        "sunflower": 26.0,
+                        "bee": 0.0,
+                        "pine_tree": 0.0,
+                        "sweet_pepper": 0.0,
+                        "can": 11.0,
+                        "camel": 0.0,
+                        "lizard": 0.0,
+                        "trout": 0.0,
+                        "lawn_mower": 37.0,
+                        "seal": 0.0,
+                        "plain": 30.0,
+                        "spider": 0.0,
+                        "oak_tree": 19.0,
+                        "chair": 29.0,
+                        "bowl": 5.0,
+                        "elephant": 8.0,
+                        "orchid": 60.0,
+                        "house": 14.0,
+                        "whale": 18.0,
+                        "butterfly": 3.0,
+                        "sea": 38.0,
+                        "willow_tree": 0.0,
+                        "woman": 0.0,
+                        "wolf": 21.0,
+                        "baby": 3.0,
+                        "possum": 0.0,
+                        "raccoon": 3.0,
+                        "leopard": 38.0,
+                        "clock": 38.0,
+                        "girl": 44.0,
+                        "telephone": 60.0,
+                        "cockroach": 60.0,
+                        "fox": 36.0,
+                        "television": 66.0,
+                        "chimpanzee": 41.0,
+                        "worm": 58.0,
+                        "apple": 73.0,
+                        "tiger": 37.0,
+                        "crocodile": 36.0,
+                        "caterpillar": 52.0,
+                        "wardrobe": 72.0,
+                        "boy": 26.0,
+                        "bridge": 64.0,
+                        "maple_tree": 66.0,
+                        "couch": 4.0,
+                        "dolphin": 48.0,
+                        "man": 57.0,
+                        "poppy": 75.0,
+                        "rocket": 69.0,
+                        "hamster": 66.0,
+                        "plate": 85.0,
+                        "beetle": 51.0,
+                        "porcupine": 40.0,
+                        "skunk": 79.0,
+                        "bed": 75.0,
+                        "flatfish": 33.0,
+                        "beaver": 41.0,
+                        "mushroom": 51.0,
+                        "motorcycle": 91.0,
+                        "shark": 55.0,
+                        "turtle": 22.0,
+                        "keyboard": 83.0,
+                        "ray": 33.0,
+                        "dinosaur": 48.0,
+                        "mountain": 76.0,
+                        "pear": 65.0,
+                        "forest": 72.0
+                    },
+                    "acc_por_tarefa": [
+                        0.45,
+                        5.35,
+                        14.4,
+                        48.8,
+                        60.5
+                    ],
+                    "aac": 25.9,
+                    "loss_pn": 3.9416792609474878,
+                    "pseudo_negativos": {
+                        "ess_frac": null,
+                        "frac_vaza": 0.69856461198136,
+                        "margem_media": 0.10349635328901441,
+                        "logZ_is": null,
+                        "logZ_gfn": null,
+                        "perda_tb": null
+                    }
+                },
+                {
+                    "epoca": 2,
+                    "loss_ce": 1.981172071838379,
+                    "loss_lvq": 0.0,
+                    "acc_treino": 56.87,
+                    "acc_por_classe": {
+                        "road": 1.0,
+                        "palm_tree": 4.0,
+                        "snake": 1.0,
+                        "bicycle": 0.0,
+                        "cloud": 0.0,
+                        "table": 0.0,
+                        "train": 0.0,
+                        "rabbit": 0.0,
+                        "shrew": 0.0,
+                        "skyscraper": 0.0,
+                        "lamp": 0.0,
+                        "tractor": 0.0,
+                        "bear": 0.0,
+                        "tulip": 0.0,
+                        "otter": 0.0,
+                        "bottle": 4.0,
+                        "crab": 0.0,
+                        "squirrel": 0.0,
+                        "lion": 0.0,
+                        "kangaroo": 0.0,
+                        "pickup_truck": 6.0,
+                        "rose": 2.0,
+                        "snail": 0.0,
+                        "aquarium_fish": 0.0,
+                        "tank": 3.0,
+                        "cattle": 2.0,
+                        "castle": 5.0,
+                        "mouse": 0.0,
+                        "cup": 20.0,
+                        "orange": 19.0,
+                        "bus": 3.0,
+                        "streetcar": 2.0,
+                        "lobster": 1.0,
+                        "sunflower": 29.0,
+                        "bee": 0.0,
+                        "pine_tree": 0.0,
+                        "sweet_pepper": 0.0,
+                        "can": 8.0,
+                        "camel": 1.0,
+                        "lizard": 0.0,
+                        "trout": 0.0,
+                        "lawn_mower": 33.0,
+                        "seal": 4.0,
+                        "plain": 34.0,
+                        "spider": 2.0,
+                        "oak_tree": 19.0,
+                        "chair": 11.0,
+                        "bowl": 5.0,
+                        "elephant": 19.0,
+                        "orchid": 60.0,
+                        "house": 11.0,
+                        "whale": 11.0,
+                        "butterfly": 4.0,
+                        "sea": 19.0,
+                        "willow_tree": 1.0,
+                        "woman": 0.0,
+                        "wolf": 23.0,
+                        "baby": 1.0,
+                        "possum": 2.0,
+                        "raccoon": 10.0,
+                        "leopard": 40.0,
+                        "clock": 14.0,
+                        "girl": 44.0,
+                        "telephone": 47.0,
+                        "cockroach": 59.0,
+                        "fox": 39.0,
+                        "television": 47.0,
+                        "chimpanzee": 40.0,
+                        "worm": 46.0,
+                        "apple": 67.0,
+                        "tiger": 39.0,
+                        "crocodile": 35.0,
+                        "caterpillar": 56.0,
+                        "wardrobe": 38.0,
+                        "boy": 26.0,
+                        "bridge": 40.0,
+                        "maple_tree": 66.0,
+                        "couch": 0.0,
+                        "dolphin": 39.0,
+                        "man": 56.0,
+                        "poppy": 78.0,
+                        "rocket": 76.0,
+                        "hamster": 68.0,
+                        "plate": 91.0,
+                        "beetle": 47.0,
+                        "porcupine": 42.0,
+                        "skunk": 69.0,
+                        "bed": 84.0,
+                        "flatfish": 32.0,
+                        "beaver": 42.0,
+                        "mushroom": 56.0,
+                        "motorcycle": 93.0,
+                        "shark": 59.0,
+                        "turtle": 19.0,
+                        "keyboard": 82.0,
+                        "ray": 33.0,
+                        "dinosaur": 44.0,
+                        "mountain": 82.0,
+                        "pear": 69.0,
+                        "forest": 69.0
+                    },
+                    "acc_por_tarefa": [
+                        0.5,
+                        5.05,
+                        13.45,
+                        41.9,
+                        61.75
+                    ],
+                    "aac": 24.53,
+                    "loss_pn": 3.8713573896143423,
+                    "pseudo_negativos": {
+                        "ess_frac": null,
+                        "frac_vaza": 0.644637181000276,
+                        "margem_media": 0.08853087686536985,
+                        "logZ_is": null,
+                        "logZ_gfn": null,
+                        "perda_tb": null
+                    }
+                }
+            ],
+            "parada_antecipada": null,
+            "tempo_treino_s": 10.619853496551514
+        }
+    },
+    "diagnostico_task_arithmetic": {},
+    "acc_apos_tarefa": [
+        64.8,
+        41.725,
+        30.85,
+        28.299999999999997,
+        24.3
+    ],
+    "acc_apos_tarefa_padronizada": [
+        64.8,
+        49.95,
+        44.583333333333336,
+        41.375,
+        37.8
+    ],
+    "acc_por_tarefa_apos_tarefa": [
+        [
+            64.8
+        ],
+        [
+            18.95,
+            64.5
+        ],
+        [
+            5.35,
+            21.4,
+            65.8
+        ],
+        [
+            2.1999999999999997,
+            12.049999999999999,
+            31.5,
+            67.45
+        ],
+        [
+            0.5,
+            4.9,
+            13.15,
+            41.4,
+            61.550000000000004
+        ]
+    ],
+    "acc_por_tarefa_apos_tarefa_padronizada": [
+        [
+            64.8
+        ],
+        [
+            50.4,
+            49.5
+        ],
+        [
+            46.150000000000006,
+            42.449999999999996,
+            45.15
+        ],
+        [
+            43.55,
+            40.050000000000004,
+            36.1,
+            45.800000000000004
+        ],
+        [
+            40.6,
+            36.85,
+            31.75,
+            41.4,
+            38.4
+        ]
+    ],
+    "metricas_vazamento_por_fronteira": {
+        "1": {
+            "acc": 0.41725,
+            "vazamento": 0.4055,
+            "vazamento_balanceado": 0.40549999999999997,
+            "erro_dentro_da_tarefa": 0.17725,
+            "parcela_do_erro_por_vazamento": 0.6958386958386958,
+            "acc_oraculo_tarefa": 0.64925,
+            "teto_de_ganho": 0.23199999999999998,
+            "matriz_L": [
+                [
+                    0.2035,
+                    0.7965
+                ],
+                [
+                    0.0145,
+                    0.9855
+                ]
+            ],
+            "contagens": [
+                [
+                    407,
+                    1593
+                ],
+                [
+                    29,
+                    1971
+                ]
+            ],
+            "indice_direcao": 54.93103448275862,
+            "perfil_deslocamento": {
+                "-1": 0.0145,
+                "1": 0.7965
+            },
+            "spearman_recencia": 0.9999999999999999,
+            "spearman_semantica": 0.9999999999999999,
+            "spearman_semantica_parcial": 0.9999999999999999,
+            "vazamento_apos_normalizacao": 0.31025,
+            "parcela_atribuivel_a_escala": 0.2348951911220715
+        },
+        "2": {
+            "acc": 0.3085,
+            "vazamento": 0.5648333333333333,
+            "vazamento_balanceado": 0.5648333333333333,
+            "erro_dentro_da_tarefa": 0.12666666666666668,
+            "parcela_do_erro_por_vazamento": 0.816823330923114,
+            "acc_oraculo_tarefa": 0.654,
+            "teto_de_ganho": 0.34550000000000003,
+            "matriz_L": [
+                [
+                    0.0535,
+                    0.045,
+                    0.9015
+                ],
+                [
+                    0.0025,
+                    0.262,
+                    0.7355
+                ],
+                [
+                    0.0,
+                    0.01,
+                    0.99
+                ]
+            ],
+            "contagens": [
+                [
+                    107,
+                    90,
+                    1803
+                ],
+                [
+                    5,
+                    524,
+                    1471
+                ],
+                [
+                    0,
+                    20,
+                    1980
+                ]
+            ],
+            "indice_direcao": 134.55999999999997,
+            "perfil_deslocamento": {
+                "-2": 0.0,
+                "-1": 0.00625,
+                "1": 0.39025000000000004,
+                "2": 0.9015
+            },
+            "spearman_recencia": 0.9710083124552246,
+            "spearman_semantica": 0.3714285714285715,
+            "spearman_semantica_parcial": -0.8649340039761745,
+            "vazamento_apos_normalizacao": 0.40016666666666667,
+            "parcela_atribuivel_a_escala": 0.29153142519917374
+        },
+        "3": {
+            "acc": 0.283,
+            "vazamento": 0.62,
+            "vazamento_balanceado": 0.62,
+            "erro_dentro_da_tarefa": 0.097,
+            "parcela_do_erro_por_vazamento": 0.8647140864714086,
+            "acc_oraculo_tarefa": 0.66475,
+            "teto_de_ganho": 0.38175,
+            "matriz_L": [
+                [
+                    0.022,
+                    0.017,
+                    0.2235,
+                    0.7375
+                ],
+                [
+                    0.0015,
+                    0.142,
+                    0.2255,
+                    0.631
+                ],
+                [
+                    0.0,
+                    0.0025,
+                    0.395,
+                    0.6025
+                ],
+                [
+                    0.0,
+                    0.0025,
+                    0.0365,
+                    0.961
+                ]
+            ],
+            "contagens": [
+                [
+                    44,
+                    34,
+                    447,
+                    1475
+                ],
+                [
+                    3,
+                    284,
+                    451,
+                    1262
+                ],
+                [
+                    0,
+                    5,
+                    790,
+                    1205
+                ],
+                [
+                    0,
+                    5,
+                    73,
+                    1922
+                ]
+            ],
+            "indice_direcao": 56.67441860465117,
+            "perfil_deslocamento": {
+                "-3": 0.0,
+                "-2": 0.00125,
+                "-1": 0.013499999999999998,
+                "1": 0.2816666666666667,
+                "2": 0.42725,
+                "3": 0.7375
+            },
+            "spearman_recencia": 0.8965200577350226,
+            "spearman_semantica": 0.13333415410627572,
+            "spearman_semantica_parcial": -0.5514753288429328,
+            "vazamento_apos_normalizacao": 0.457875,
+            "parcela_atribuivel_a_escala": 0.261491935483871
+        },
+        "4": {
+            "acc": 0.243,
+            "vazamento": 0.6666,
+            "vazamento_balanceado": 0.6666,
+            "erro_dentro_da_tarefa": 0.0904,
+            "parcela_do_erro_por_vazamento": 0.8805812417437252,
+            "acc_oraculo_tarefa": 0.6617,
+            "teto_de_ganho": 0.41869999999999996,
+            "matriz_L": [
+                [
+                    0.005,
+                    0.003,
+                    0.034,
+                    0.1515,
+                    0.8065
+                ],
+                [
+                    0.0,
+                    0.055,
+                    0.0425,
+                    0.1325,
+                    0.77
+                ],
+                [
+                    0.0,
+                    0.0005,
+                    0.1505,
+                    0.22,
+                    0.629
+                ],
+                [
+                    0.0,
+                    0.0015,
+                    0.008,
+                    0.5255,
+                    0.465
+                ],
+                [
+                    0.0,
+                    0.0,
+                    0.007,
+                    0.062,
+                    0.931
+                ]
+            ],
+            "contagens": [
+                [
+                    10,
+                    6,
+                    68,
+                    303,
+                    1613
+                ],
+                [
+                    0,
+                    110,
+                    85,
+                    265,
+                    1540
+                ],
+                [
+                    0,
+                    1,
+                    301,
+                    440,
+                    1258
+                ],
+                [
+                    0,
+                    3,
+                    16,
+                    1051,
+                    930
+                ],
+                [
+                    0,
+                    0,
+                    14,
+                    124,
+                    1862
+                ]
+            ],
+            "indice_direcao": 41.18987341772152,
+            "perfil_deslocamento": {
+                "-4": 0.0,
+                "-3": 0.0,
+                "-2": 0.0028333333333333335,
+                "-1": 0.017625000000000002,
+                "1": 0.182625,
+                "2": 0.26516666666666666,
+                "3": 0.46075,
+                "4": 0.8065
+            },
+            "spearman_recencia": 0.8574775581737282,
+            "spearman_semantica": 0.18788417949022426,
+            "spearman_semantica_parcial": -0.37312237278906,
+            "vazamento_apos_normalizacao": 0.5092,
+            "parcela_atribuivel_a_escala": 0.2361236123612361
+        }
+    },
+    "metricas_vazamento_por_fronteira_padronizada": {
+        "1": {
+            "acc": 0.4995,
+            "vazamento": 0.31025,
+            "vazamento_balanceado": 0.31025,
+            "erro_dentro_da_tarefa": 0.19025,
+            "parcela_do_erro_por_vazamento": 0.61988011988012,
+            "acc_oraculo_tarefa": 0.64925,
+            "teto_de_ganho": 0.14975,
+            "matriz_L": [
+                [
+                    0.6865,
+                    0.3135
+                ],
+                [
+                    0.307,
+                    0.693
+                ]
+            ],
+            "contagens": [
+                [
+                    1373,
+                    627
+                ],
+                [
+                    614,
+                    1386
+                ]
+            ],
+            "indice_direcao": 1.021172638436482,
+            "perfil_deslocamento": {
+                "-1": 0.307,
+                "1": 0.3135
+            },
+            "spearman_recencia": 0.9999999999999999,
+            "spearman_semantica": 0.9999999999999999,
+            "spearman_semantica_parcial": 0.9999999999999999,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        },
+        "2": {
+            "acc": 0.44583333333333336,
+            "vazamento": 0.40016666666666667,
+            "vazamento_balanceado": 0.40016666666666667,
+            "erro_dentro_da_tarefa": 0.154,
+            "parcela_do_erro_por_vazamento": 0.7221052631578947,
+            "acc_oraculo_tarefa": 0.654,
+            "teto_de_ganho": 0.20816666666666667,
+            "matriz_L": [
+                [
+                    0.6015,
+                    0.203,
+                    0.1955
+                ],
+                [
+                    0.2435,
+                    0.5725,
+                    0.184
+                ],
+                [
+                    0.2025,
+                    0.172,
+                    0.6255
+                ]
+            ],
+            "contagens": [
+                [
+                    1203,
+                    406,
+                    391
+                ],
+                [
+                    487,
+                    1145,
+                    368
+                ],
+                [
+                    405,
+                    344,
+                    1251
+                ]
+            ],
+            "indice_direcao": 0.9425566343042071,
+            "perfil_deslocamento": {
+                "-2": 0.2025,
+                "-1": 0.20775,
+                "1": 0.1935,
+                "2": 0.1955
+            },
+            "spearman_recencia": -0.14712247158412492,
+            "spearman_semantica": 0.6,
+            "spearman_semantica_parcial": 0.8319107657486323,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        },
+        "3": {
+            "acc": 0.41375,
+            "vazamento": 0.457875,
+            "vazamento_balanceado": 0.45787500000000003,
+            "erro_dentro_da_tarefa": 0.128375,
+            "parcela_do_erro_por_vazamento": 0.7810234541577825,
+            "acc_oraculo_tarefa": 0.66475,
+            "teto_de_ganho": 0.25099999999999995,
+            "matriz_L": [
+                [
+                    0.551,
+                    0.159,
+                    0.122,
+                    0.168
+                ],
+                [
+                    0.2155,
+                    0.5335,
+                    0.129,
+                    0.122
+                ],
+                [
+                    0.1725,
+                    0.146,
+                    0.468,
+                    0.2135
+                ],
+                [
+                    0.174,
+                    0.107,
+                    0.103,
+                    0.616
+                ]
+            ],
+            "contagens": [
+                [
+                    1102,
+                    318,
+                    244,
+                    336
+                ],
+                [
+                    431,
+                    1067,
+                    258,
+                    244
+                ],
+                [
+                    345,
+                    292,
+                    936,
+                    427
+                ],
+                [
+                    348,
+                    214,
+                    206,
+                    1232
+                ]
+            ],
+            "indice_direcao": 0.9950980392156864,
+            "perfil_deslocamento": {
+                "-3": 0.174,
+                "-2": 0.13974999999999999,
+                "-1": 0.15483333333333332,
+                "1": 0.16716666666666669,
+                "2": 0.122,
+                "3": 0.168
+            },
+            "spearman_recencia": -0.14975189244419534,
+            "spearman_semantica": 0.234676366893346,
+            "spearman_semantica_parcial": 0.32464098674274217,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        },
+        "4": {
+            "acc": 0.378,
+            "vazamento": 0.5092,
+            "vazamento_balanceado": 0.5092,
+            "erro_dentro_da_tarefa": 0.1128,
+            "parcela_do_erro_por_vazamento": 0.8186495176848875,
+            "acc_oraculo_tarefa": 0.6617,
+            "teto_de_ganho": 0.28369999999999995,
+            "matriz_L": [
+                [
+                    0.5,
+                    0.135,
+                    0.095,
+                    0.104,
+                    0.166
+                ],
+                [
+                    0.1905,
+                    0.483,
+                    0.098,
+                    0.075,
+                    0.1535
+                ],
+                [
+                    0.146,
+                    0.129,
+                    0.3995,
+                    0.1525,
+                    0.173
+                ],
+                [
+                    0.139,
+                    0.091,
+                    0.0865,
+                    0.536,
+                    0.1475
+                ],
+                [
+                    0.1745,
+                    0.1085,
+                    0.084,
+                    0.0975,
+                    0.5355
+                ]
+            ],
+            "contagens": [
+                [
+                    1000,
+                    270,
+                    190,
+                    208,
+                    332
+                ],
+                [
+                    381,
+                    966,
+                    196,
+                    150,
+                    307
+                ],
+                [
+                    292,
+                    258,
+                    799,
+                    305,
+                    346
+                ],
+                [
+                    278,
+                    182,
+                    173,
+                    1072,
+                    295
+                ],
+                [
+                    349,
+                    217,
+                    168,
+                    195,
+                    1071
+                ]
+            ],
+            "indice_direcao": 1.0425190533493782,
+            "perfil_deslocamento": {
+                "-4": 0.1745,
+                "-3": 0.12375,
+                "-2": 0.107,
+                "-1": 0.12587500000000001,
+                "1": 0.13325,
+                "2": 0.11433333333333333,
+                "3": 0.12875,
+                "4": 0.166
+            },
+            "spearman_recencia": 0.0737690579820437,
+            "spearman_semantica": 0.30526315789473685,
+            "spearman_semantica_parcial": 0.3032078717061847,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        }
+    },
+    "resultado_final_padronizado": {
+        "acc_por_tarefa": [
+            40.6,
+            36.85,
+            31.75,
+            41.4,
+            38.4
+        ],
+        "aac": 37.8,
+        "aac_incremental": 47.70166666666667
+    },
+    "versao_principal": "padronizada",
+    "resultado_final": {
+        "acc_por_tarefa": [
+            0.5,
+            4.9,
+            13.15,
+            41.4,
+            61.550000000000004
+        ],
+        "aac": 24.3,
+        "aac_incremental": 37.995000000000005,
+        "nc1_concatenado": null,
+        "alinhamento_diagonal": null,
+        "matriz_scores_medios": null
+    },
+    "metricas_vazamento_final": {
+        "acc": 0.243,
+        "vazamento": 0.6666,
+        "vazamento_balanceado": 0.6666,
+        "erro_dentro_da_tarefa": 0.0904,
+        "parcela_do_erro_por_vazamento": 0.8805812417437252,
+        "acc_oraculo_tarefa": 0.6617,
+        "teto_de_ganho": 0.41869999999999996,
+        "matriz_L": [
+            [
+                0.005,
+                0.003,
+                0.034,
+                0.1515,
+                0.8065
+            ],
+            [
+                0.0,
+                0.055,
+                0.0425,
+                0.1325,
+                0.77
+            ],
+            [
+                0.0,
+                0.0005,
+                0.1505,
+                0.22,
+                0.629
+            ],
+            [
+                0.0,
+                0.0015,
+                0.008,
+                0.5255,
+                0.465
+            ],
+            [
+                0.0,
+                0.0,
+                0.007,
+                0.062,
+                0.931
+            ]
+        ],
+        "contagens": [
+            [
+                10,
+                6,
+                68,
+                303,
+                1613
+            ],
+            [
+                0,
+                110,
+                85,
+                265,
+                1540
+            ],
+            [
+                0,
+                1,
+                301,
+                440,
+                1258
+            ],
+            [
+                0,
+                3,
+                16,
+                1051,
+                930
+            ],
+            [
+                0,
+                0,
+                14,
+                124,
+                1862
+            ]
+        ],
+        "indice_direcao": 41.18987341772152,
+        "perfil_deslocamento": {
+            "-4": 0.0,
+            "-3": 0.0,
+            "-2": 0.0028333333333333335,
+            "-1": 0.017625000000000002,
+            "1": 0.182625,
+            "2": 0.26516666666666666,
+            "3": 0.46075,
+            "4": 0.8065
+        },
+        "spearman_recencia": 0.8574775581737282,
+        "spearman_semantica": 0.18788417949022426,
+        "spearman_semantica_parcial": -0.37312237278906,
+        "vazamento_apos_normalizacao": 0.5092,
+        "parcela_atribuivel_a_escala": 0.2361236123612361
+    },
+    "metricas_vazamento_final_padronizada": {
+        "acc": 0.378,
+        "vazamento": 0.5092,
+        "vazamento_balanceado": 0.5092,
+        "erro_dentro_da_tarefa": 0.1128,
+        "parcela_do_erro_por_vazamento": 0.8186495176848875,
+        "acc_oraculo_tarefa": 0.6617,
+        "teto_de_ganho": 0.28369999999999995,
+        "matriz_L": [
+            [
+                0.5,
+                0.135,
+                0.095,
+                0.104,
+                0.166
+            ],
+            [
+                0.1905,
+                0.483,
+                0.098,
+                0.075,
+                0.1535
+            ],
+            [
+                0.146,
+                0.129,
+                0.3995,
+                0.1525,
+                0.173
+            ],
+            [
+                0.139,
+                0.091,
+                0.0865,
+                0.536,
+                0.1475
+            ],
+            [
+                0.1745,
+                0.1085,
+                0.084,
+                0.0975,
+                0.5355
+            ]
+        ],
+        "contagens": [
+            [
+                1000,
+                270,
+                190,
+                208,
+                332
+            ],
+            [
+                381,
+                966,
+                196,
+                150,
+                307
+            ],
+            [
+                292,
+                258,
+                799,
+                305,
+                346
+            ],
+            [
+                278,
+                182,
+                173,
+                1072,
+                295
+            ],
+            [
+                349,
+                217,
+                168,
+                195,
+                1071
+            ]
+        ],
+        "indice_direcao": 1.0425190533493782,
+        "perfil_deslocamento": {
+            "-4": 0.1745,
+            "-3": 0.12375,
+            "-2": 0.107,
+            "-1": 0.12587500000000001,
+            "1": 0.13325,
+            "2": 0.11433333333333333,
+            "3": 0.12875,
+            "4": 0.166
+        },
+        "spearman_recencia": 0.0737690579820437,
+        "spearman_semantica": 0.30526315789473685,
+        "spearman_semantica_parcial": 0.3032078717061847,
+        "vazamento_apos_normalizacao": null,
+        "parcela_atribuivel_a_escala": null
+    },
+    "estatisticas_score_por_tarefa": [
+        [
+            0.46717503666877747,
+            0.12151773528886795
+        ],
+        [
+            0.6253042817115784,
+            0.09426785515380859
+        ],
+        [
+            0.7314935326576233,
+            0.07487153516841888
+        ],
+        [
+            0.7937915325164795,
+            0.07240616785121917
+        ],
+        [
+            0.8255936503410339,
+            0.05487706394625664
+        ]
+    ],
+    "dispersao_escala_DE": 1.7409534979812176,
+    "estatisticas_score_origem": "imagens_de_treino_no_fim_de_cada_tarefa",
+    "esquecimento_medio": 50.650000000000006,
+    "esquecimento_medio_padronizado": 13.6625,
+    "memoria": {
+        "bytes_banco_por_classe_media": 67716.0,
+        "bytes_banco_total": 6771600,
+        "bytes_prototipo_por_classe": 2048,
+        "bytes_adapters_total": 1322240,
+        "adapters_distintos": 5,
+        "bytes_estatisticas_padronizacao": 40
+    },
+    "tempos": {
+        "cache_phi_s": 0.15146946907043457,
+        "treino_por_tarefa_s": [
+            2.5178654193878174,
+            6.949848413467407,
+            8.036112546920776,
+            9.144547462463379,
+            10.619853496551514
+        ],
+        "total_s": 90.77905988693237
+    }
+}
