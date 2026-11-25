@@ -7,7 +7,7 @@
             64
         ],
         "recorte_central": false,
-        "nota": "Cenário 1 do plano de análise: CIFAR-100, B0 Inc20 (5 tarefas), ResNet-18, 64x64. É o cenário do desenvolvimento (mesmas opções da v0.9, inclusive os diagnósticos extras). Confira 'raiz' na sua máquina."
+        "nota": "Cenário 1 do plano de análise: CIFAR-100, B0 Inc20 (5 tarefas), ResNet-18, 64x64. É o cenário do desenvolvimento (mesmas opções da v0.9; diagnósticos extras desligados: são só avaliação e custavam ~25 min por execução). Confira 'raiz' na sua máquina."
     },
     "tarefas": {
         "classes_por_tarefa": 20,
@@ -17,7 +17,8 @@
     "sobrescrever": {
         "treino": {
             "backbone": "resnet18",
-            "embedding_dim": 512
+            "embedding_dim": 512,
+            "diagnosticos_extras": false
         },
         "pseudo_negativos": {
             "relu": true

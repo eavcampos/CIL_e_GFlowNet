@@ -266,6 +266,8 @@ if not (0.0 <= FRACAO_EST_VAL < 0.5):
 # [Fase B] diagnosticos_extras: t-SNE, aritmética de tarefas, drift, NC1, mapas de scores e gráficos.
 # Só avaliação (não mudam o treino); false economiza tempo nos cenários grandes.
 DIAGNOSTICOS_EXTRAS = bool(CFG_TREINO.get("diagnosticos_extras", True))
+# [Fase B] lote_extracao_phi: imagens por lote ao calcular phi (só afeta memória e tempo, não o resultado)
+LOTE_EXTRACAO_PHI = max(1, int(CFG_TREINO.get("lote_extracao_phi", 128)))
 
 if INIT_CLASSES_NOVAS not in ("aleatorio", "media_phi"):
     raise ValueError(f"treino.init_classes_novas inválido: {INIT_CLASSES_NOVAS} (use 'aleatorio' ou 'media_phi')")
@@ -467,9 +469,11 @@ def carregar_dataset_base(cfg_dataset):
     if info["classes"] is not None and n != info["classes"]:
         logging.warning(f"[Dataset] {nome}: {n} classes encontradas; a versão usada em SimpleCIL/APER/EASE "
                         f"tem {info['classes']}. Confira se é a mesma versão do dataset.")
+    entrada = ("Resize(256, bicúbica) + CenterCrop(224), sem normalização (transformação do PILOT)"
+               if str(cfg_dataset.get("transformacao", "")).lower() == "pilot" else
+               f"{cfg_dataset.get('resize', [64, 64])}{' com recorte central' if cfg_dataset.get('recorte_central') else ''}")
     logging.info(f"[Dataset] {nome} carregado — {n} classes, {len(train_set)} imagens de treino, "
-                 f"{len(test_set)} imagens de teste, entrada {cfg_dataset.get('resize', [64, 64])}"
-                 f"{' com recorte central' if cfg_dataset.get('recorte_central') else ''}.")
+                 f"{len(test_set)} imagens de teste, entrada {entrada}.")
     return train_set, test_set
 
 
@@ -531,10 +535,24 @@ def _criar_loader(ds, indices, batch_size, shuffle, seed=0):
 
 @torch.no_grad()
 def calcular_phi(backbone, dataset):
-    feats = []
-    for x, _ in DataLoader(dataset, batch_size=256, shuffle=False, num_workers=2):
-        feats.append(backbone(x.to(DEVICE)).float().cpu())
-    return torch.cat(feats)
+    """phi de todo o dataset, em lotes. [Fase B] O tamanho do lote vem de treino.lote_extracao_phi
+    (padrão 128); se faltar memória na GPU (por exemplo, GPU compartilhada com outro processo), o lote é
+    dividido por 2 e a extração recomeça, até 1 imagem por lote. O resultado não depende do lote."""
+    lote = LOTE_EXTRACAO_PHI
+    while True:
+        try:
+            feats = []
+            for x, _ in DataLoader(dataset, batch_size=lote, shuffle=False, num_workers=2):
+                feats.append(backbone(x.to(DEVICE)).float().cpu())
+            return torch.cat(feats)
+        except torch.cuda.OutOfMemoryError:
+            feats = None
+            torch.cuda.empty_cache()
+            if lote == 1:
+                raise
+            lote = max(1, lote // 2)
+            logging.warning(f"[Cache phi] Memória da GPU insuficiente; tentando de novo com lotes de {lote} imagens. "
+                            f"(Se a GPU estiver sendo usada por outro processo, isso é esperado.)")
 
 
 def preparar_cache_phi(backbone_real, train_set, test_set, cfg_dataset):
@@ -2003,6 +2021,27 @@ def estatisticas_score_tarefa(backbone, adapters, fc, lvq, loader_treino, indice
     return float(vencedor.mean()), float(vencedor.std() + 1e-8)
 
 
+@torch.no_grad()
+def estatisticas_score_banco(adapter, fc, banco, indice_tarefa, n_por_classe, semente):
+    """[Fase B, adendo de 25/11/2026] μ_k e σ_k da nota vencedora da tarefa k, calculados com o Adapter ATUAL
+    sobre features SINTÉTICAS das classes da tarefa k, sorteadas do banco de gaussianas (nenhuma imagem
+    guardada). Usado só no braço adapter_compartilhado: lá o Adapter continua mudando depois que a tarefa k
+    termina, e as estatísticas calculadas no fim dela ficam desatualizadas. O sorteio usa uma semente própria
+    e não altera a sequência aleatória do resto da execução."""
+    classes = list(range(indice_tarefa * CLASSES_POR_TAREFA, (indice_tarefa + 1) * CLASSES_POR_TAREFA))
+    dispositivos = [DEVICE] if DEVICE.type == "cuda" else []
+    with torch.random.fork_rng(devices=dispositivos):
+        torch.manual_seed(semente)
+        rotulos = torch.tensor([c for c in classes for _ in range(n_por_classe)], device=DEVICE)
+        phi = banco.amostrar(rotulos)
+        if bool(CFG_PN.get("relu", True)):
+            phi = F.relu(phi)   # mesma convenção dos pseudo-negativos (ReLU só na ResNet)
+    e = F.normalize(adapter(phi), dim=1, eps=1e-8)
+    w = F.normalize(fc[classes], dim=1, eps=1e-8)
+    vencedor = (e @ w.T).max(dim=1).values
+    return float(vencedor.mean()), float(vencedor.std() + 1e-8)
+
+
 def _json_seguro(v):
     if isinstance(v, (float, np.floating)):
         return None if not np.isfinite(v) else float(v)
@@ -2166,6 +2205,11 @@ def executar_experimento():
         test_set = DatasetPhi(phi_te.to(DEVICE), test_set.targets, test_set.classes)
         backbone = BackboneIdentidade().to(DEVICE)
         logging.info("[Cache phi] ATIVO: os Adapters treinam sobre phi pré-calculado.")
+        # [Fase B] com o cache pronto, o backbone sai da GPU (libera memória para o treino); só volta se houver
+        # avaliação extra em outro dataset
+        backbone_real = backbone_real.cpu()
+        if torch.cuda.is_available():
+            torch.cuda.empty_cache()
     else:
         backbone = backbone_real
     tempo_cache_phi = time.time() - t_cache
@@ -2242,6 +2286,8 @@ def executar_experimento():
     gerador = GeradorPseudoNegativos(banco, CFG_PN, CLASSES_POR_TAREFA, ALPHA_LVQ, TAU_LVQ, DEVICE)
     task_stats = []
     task_stats_val = []   # [Fase B, ablação A1] μ_k, σ_k na parte não vista do treino
+    task_stats_fim_tarefa = []   # [Fase B] adapter_compartilhado: estatísticas originais, do fim de cada tarefa
+    N_AMOSTRAS_EST_BANCO = int(CFG_TREINO.get("amostras_estatisticas_banco", 256))
     json_data["configuracao_efetiva"]["pseudo_negativos"] = CFG_PN
     logging.info(f"[Estratégia 2] Pseudo-negativos: modo={PN_MODO} (\"nenhum\" reproduz a Nova Estratégia 1).")
 
@@ -2264,6 +2310,15 @@ def executar_experimento():
         if FRACAO_EST_VAL > 0:
             task_stats_val.append(estatisticas_score_tarefa(backbone, adapters + [adapter_t], fc, lvq,
                                                             loaders_validacao[t], t))
+        if ADAPTER_COMPARTILHADO:
+            # [Fase B, adendo de 25/11/2026] com o Adapter compartilhado, μ_k e σ_k de TODAS as tarefas já vistas
+            # são recalculados agora, com o Adapter atual, sobre amostras do banco de gaussianas. As estatísticas
+            # do fim de cada tarefa (com imagens reais) ficam guardadas só para referência.
+            task_stats_fim_tarefa.append(task_stats[-1])
+            task_stats[:] = [estatisticas_score_banco(adapter_t, fc, banco, k, N_AMOSTRAS_EST_BANCO,
+                                                      SEED + 9000 + 100 * t + k) for k in range(t + 1)]
+            logging.info(f"[Tarefa {t}] Adapter compartilhado: μ_k, σ_k das tarefas 0..{t} recalculados com o Adapter "
+                         f"atual sobre {N_AMOSTRAS_EST_BANCO} amostras do banco por classe.")
 
         json_data["tarefas"][str(t)] = {
             "classes": [nomes_classe_cil[c] for c in classes_novas],
@@ -2437,6 +2492,13 @@ def executar_experimento():
     # [Fase B] estatísticas e métricas novas do plano de análise (Seções 6 e 7.2)
     json_data["estatisticas_score_por_tarefa"] = [[float(m), float(sd)] for m, sd in task_stats]
     json_data["dispersao_escala_DE"] = dispersao_escala(task_stats)
+    if ADAPTER_COMPARTILHADO:
+        json_data["estatisticas_score_origem"] = "banco_de_gaussianas_com_adapter_final"
+        json_data["estatisticas_score_por_tarefa_fim_da_tarefa"] = [[float(m), float(sd)]
+                                                                    for m, sd in task_stats_fim_tarefa]
+        json_data["dispersao_escala_DE_fim_da_tarefa"] = dispersao_escala(task_stats_fim_tarefa)
+    else:
+        json_data["estatisticas_score_origem"] = "imagens_de_treino_no_fim_de_cada_tarefa"
     json_data["esquecimento_medio"] = esquecimento_medio(json_data["acc_por_tarefa_apos_tarefa"])
     json_data["esquecimento_medio_padronizado"] = esquecimento_medio(
         json_data["acc_por_tarefa_apos_tarefa_padronizada"])
@@ -2459,7 +2521,7 @@ def executar_experimento():
     for cfg_extra in CFG.get("avaliacao_extra", []) or []:
         try:
             json_data.setdefault("avaliacao_extra", {})[cfg_extra["nome"]] = avaliar_dataset_extra(
-                cfg_extra, backbone_real, adapters, fc, lvq, nomes_classe_cil, task_stats)
+                cfg_extra, backbone_real.to(DEVICE), adapters, fc, lvq, nomes_classe_cil, task_stats)
         except Exception as erro:   # uma avaliação extra com problema não derruba a execução inteira
             logging.error(f"[Avaliação extra] {cfg_extra.get('nome')}: falhou ({erro}).")
             json_data.setdefault("avaliacao_extra", {})[cfg_extra.get("nome", "?")] = {"erro": str(erro)}
@@ -2480,6 +2542,7 @@ def executar_experimento():
         "seed": SEED, "configuracao": CFG,
         "banco_gaussianas": banco.estado(),          # [Estratégia 2]
         "estatisticas_score_por_tarefa": task_stats,  # [Estratégia 2]
+        "estatisticas_score_por_tarefa_fim_da_tarefa": task_stats_fim_tarefa,  # [Fase B] só adapter compartilhado
     }, checkpoint_path)
     logging.info(f" [Checkpoint] {checkpoint_path}")
 
