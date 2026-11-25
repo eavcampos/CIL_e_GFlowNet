@@ -61,3 +61,20 @@ config_gauss_seed1998 | OK | 0h23min | AAC (5 tarefas): 34.17% | padronizada: 43
 47.67%
 config_margem_padronizada_seed1998 | OK | 0h39min | AAC (5 tarefas): 35.91% | padronizada: 43.62% | vazamento 55.90%
 47.41%
+Execução de 24/11/2026 21:05:08
+config_ncm_teste_cenario1_cifar100_inc20_resnet_seed1993 | OK | 0h30min | AAC (5 tarefas): 41.29% | padronizada: 40.92% | vazamento 47.05%
+47.41%
+config_baseline_teste_cenario1_cifar100_inc20_resnet_seed1993 | OK | 0h34min | AAC (5 tarefas): 14.01% | padronizada: 33.51% | vazamento 77.90%
+55.90%
+config_gauss_teste_cenario1_cifar100_inc20_resnet_seed1993 | OK | 0h35min | AAC (5 tarefas): 24.30% | padronizada: 37.85% | vazamento 66.88%
+50.94%
+config_adapter_compartilhado_teste_cenario1_cifar100_inc20_resnet_seed1993 | OK | 0h31min | AAC (5 tarefas): 13.76% | padronizada: 2.37% | vazamento 73.83%
+78.81%
+Execução de 25/11/2026 04:18:16
+config_ncm_teste_cenario5_imagenet_r_inc20_vit_seed1993 | FALHOU (código 1) | 0h0min | ver /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/execucoes/config_ncm_teste_cenario5_imagenet_r_inc20_vit_seed1993.txt
+config_baseline_teste_cenario5_imagenet_r_inc20_vit_seed1993 | FALHOU (código 1) | 0h0min | ver /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/execucoes/config_baseline_teste_cenario5_imagenet_r_inc20_vit_seed1993.txt
+config_baseline_estatval_teste_cenario5_imagenet_r_inc20_vit_seed1993 | FALHOU (código 1) | 0h0min | ver /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/execucoes/config_baseline_estatval_teste_cenario5_imagenet_r_inc20_vit_seed1993.txt
+Execução de 25/11/2026 04:22:58
+config_ncm_teste_cenario5_imagenet_r_inc20_vit_seed1993 | FALHOU (código 1) | 0h0min | ver /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/execucoes/config_ncm_teste_cenario5_imagenet_r_inc20_vit_seed1993.txt
+config_baseline_teste_cenario5_imagenet_r_inc20_vit_seed1993 | FALHOU (código 1) | 0h0min | ver /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/execucoes/config_baseline_teste_cenario5_imagenet_r_inc20_vit_seed1993.txt
+config_baseline_estatval_teste_cenario5_imagenet_r_inc20_vit_seed1993 | FALHOU (código 1) | 0h0min | ver /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/execucoes/config_baseline_estatval_teste_cenario5_imagenet_r_inc20_vit_seed1993.txt
