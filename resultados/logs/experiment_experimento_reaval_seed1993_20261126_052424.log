@@ -1,0 +1,70 @@
+2026-11-26 05:24:25,074 [INFO] [Reprodutibilidade] Seed=1993 (random, numpy, torch, cudnn determinístico). Esta mesma seed também controla o sorteio das classes por tarefa.
+2026-11-26 05:24:25,075 [INFO] [Configuração] dataset=cifar100 | num_tasks=5 | classes_por_tarefa=20 | batch_size=48 | otimizador=SGD | device=cuda:0 | pseudo_negativos=is
+2026-11-26 05:24:25,163 [INFO] === [Reavaliação, cabeça Mahalanobis] checkpoint_experimento_seed1993_20261118_025309.pt — 5 tarefas, seed 1993 ===
+2026-11-26 05:24:27,525 [INFO] [Dataset] cifar100 carregado — 100 classes, 50000 imagens de treino, 10000 imagens de teste, entrada [64, 64].
+2026-11-26 05:24:28,172 [INFO] [Backbone] ResNet-18 pré-treinada no ImageNet, congelada desde a criação.
+2026-11-26 05:24:28,495 [INFO] [Cache phi] lido de /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/cache_phi/cifar100_b94f09bd43.pt
+2026-11-26 05:24:29,842 [INFO] [Verificação] cosseno, recalculado do checkpoint: 35.86% (padronizado: 43.14%)
+2026-11-26 05:24:37,495 [INFO] [Tarefa 0] Cabeça Mahalanobis: acurácia no teste acumulado 73.35% (padronizada: 73.35%)
+2026-11-26 05:24:44,895 [INFO] [Tarefa 1] Cabeça Mahalanobis: acurácia no teste acumulado 59.38% (padronizada: 61.32%)
+2026-11-26 05:24:52,307 [INFO] [Tarefa 2] Cabeça Mahalanobis: acurácia no teste acumulado 52.27% (padronizada: 54.33%)
+2026-11-26 05:24:59,548 [INFO] [Tarefa 3] Cabeça Mahalanobis: acurácia no teste acumulado 45.11% (padronizada: 50.88%)
+2026-11-26 05:25:06,831 [INFO] [Tarefa 4] Cabeça Mahalanobis: acurácia no teste acumulado 37.32% (padronizada: 46.69%)
+2026-11-26 05:25:06,974 [INFO] === MÉTRICAS DE VAZAMENTO — final — cabeça Mahalanobis ===
+2026-11-26 05:25:06,975 [INFO]    Acurácia CIL ................  37.32%
+2026-11-26 05:25:06,975 [INFO]    Vazamento (Lambda) ..........  53.69%
+2026-11-26 05:25:06,975 [INFO]    Vazamento balanceado ........  53.69%
+2026-11-26 05:25:06,975 [INFO]    Erro dentro da task (E_WP) ..   8.99%
+2026-11-26 05:25:06,975 [INFO]    Parcela do erro por vazamento  85.66%
+2026-11-26 05:25:06,976 [INFO]    Acurácia com oráculo de task   72.79%
+2026-11-26 05:25:06,976 [INFO]    Teto de ganho ...............  35.47 p.p.
+2026-11-26 05:25:06,976 [INFO]    Índice de direção D .........  11.286
+2026-11-26 05:25:06,976 [INFO]    Spearman(L, j-i) recência ...   0.891
+2026-11-26 05:25:06,976 [INFO]    Spearman(L, S) semântica ....   0.257
+2026-11-26 05:25:06,976 [INFO]      parcial, controlando j-i ..  -0.288
+2026-11-26 05:25:06,976 [INFO]    Vazamento após normalização .  43.85%
+2026-11-26 05:25:06,977 [INFO]    Parcela atribuível a escala .  18.33%
+2026-11-26 05:25:06,977 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-26 05:25:06,977 [INFO]      k = -4: 0.004
+2026-11-26 05:25:06,977 [INFO]      k = -3: 0.010
+2026-11-26 05:25:06,977 [INFO]      k = -2: 0.014
+2026-11-26 05:25:06,977 [INFO]      k = -1: 0.038
+2026-11-26 05:25:06,977 [INFO]      k = +1: 0.150
+2026-11-26 05:25:06,977 [INFO]      k = +2: 0.203
+2026-11-26 05:25:06,978 [INFO]      k = +3: 0.337
+2026-11-26 05:25:06,978 [INFO]      k = +4: 0.583
+2026-11-26 05:25:06,978 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-26 05:25:06,978 [INFO]      0.091 0.040 0.061 0.225 0.583
+2026-11-26 05:25:06,978 [INFO]      0.009 0.329 0.057 0.155 0.450
+2026-11-26 05:25:06,978 [INFO]      0.006 0.021 0.364 0.215 0.393
+2026-11-26 05:25:06,979 [INFO]      0.004 0.011 0.024 0.674 0.287
+2026-11-26 05:25:06,979 [INFO]      0.004 0.015 0.026 0.097 0.857
+2026-11-26 05:25:07,031 [INFO] === MÉTRICAS DE VAZAMENTO — final — cabeça Mahalanobis (notas padronizadas) ===
+2026-11-26 05:25:07,032 [INFO]    Acurácia CIL ................  46.69%
+2026-11-26 05:25:07,032 [INFO]    Vazamento (Lambda) ..........  43.85%
+2026-11-26 05:25:07,032 [INFO]    Vazamento balanceado ........  43.85%
+2026-11-26 05:25:07,032 [INFO]    Erro dentro da task (E_WP) ..   9.46%
+2026-11-26 05:25:07,033 [INFO]    Parcela do erro por vazamento  82.25%
+2026-11-26 05:25:07,033 [INFO]    Acurácia com oráculo de task   72.79%
+2026-11-26 05:25:07,033 [INFO]    Teto de ganho ...............  26.10 p.p.
+2026-11-26 05:25:07,033 [INFO]    Índice de direção D .........   1.206
+2026-11-26 05:25:07,033 [INFO]    Spearman(L, j-i) recência ...   0.330
+2026-11-26 05:25:07,033 [INFO]    Spearman(L, S) semântica ....   0.319
+2026-11-26 05:25:07,033 [INFO]      parcial, controlando j-i ..   0.210
+2026-11-26 05:25:07,034 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-26 05:25:07,034 [INFO]      k = -4: 0.132
+2026-11-26 05:25:07,034 [INFO]      k = -3: 0.089
+2026-11-26 05:25:07,034 [INFO]      k = -2: 0.083
+2026-11-26 05:25:07,034 [INFO]      k = -1: 0.109
+2026-11-26 05:25:07,034 [INFO]      k = +1: 0.111
+2026-11-26 05:25:07,034 [INFO]      k = +2: 0.109
+2026-11-26 05:25:07,034 [INFO]      k = +3: 0.120
+2026-11-26 05:25:07,034 [INFO]      k = +4: 0.186
+2026-11-26 05:25:07,034 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-26 05:25:07,035 [INFO]      0.532 0.083 0.091 0.108 0.186
+2026-11-26 05:25:07,035 [INFO]      0.175 0.534 0.082 0.076 0.132
+2026-11-26 05:25:07,035 [INFO]      0.133 0.081 0.498 0.128 0.161
+2026-11-26 05:25:07,035 [INFO]      0.110 0.049 0.088 0.601 0.152
+2026-11-26 05:25:07,035 [INFO]      0.132 0.069 0.067 0.091 0.642
+2026-11-26 05:25:07,036 [INFO]  > [Cabeça Mahalanobis] acurácia final 37.32% | padronizada 46.69% | DE 1.1415546688494893 | 37s
+2026-11-26 05:25:07,037 [INFO]  [JSON] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/reavaliacao_mahalanobis/reaval_mahalanobis_experimento_seed1993_20261118_025309.json

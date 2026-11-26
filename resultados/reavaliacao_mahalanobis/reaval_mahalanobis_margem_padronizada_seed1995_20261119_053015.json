@@ -1,0 +1,317 @@
+{
+    "checkpoint": "/home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/desenvolvimento/checkpoints/checkpoint_margem_padronizada_seed1995_20261119_053015.pt",
+    "execucao_original": "margem_padronizada_seed1995_20261119_053015",
+    "seed": 1995,
+    "dataset": "cifar100",
+    "backbone": "resnet18",
+    "num_tasks": 5,
+    "classes_por_tarefa": 20,
+    "pseudo_negativos": "is",
+    "padronizar_notas": true,
+    "verificacao": {
+        "acc_cosseno": 32.7,
+        "acc_cosseno_padronizada": 42.480000000000004
+    },
+    "cabeca_mahalanobis": {
+        "hiperparametros": {
+            "alpha1": 1.0,
+            "alpha2": 1.0,
+            "tukey_beta": null
+        },
+        "dados_de_ajuste": "imagens de treino da própria tarefa (sem a parte de validação), no fim da tarefa",
+        "acc_apos_tarefa": [
+            75.4,
+            60.9,
+            48.3,
+            39.25,
+            33.35
+        ],
+        "acc_apos_tarefa_padronizada": [
+            75.4,
+            62.675000000000004,
+            56.53333333333334,
+            49.1875,
+            44.91
+        ],
+        "acc_por_tarefa_apos_tarefa": [
+            [
+                75.4
+            ],
+            [
+                54.900000000000006,
+                66.9
+            ],
+            [
+                28.349999999999998,
+                44.55,
+                72.0
+            ],
+            [
+                9.65,
+                28.249999999999996,
+                56.35,
+                62.74999999999999
+            ],
+            [
+                2.9499999999999997,
+                17.849999999999998,
+                41.0,
+                42.3,
+                62.64999999999999
+            ]
+        ],
+        "acc_por_tarefa_apos_tarefa_padronizada": [
+            [
+                75.4
+            ],
+            [
+                65.95,
+                59.4
+            ],
+            [
+                57.85,
+                52.55,
+                59.199999999999996
+            ],
+            [
+                48.55,
+                45.25,
+                52.349999999999994,
+                50.6
+            ],
+            [
+                42.1,
+                41.6,
+                48.35,
+                45.35,
+                47.15
+            ]
+        ],
+        "metricas_vazamento_final": {
+            "acc": 0.3335,
+            "vazamento": 0.5907,
+            "vazamento_balanceado": 0.5907,
+            "erro_dentro_da_tarefa": 0.0758,
+            "parcela_do_erro_por_vazamento": 0.886271567891973,
+            "acc_oraculo_tarefa": 0.723,
+            "teto_de_ganho": 0.38949999999999996,
+            "matriz_L": [
+                [
+                    0.031,
+                    0.0145,
+                    0.094,
+                    0.212,
+                    0.6485
+                ],
+                [
+                    0.0005,
+                    0.1845,
+                    0.0745,
+                    0.197,
+                    0.5435
+                ],
+                [
+                    0.001,
+                    0.0085,
+                    0.452,
+                    0.123,
+                    0.4155
+                ],
+                [
+                    0.0,
+                    0.01,
+                    0.044,
+                    0.5035,
+                    0.4425
+                ],
+                [
+                    0.0,
+                    0.0035,
+                    0.025,
+                    0.096,
+                    0.8755
+                ]
+            ],
+            "contagens": [
+                [
+                    62,
+                    29,
+                    188,
+                    424,
+                    1297
+                ],
+                [
+                    1,
+                    369,
+                    149,
+                    394,
+                    1087
+                ],
+                [
+                    2,
+                    17,
+                    904,
+                    246,
+                    831
+                ],
+                [
+                    0,
+                    20,
+                    88,
+                    1007,
+                    885
+                ],
+                [
+                    0,
+                    7,
+                    50,
+                    192,
+                    1751
+                ]
+            ],
+            "indice_direcao": 14.668435013262597,
+            "perfil_deslocamento": {
+                "-4": 0.0,
+                "-3": 0.00175,
+                "-2": 0.012000000000000002,
+                "-1": 0.03725,
+                "1": 0.163625,
+                "2": 0.23550000000000001,
+                "3": 0.37775,
+                "4": 0.6485
+            },
+            "spearman_recencia": 0.8730086113108028,
+            "spearman_semantica": -0.26551336966051126,
+            "spearman_semantica_parcial": -0.11630222432691614,
+            "vazamento_apos_normalizacao": 0.4632,
+            "parcela_atribuivel_a_escala": 0.21584560690705942
+        },
+        "metricas_vazamento_final_padronizada": {
+            "acc": 0.4491,
+            "vazamento": 0.4632,
+            "vazamento_balanceado": 0.46319999999999995,
+            "erro_dentro_da_tarefa": 0.0877,
+            "parcela_do_erro_por_vazamento": 0.8408059538936287,
+            "acc_oraculo_tarefa": 0.723,
+            "teto_de_ganho": 0.2739,
+            "matriz_L": [
+                [
+                    0.476,
+                    0.064,
+                    0.09,
+                    0.1575,
+                    0.2125
+                ],
+                [
+                    0.087,
+                    0.471,
+                    0.098,
+                    0.1645,
+                    0.1795
+                ],
+                [
+                    0.076,
+                    0.085,
+                    0.5525,
+                    0.128,
+                    0.1585
+                ],
+                [
+                    0.0615,
+                    0.088,
+                    0.089,
+                    0.56,
+                    0.2015
+                ],
+                [
+                    0.075,
+                    0.0715,
+                    0.08,
+                    0.149,
+                    0.6245
+                ]
+            ],
+            "contagens": [
+                [
+                    952,
+                    128,
+                    180,
+                    315,
+                    425
+                ],
+                [
+                    174,
+                    942,
+                    196,
+                    329,
+                    359
+                ],
+                [
+                    152,
+                    170,
+                    1105,
+                    256,
+                    317
+                ],
+                [
+                    123,
+                    176,
+                    178,
+                    1120,
+                    403
+                ],
+                [
+                    150,
+                    143,
+                    160,
+                    298,
+                    1249
+                ]
+            ],
+            "indice_direcao": 1.68677494199536,
+            "perfil_deslocamento": {
+                "-4": 0.075,
+                "-3": 0.0665,
+                "-2": 0.08133333333333333,
+                "-1": 0.10250000000000001,
+                "1": 0.12287500000000001,
+                "2": 0.1376666666666667,
+                "3": 0.16849999999999998,
+                "4": 0.2125
+            },
+            "spearman_recencia": 0.8061360975357352,
+            "spearman_semantica": -0.04962406015037594,
+            "spearman_semantica_parcial": 0.25200285627952096,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        },
+        "estatisticas_score_por_tarefa": [
+            [
+                -0.26764026284217834,
+                0.08804231391979217
+            ],
+            [
+                -0.17276716232299805,
+                0.08257127063108444
+            ],
+            [
+                -0.10806076228618622,
+                0.05889475228024483
+            ],
+            [
+                -0.09082184731960297,
+                0.048630608932504656
+            ],
+            [
+                -0.06347593665122986,
+                0.039092193113098146
+            ]
+        ],
+        "dispersao_escala_DE": 1.2867196629344033,
+        "esquecimento_medio": 43.2375,
+        "esquecimento_medio_padronizado": 16.799999999999997,
+        "bytes_por_classe": 1050624,
+        "tempo_s": 35.95356512069702
+    },
+    "tempo_total_s": 40.56938099861145
+}

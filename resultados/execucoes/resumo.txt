@@ -121,3 +121,14 @@ config_gauss_ca_teste_cenario1_cifar100_inc20_resnet_seed1993 | OK | 0h0min | ? 
 Execução de 26/11/2026 03:41:38
 config_fecam_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h2min | ? | vazamento 33.87%
 config_gauss_ca_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h1min | ? | vazamento 39.42%
+Execução de 26/11/2026 05:19:04
+config_ncm_teste_cenario5_imagenet_r_inc20_vit_seed1993 | pulado (já concluído)
+config_baseline_teste_cenario5_imagenet_r_inc20_vit_seed1993 | pulado (já concluído)
+Execução de 26/11/2026 13:53:26 — bateria 1
+config_fecam_cenario1_cifar100_inc20_resnet_seed1993 | OK | 0h0min | acurácia 54.72% | vazamento 35.98%
+Execução de 26/11/2026 13:54:42 — bateria 2
+config_fecam_cenario1_cifar100_inc20_resnet_seed1994 | OK | 0h0min | acurácia 54.72% | vazamento 36.41%
+Execução de 26/11/2026 13:55:57 — bateria 3
+config_fecam_cenario1_cifar100_inc20_resnet_seed1995 | OK | 0h0min | acurácia 54.72% | vazamento 35.75%
+Execução de 26/11/2026 13:57:11 — bateria 4
+config_fecam_cenario1_cifar100_inc20_resnet_seed1996 | OK | 0h0min | acurácia 54.72% | vazamento 37.03%

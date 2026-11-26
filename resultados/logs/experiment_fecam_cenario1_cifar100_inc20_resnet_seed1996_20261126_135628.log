@@ -1,0 +1,131 @@
+2026-11-26 13:56:28,287 [INFO] [Reprodutibilidade] Seed=1996 (random, numpy, torch, cudnn determinístico). Esta mesma seed também controla o sorteio das classes por tarefa.
+2026-11-26 13:56:28,288 [INFO] [Configuração] dataset=cifar100 | num_tasks=auto | classes_por_tarefa=20 | batch_size=48 | otimizador=SGD | device=cuda:0 | pseudo_negativos=nenhum
+2026-11-26 13:56:28,289 [INFO] === [Fase B] Braço sem adapters: fecam — dataset=cifar100, seed=1996 ===
+2026-11-26 13:56:30,305 [INFO] [Dataset] cifar100 carregado — 100 classes, 50000 imagens de treino, 10000 imagens de teste, entrada [64, 64].
+2026-11-26 13:56:30,776 [INFO] [Backbone] ResNet-18 pré-treinada no ImageNet, congelada desde a criação.
+2026-11-26 13:56:31,207 [INFO] [Cache phi] lido de /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/cache_phi/cifar100_b94f09bd43.pt
+2026-11-26 13:56:31,542 [INFO] [FeCAM] hiperparâmetros: {'alpha1': 1.0, 'alpha2': 1.0, 'tukey_beta': 0.5}
+2026-11-26 13:56:39,471 [INFO] [Tarefa 0] fecam: acurácia no teste acumulado 75.05% (7.8s)
+2026-11-26 13:56:46,884 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 1 ===
+2026-11-26 13:56:46,886 [INFO]    Acurácia CIL ................  67.97%
+2026-11-26 13:56:46,886 [INFO]    Vazamento (Lambda) ..........  17.85%
+2026-11-26 13:56:46,886 [INFO]    Vazamento balanceado ........  17.85%
+2026-11-26 13:56:46,886 [INFO]    Erro dentro da task (E_WP) ..  14.17%
+2026-11-26 13:56:46,886 [INFO]    Parcela do erro por vazamento  55.74%
+2026-11-26 13:56:46,886 [INFO]    Acurácia com oráculo de task   77.48%
+2026-11-26 13:56:46,886 [INFO]    Teto de ganho ...............   9.50 p.p.
+2026-11-26 13:56:46,886 [INFO]    Índice de direção D .........   1.006
+2026-11-26 13:56:46,886 [INFO]    Spearman(L, j-i) recência ...   1.000
+2026-11-26 13:56:46,886 [INFO]    Spearman(L, S) semântica ....  -1.000
+2026-11-26 13:56:46,886 [INFO]      parcial, controlando j-i ..  -1.000
+2026-11-26 13:56:46,886 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-26 13:56:46,886 [INFO]      k = -1: 0.178
+2026-11-26 13:56:46,886 [INFO]      k = +1: 0.179
+2026-11-26 13:56:46,887 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-26 13:56:46,887 [INFO]      0.821 0.179
+2026-11-26 13:56:46,887 [INFO]      0.178 0.822
+2026-11-26 13:56:46,887 [INFO] [Tarefa 1] fecam: acurácia no teste acumulado 67.97% (7.4s)
+2026-11-26 13:56:54,289 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 2 ===
+2026-11-26 13:56:54,290 [INFO]    Acurácia CIL ................  61.88%
+2026-11-26 13:56:54,290 [INFO]    Vazamento (Lambda) ..........  25.25%
+2026-11-26 13:56:54,290 [INFO]    Vazamento balanceado ........  25.25%
+2026-11-26 13:56:54,290 [INFO]    Erro dentro da task (E_WP) ..  12.87%
+2026-11-26 13:56:54,290 [INFO]    Parcela do erro por vazamento  66.24%
+2026-11-26 13:56:54,290 [INFO]    Acurácia com oráculo de task   76.37%
+2026-11-26 13:56:54,290 [INFO]    Teto de ganho ...............  14.48 p.p.
+2026-11-26 13:56:54,290 [INFO]    Índice de direção D .........   1.056
+2026-11-26 13:56:54,290 [INFO]    Spearman(L, j-i) recência ...   0.441
+2026-11-26 13:56:54,290 [INFO]    Spearman(L, S) semântica ....   0.429
+2026-11-26 13:56:54,290 [INFO]      parcial, controlando j-i ..   0.721
+2026-11-26 13:56:54,290 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-26 13:56:54,290 [INFO]      k = -2: 0.122
+2026-11-26 13:56:54,290 [INFO]      k = -1: 0.123
+2026-11-26 13:56:54,290 [INFO]      k = +1: 0.126
+2026-11-26 13:56:54,290 [INFO]      k = +2: 0.138
+2026-11-26 13:56:54,290 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-26 13:56:54,290 [INFO]      0.732 0.131 0.138
+2026-11-26 13:56:54,291 [INFO]      0.135 0.744 0.121
+2026-11-26 13:56:54,291 [INFO]      0.122 0.112 0.766
+2026-11-26 13:56:54,291 [INFO] [Tarefa 2] fecam: acurácia no teste acumulado 61.88% (7.4s)
+2026-11-26 13:57:01,856 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 3 ===
+2026-11-26 13:57:01,857 [INFO]    Acurácia CIL ................  59.08%
+2026-11-26 13:57:01,857 [INFO]    Vazamento (Lambda) ..........  31.01%
+2026-11-26 13:57:01,857 [INFO]    Vazamento balanceado ........  31.01%
+2026-11-26 13:57:01,857 [INFO]    Erro dentro da task (E_WP) ..   9.91%
+2026-11-26 13:57:01,857 [INFO]    Parcela do erro por vazamento  75.78%
+2026-11-26 13:57:01,857 [INFO]    Acurácia com oráculo de task   77.60%
+2026-11-26 13:57:01,857 [INFO]    Teto de ganho ...............  18.53 p.p.
+2026-11-26 13:57:01,857 [INFO]    Índice de direção D .........   0.958
+2026-11-26 13:57:01,857 [INFO]    Spearman(L, j-i) recência ...  -0.121
+2026-11-26 13:57:01,858 [INFO]    Spearman(L, S) semântica ....   0.161
+2026-11-26 13:57:01,858 [INFO]      parcial, controlando j-i ..   0.148
+2026-11-26 13:57:01,858 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-26 13:57:01,858 [INFO]      k = -3: 0.108
+2026-11-26 13:57:01,858 [INFO]      k = -2: 0.099
+2026-11-26 13:57:01,858 [INFO]      k = -1: 0.110
+2026-11-26 13:57:01,858 [INFO]      k = +1: 0.100
+2026-11-26 13:57:01,858 [INFO]      k = +2: 0.106
+2026-11-26 13:57:01,858 [INFO]      k = +3: 0.093
+2026-11-26 13:57:01,858 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-26 13:57:01,858 [INFO]      0.676 0.113 0.117 0.093
+2026-11-26 13:57:01,858 [INFO]      0.121 0.683 0.100 0.096
+2026-11-26 13:57:01,858 [INFO]      0.107 0.098 0.708 0.087
+2026-11-26 13:57:01,858 [INFO]      0.108 0.090 0.110 0.693
+2026-11-26 13:57:01,859 [INFO] [Tarefa 3] fecam: acurácia no teste acumulado 59.08% (7.4s)
+2026-11-26 13:57:09,482 [INFO] === MÉTRICAS DE VAZAMENTO — após a tarefa 4 ===
+2026-11-26 13:57:09,484 [INFO]    Acurácia CIL ................  54.72%
+2026-11-26 13:57:09,484 [INFO]    Vazamento (Lambda) ..........  37.03%
+2026-11-26 13:57:09,484 [INFO]    Vazamento balanceado ........  37.03%
+2026-11-26 13:57:09,484 [INFO]    Erro dentro da task (E_WP) ..   8.25%
+2026-11-26 13:57:09,484 [INFO]    Parcela do erro por vazamento  81.78%
+2026-11-26 13:57:09,484 [INFO]    Acurácia com oráculo de task   76.72%
+2026-11-26 13:57:09,484 [INFO]    Teto de ganho ...............  22.00 p.p.
+2026-11-26 13:57:09,484 [INFO]    Índice de direção D .........   0.920
+2026-11-26 13:57:09,484 [INFO]    Spearman(L, j-i) recência ...  -0.325
+2026-11-26 13:57:09,484 [INFO]    Spearman(L, S) semântica ....   0.412
+2026-11-26 13:57:09,484 [INFO]      parcial, controlando j-i ..   0.433
+2026-11-26 13:57:09,484 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-26 13:57:09,484 [INFO]      k = -4: 0.100
+2026-11-26 13:57:09,485 [INFO]      k = -3: 0.103
+2026-11-26 13:57:09,485 [INFO]      k = -2: 0.095
+2026-11-26 13:57:09,485 [INFO]      k = -1: 0.093
+2026-11-26 13:57:09,485 [INFO]      k = +1: 0.086
+2026-11-26 13:57:09,485 [INFO]      k = +2: 0.097
+2026-11-26 13:57:09,485 [INFO]      k = +3: 0.081
+2026-11-26 13:57:09,485 [INFO]      k = +4: 0.090
+2026-11-26 13:57:09,485 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-26 13:57:09,485 [INFO]      0.630 0.098 0.103 0.080 0.090
+2026-11-26 13:57:09,485 [INFO]      0.109 0.645 0.083 0.080 0.083
+2026-11-26 13:57:09,485 [INFO]      0.090 0.086 0.642 0.073 0.108
+2026-11-26 13:57:09,485 [INFO]      0.097 0.074 0.088 0.650 0.090
+2026-11-26 13:57:09,485 [INFO]      0.100 0.108 0.122 0.090 0.580
+2026-11-26 13:57:09,486 [INFO] [Tarefa 4] fecam: acurácia no teste acumulado 54.72% (7.5s)
+2026-11-26 13:57:09,505 [INFO] === MÉTRICAS DE VAZAMENTO — final ===
+2026-11-26 13:57:09,506 [INFO]    Acurácia CIL ................  54.72%
+2026-11-26 13:57:09,506 [INFO]    Vazamento (Lambda) ..........  37.03%
+2026-11-26 13:57:09,506 [INFO]    Vazamento balanceado ........  37.03%
+2026-11-26 13:57:09,506 [INFO]    Erro dentro da task (E_WP) ..   8.25%
+2026-11-26 13:57:09,506 [INFO]    Parcela do erro por vazamento  81.78%
+2026-11-26 13:57:09,506 [INFO]    Acurácia com oráculo de task   76.72%
+2026-11-26 13:57:09,506 [INFO]    Teto de ganho ...............  22.00 p.p.
+2026-11-26 13:57:09,506 [INFO]    Índice de direção D .........   0.920
+2026-11-26 13:57:09,506 [INFO]    Spearman(L, j-i) recência ...  -0.325
+2026-11-26 13:57:09,506 [INFO]    Spearman(L, S) semântica ....   0.412
+2026-11-26 13:57:09,507 [INFO]      parcial, controlando j-i ..   0.433
+2026-11-26 13:57:09,507 [INFO]    Perfil por deslocamento k = j - i:
+2026-11-26 13:57:09,507 [INFO]      k = -4: 0.100
+2026-11-26 13:57:09,507 [INFO]      k = -3: 0.103
+2026-11-26 13:57:09,507 [INFO]      k = -2: 0.095
+2026-11-26 13:57:09,507 [INFO]      k = -1: 0.093
+2026-11-26 13:57:09,507 [INFO]      k = +1: 0.086
+2026-11-26 13:57:09,507 [INFO]      k = +2: 0.097
+2026-11-26 13:57:09,507 [INFO]      k = +3: 0.081
+2026-11-26 13:57:09,507 [INFO]      k = +4: 0.090
+2026-11-26 13:57:09,507 [INFO]    Matriz L (linha = task verdadeira, coluna = task prevista):
+2026-11-26 13:57:09,507 [INFO]      0.630 0.098 0.103 0.080 0.090
+2026-11-26 13:57:09,507 [INFO]      0.109 0.645 0.083 0.080 0.083
+2026-11-26 13:57:09,507 [INFO]      0.090 0.086 0.642 0.073 0.108
+2026-11-26 13:57:09,507 [INFO]      0.097 0.074 0.088 0.650 0.090
+2026-11-26 13:57:09,508 [INFO]      0.100 0.108 0.122 0.090 0.580
+2026-11-26 13:57:09,508 [INFO]  > fecam: acurácia final 54.72% | AAC incremental 63.74% | esquecimento médio 10.9125
+2026-11-26 13:57:09,510 [INFO]  [JSON] /home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/resultados/results/results_fecam_cenario1_cifar100_inc20_resnet_seed1996_20261126_135628.json

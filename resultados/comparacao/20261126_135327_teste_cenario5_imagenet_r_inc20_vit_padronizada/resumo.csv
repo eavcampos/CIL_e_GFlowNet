@@ -1,0 +1,9 @@
+seed;config;aac;vazamento;erro_dentro_da_tarefa;teto_de_ganho;aac_incremental;acc_T0;acc_T1;acc_T2;acc_T3;acc_T4;acc_T5;acc_T6;acc_T7;acc_T8;acc_T9
+1993;baseline;39.904;55.350;4.867;34.583;51.017;37.881;38.133;40.594;40.280;40.452;49.242;40.070;36.077;45.397;30.915
+1993;gauss;47.281;47.833;5.050;27.467;58.820;43.541;46.677;50.000;49.387;45.380;46.061;47.979;46.639;52.929;44.214
+1993;margem_padronizada;49.608;45.150;5.400;25.417;59.869;46.299;47.152;52.640;51.664;49.487;47.273;50.615;50.069;53.556;47.323
+média;baseline;39.904;55.350;4.867;34.583
+média;gauss;47.281;47.833;5.050;27.467
+média;margem_padronizada;49.608;45.150;5.400;25.417
+diferença média (gauss - baseline);;+7.376;-7.517;+0.183;-7.117
+diferença média (margem_padronizada - gauss);;+2.327;-2.683;+0.350;-2.050
