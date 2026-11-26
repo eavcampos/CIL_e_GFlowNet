@@ -116,7 +116,7 @@ if [ -z "${PYTHON:-}" ]; then
 fi
 
 # --- verificações antes de começar ---------------------------------------------
-for f in "$SCRIPT" pseudo_negativos_cil.py metricas_vazamento.py comparar_resultados.py "${CONFIGS[@]}"; do
+for f in "$SCRIPT" pseudo_negativos_cil.py metricas_vazamento.py comparar_resultados.py bracos_sem_adapter.py cabeca_mahalanobis.py "${CONFIGS[@]}"; do
     [ -f "$f" ] || { echo "ERRO: arquivo $f não encontrado em $PASTA_PROJETO"; exit 1; }
 done
 if [ -n "$PERFIL" ] && grep -q '"vit_b16_in21k"' "$ARQ_PERFIL"; then   # [Fase B] o ViT precisa do timm
@@ -196,12 +196,19 @@ for seed in "${SEEDS[@]}"; do
 
         if [ $status -eq 0 ]; then
             touch "$marcador"
-            aac=$(grep -o "AAC ([0-9]* tarefas): [0-9.]*%" "$saida" | tail -1)
-            pad=$(grep -o "Acurácia final padronizada ([0-9]* tarefas): [0-9.]*%" "$saida" | tail -1 | grep -o "[0-9.]*%$")
-            [ -n "$pad" ] && aac="$aac | padronizada: $pad"
-            vaz=$(grep -A2 "MÉTRICAS DE VAZAMENTO — final" "$saida" | grep -o "Vazamento (Lambda) [. ]*[0-9.]*%" | grep -o "[0-9.]*%$")
-            echo "  OK em $dur_txt | ${aac:-AAC não encontrado} | vazamento final: ${vaz:-?}"
-            RESUMO+=("$nome | OK | $dur_txt | ${aac:-?} | vazamento ${vaz:-?}")
+            # [Fase B] acurácia ponderada por imagem ("Acurácia CIL") de cada bloco final do log: notas brutas,
+            # padronizadas e da cabeça Mahalanobis (as duas últimas só existem nos braços com Adapters)
+            _bloco() { grep -A2 -F "$1" "$saida" | grep -o "$2 [. ]*[0-9.]*%" | head -1 | grep -o "[0-9.]*%$"; }
+            acc=$(_bloco "MÉTRICAS DE VAZAMENTO — final ===" "Acurácia CIL")
+            vaz=$(_bloco "MÉTRICAS DE VAZAMENTO — final ===" "Vazamento (Lambda)")
+            pad=$(_bloco "MÉTRICAS DE VAZAMENTO — final (notas padronizadas) ===" "Acurácia CIL")
+            mah=$(_bloco "MÉTRICAS DE VAZAMENTO — final — cabeça Mahalanobis ===" "Acurácia CIL")
+            mahp=$(_bloco "MÉTRICAS DE VAZAMENTO — final — cabeça Mahalanobis (notas padronizadas) ===" "Acurácia CIL")
+            aac="acurácia ${acc:-?}"
+            [ -n "$pad" ] && aac="$aac | padronizada ${pad}"
+            [ -n "$mah" ] && aac="$aac | Mahalanobis ${mah} | Mahalanobis padronizada ${mahp:-?}"
+            echo "  OK em $dur_txt | $aac | vazamento final: ${vaz:-?}"
+            RESUMO+=("$nome | OK | $dur_txt | $aac | vazamento ${vaz:-?}")
         else
             FALHAS=$((FALHAS + 1))
             echo "  FALHOU (código $status) em $dur_txt. Últimas linhas:"

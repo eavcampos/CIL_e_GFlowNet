@@ -9,6 +9,8 @@ novas, o comportamento é o da tag v0.9-desenvolvimento):
   - treino.fracao_estatisticas_validacao: separa uma fração do treino e também padroniza com μ_k, σ_k
     calculados nela (ablação A1);
   - treino.diagnosticos_extras: false desliga t-SNE, aritmética de tarefas, drift e gráficos (só avaliação);
+  - treino.cabeca_mahalanobis (padrão true; adendo de 26/11/2026): avaliação extra com a receita do FeCAM
+    sobre as saídas de cada Adapter (cabeca_mahalanobis.py), bloco "cabeca_mahalanobis" no JSON;
   - JSON com μ_k e σ_k por tarefa, dispersão de escala DE, acurácia por tarefa após cada tarefa,
     esquecimento médio, memória guardada e tempos.
 """
@@ -266,6 +268,10 @@ if not (0.0 <= FRACAO_EST_VAL < 0.5):
 # [Fase B] diagnosticos_extras: t-SNE, aritmética de tarefas, drift, NC1, mapas de scores e gráficos.
 # Só avaliação (não mudam o treino); false economiza tempo nos cenários grandes.
 DIAGNOSTICOS_EXTRAS = bool(CFG_TREINO.get("diagnosticos_extras", True))
+# [Fase B, adendo de 26/11/2026] cabeca_mahalanobis: além do cosseno, avalia cada execução com a receita do FeCAM
+# aplicada às saídas do Adapter de cada tarefa (cabeca_mahalanobis.py). Só avaliação: não muda o treino. Não se
+# aplica ao adapter_compartilhado.
+CABECA_MAHALANOBIS = bool(CFG_TREINO.get("cabeca_mahalanobis", True)) and not ADAPTER_COMPARTILHADO
 # [Fase B] classificador: "adapters" (padrão: todos os braços com Adapters, inclusive o NCM) ou um dos braços
 # sem Adapters do plano de análise, implementados em bracos_sem_adapter.py: "fecam" ou "gauss_ca".
 CLASSIFICADOR = str(CFG_TREINO.get("classificador", "adapters")).lower()
@@ -2258,6 +2264,7 @@ def executar_experimento():
             "adapter_compartilhado": ADAPTER_COMPARTILHADO,
             "fracao_estatisticas_validacao": FRACAO_EST_VAL, "diagnosticos_extras": DIAGNOSTICOS_EXTRAS,
             "weight_decay_adapter": WEIGHT_DECAY_ADAPTER, "perfil": CFG.get("_perfil"),
+            "cabeca_mahalanobis": CABECA_MAHALANOBIS,
         },
         "ambiente": {"torch": torch.__version__, "torchvision": torchvision.__version__, "timm": VERSAO_TIMM,
                      "python": platform.python_version(),
@@ -2293,6 +2300,11 @@ def executar_experimento():
     task_stats_val = []   # [Fase B, ablação A1] μ_k, σ_k na parte não vista do treino
     task_stats_fim_tarefa = []   # [Fase B] adapter_compartilhado: estatísticas originais, do fim de cada tarefa
     N_AMOSTRAS_EST_BANCO = int(CFG_TREINO.get("amostras_estatisticas_banco", 256))
+    cabeca = None
+    if CABECA_MAHALANOBIS:   # [Fase B, adendo de 26/11/2026]
+        import cabeca_mahalanobis
+        cabeca = cabeca_mahalanobis.CabecaMahalanobis(sys.modules[__name__])
+        logging.info(f"[Cabeça Mahalanobis] ATIVA (só avaliação): hiperparâmetros {cabeca.hp}")
     json_data["configuracao_efetiva"]["pseudo_negativos"] = CFG_PN
     logging.info(f"[Estratégia 2] Pseudo-negativos: modo={PN_MODO} (\"nenhum\" reproduz a Nova Estratégia 1).")
 
@@ -2414,6 +2426,10 @@ def executar_experimento():
         logging.info(f"[Tarefa {t}] Acurácia no teste acumulado após a tarefa: {json_data['acc_apos_tarefa'][-1]:.2f}% "
                      f"(notas padronizadas: {json_data['acc_apos_tarefa_padronizada'][-1]:.2f}%)")
 
+        if cabeca is not None:   # [Fase B, adendo de 26/11/2026] ajuste no treino da tarefa t e avaliação acumulada
+            cabeca.ajustar_tarefa(t, adapter_t, backbone, loaders_treino[t])
+            cabeca.registrar_etapa(adapters + [adapter_t], backbone, loaders_teste_acumulado[t], t)
+
         adapters.append(adapter_t)
         thetas_init_adapter.append(theta_init_adapter_t)
         thetas_init_lvq.append(theta_init_lvq_t)
@@ -2493,6 +2509,9 @@ def executar_experimento():
     json_data["metricas_vazamento_final_padronizada"] = relatorio_vazamento(
         backbone, adapters, fc, lvq, loader_teste_total, banco, task_stats, "final", padronizar=True,
         logits_labels=(_lg_f, _lb_f))
+
+    json_data["cabeca_mahalanobis"] = (cabeca.finalizar(adapters, backbone, loader_teste_total, banco)
+                                       if cabeca is not None else None)
 
     # [Fase B] estatísticas e métricas novas do plano de análise (Seções 6 e 7.2)
     json_data["estatisticas_score_por_tarefa"] = [[float(m), float(sd)] for m, sd in task_stats]
