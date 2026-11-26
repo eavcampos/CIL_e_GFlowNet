@@ -1,0 +1,880 @@
+{
+    "estrategia": "nova_estrategia_2",
+    "id_execucao": "gauss_ca_teste_cenario1_cifar100_inc20_resnet_seed1993_20261126_032857",
+    "nome_config": "gauss_ca_teste_cenario1_cifar100_inc20_resnet",
+    "arquivo_config": "/home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/_configs_teste/config_gauss_ca_teste.json",
+    "configuracao_efetiva": {
+        "seed": 1993,
+        "dataset": "cifar100",
+        "num_tasks": 5,
+        "classes_por_tarefa": 20,
+        "classificador": "gauss_ca",
+        "backbone": "resnet18",
+        "transformacao": null,
+        "embedding_dim": 512,
+        "perfil": "cenario1_cifar100_inc20_resnet",
+        "fecam": null,
+        "gauss_ca": {
+            "epocas": 5,
+            "amostras_por_classe": 256,
+            "lr": 0.01,
+            "momentum": 0.9,
+            "lote": 48,
+            "escala": 16.0,
+            "relu": true
+        },
+        "pseudo_negativos": {
+            "modo": "nenhum",
+            "nota_modo": "'nenhum' reproduz a Nova Estratégia 1 (linha de base); 'gauss' = sorteio direto das gaussianas; 'is' = amostragem por importância focada onde há vazamento (recomendado começar por aqui); 'gfn' = GFlowNet híbrida com buffer do 'is' (só se o ESS do 'is' ficar muito baixo).",
+            "por_lote": 48,
+            "nota_por_lote": "Pseudo-negativos somados a cada lote real (default = batch_size).",
+            "lambda_pn": 0.5,
+            "nota_lambda_pn": "Peso da CE dos pseudo-negativos na perda total.",
+            "beta": 5.0,
+            "nota_beta": "Usado em 'is' e 'gfn'. Peso exp(beta * margem), margem = melhor score de classe nova - score da própria classe antiga (scores em [-1, 1]). beta = 0 equivale a 'gauss'; beta grande concentra tudo no pior ponto e derruba o ESS.",
+            "n_proposta": 4096,
+            "rank_cov": 32,
+            "encolhimento": 0.001,
+            "relu": true,
+            "nota_relu": "phi da ResNet-18 sai de ReLU + avgpool (não negativo); a gaussiana não é. relu=true aplica ReLU aos phi sintéticos antes de usá-los.",
+            "gfn": {
+                "passos": 4,
+                "oculta": 256,
+                "lr": 0.001,
+                "lr_logZ": 0.1,
+                "lote": 128,
+                "atualizacoes_por_lote": 1,
+                "fracao_buffer": 0.25,
+                "exploracao": 1.3
+            },
+            "nota_teste_rapido": "Para um primeiro teste de execução: treino.epochs_por_tarefa = 2 (mantendo 5 x 20). Isso já exercita todas as fronteiras, o banco com 80 classes e os gráficos de 100 classes.",
+            "nota_n_proposta": "Propostas da amostragem por importância por lote. Com até 80 classes antigas (tarefa 4), 4096 dá ~50 propostas por classe antiga; com 1024 seriam ~13, e o ESS ficaria instável.",
+            "margem_padronizada": false
+        }
+    },
+    "ambiente": {
+        "torch": "2.4.0",
+        "timm": null,
+        "gpu": "NVIDIA RTX A6000"
+    },
+    "particao_tarefas": {
+        "classes_originais_por_tarefa": [
+            [
+                68,
+                56,
+                78,
+                8,
+                23,
+                84,
+                90,
+                65,
+                74,
+                76,
+                40,
+                89,
+                3,
+                92,
+                55,
+                9,
+                26,
+                80,
+                43,
+                38
+            ],
+            [
+                58,
+                70,
+                77,
+                1,
+                85,
+                19,
+                17,
+                50,
+                28,
+                53,
+                13,
+                81,
+                45,
+                82,
+                6,
+                59,
+                83,
+                16,
+                15,
+                44
+            ],
+            [
+                91,
+                41,
+                72,
+                60,
+                79,
+                52,
+                20,
+                10,
+                31,
+                54,
+                37,
+                95,
+                14,
+                71,
+                96,
+                98,
+                97,
+                2,
+                64,
+                66
+            ],
+            [
+                42,
+                22,
+                35,
+                86,
+                24,
+                34,
+                87,
+                21,
+                99,
+                0,
+                88,
+                27,
+                18,
+                94,
+                11,
+                12,
+                47,
+                25,
+                30,
+                46
+            ],
+            [
+                62,
+                69,
+                36,
+                61,
+                7,
+                63,
+                75,
+                5,
+                32,
+                4,
+                51,
+                48,
+                73,
+                93,
+                39,
+                67,
+                29,
+                49,
+                57,
+                33
+            ]
+        ],
+        "nomes_por_tarefa": [
+            [
+                "road",
+                "palm_tree",
+                "snake",
+                "bicycle",
+                "cloud",
+                "table",
+                "train",
+                "rabbit",
+                "shrew",
+                "skyscraper",
+                "lamp",
+                "tractor",
+                "bear",
+                "tulip",
+                "otter",
+                "bottle",
+                "crab",
+                "squirrel",
+                "lion",
+                "kangaroo"
+            ],
+            [
+                "pickup_truck",
+                "rose",
+                "snail",
+                "aquarium_fish",
+                "tank",
+                "cattle",
+                "castle",
+                "mouse",
+                "cup",
+                "orange",
+                "bus",
+                "streetcar",
+                "lobster",
+                "sunflower",
+                "bee",
+                "pine_tree",
+                "sweet_pepper",
+                "can",
+                "camel",
+                "lizard"
+            ],
+            [
+                "trout",
+                "lawn_mower",
+                "seal",
+                "plain",
+                "spider",
+                "oak_tree",
+                "chair",
+                "bowl",
+                "elephant",
+                "orchid",
+                "house",
+                "whale",
+                "butterfly",
+                "sea",
+                "willow_tree",
+                "woman",
+                "wolf",
+                "baby",
+                "possum",
+                "raccoon"
+            ],
+            [
+                "leopard",
+                "clock",
+                "girl",
+                "telephone",
+                "cockroach",
+                "fox",
+                "television",
+                "chimpanzee",
+                "worm",
+                "apple",
+                "tiger",
+                "crocodile",
+                "caterpillar",
+                "wardrobe",
+                "boy",
+                "bridge",
+                "maple_tree",
+                "couch",
+                "dolphin",
+                "man"
+            ],
+            [
+                "poppy",
+                "rocket",
+                "hamster",
+                "plate",
+                "beetle",
+                "porcupine",
+                "skunk",
+                "bed",
+                "flatfish",
+                "beaver",
+                "mushroom",
+                "motorcycle",
+                "shark",
+                "turtle",
+                "keyboard",
+                "ray",
+                "dinosaur",
+                "mountain",
+                "pear",
+                "forest"
+            ]
+        ]
+    },
+    "tarefas": {
+        "0": {
+            "classes": [
+                "road",
+                "palm_tree",
+                "snake",
+                "bicycle",
+                "cloud",
+                "table",
+                "train",
+                "rabbit",
+                "shrew",
+                "skyscraper",
+                "lamp",
+                "tractor",
+                "bear",
+                "tulip",
+                "otter",
+                "bottle",
+                "crab",
+                "squirrel",
+                "lion",
+                "kangaroo"
+            ],
+            "perda_realinhamento_por_epoca": [
+                1.5123471464961766,
+                1.4985748656094073,
+                1.498255655914545,
+                1.4918678592890502,
+                1.5040414687246084
+            ],
+            "tempo_treino_s": 2.4645848274230957
+        },
+        "1": {
+            "classes": [
+                "pickup_truck",
+                "rose",
+                "snail",
+                "aquarium_fish",
+                "tank",
+                "cattle",
+                "castle",
+                "mouse",
+                "cup",
+                "orange",
+                "bus",
+                "streetcar",
+                "lobster",
+                "sunflower",
+                "bee",
+                "pine_tree",
+                "sweet_pepper",
+                "can",
+                "camel",
+                "lizard"
+            ],
+            "perda_realinhamento_por_epoca": [
+                1.9559868352487684,
+                1.965304166637361,
+                1.9578475208953023,
+                1.9550370436161757,
+                1.954164368286729
+            ],
+            "tempo_treino_s": 2.704556465148926
+        },
+        "2": {
+            "classes": [
+                "trout",
+                "lawn_mower",
+                "seal",
+                "plain",
+                "spider",
+                "oak_tree",
+                "chair",
+                "bowl",
+                "elephant",
+                "orchid",
+                "house",
+                "whale",
+                "butterfly",
+                "sea",
+                "willow_tree",
+                "woman",
+                "wolf",
+                "baby",
+                "possum",
+                "raccoon"
+            ],
+            "perda_realinhamento_por_epoca": [
+                2.2354699183255433,
+                2.2355405379086735,
+                2.23517235070467,
+                2.2486284997314216,
+                2.2248015932738783
+            ],
+            "tempo_treino_s": 4.33321738243103
+        },
+        "3": {
+            "classes": [
+                "leopard",
+                "clock",
+                "girl",
+                "telephone",
+                "cockroach",
+                "fox",
+                "television",
+                "chimpanzee",
+                "worm",
+                "apple",
+                "tiger",
+                "crocodile",
+                "caterpillar",
+                "wardrobe",
+                "boy",
+                "bridge",
+                "maple_tree",
+                "couch",
+                "dolphin",
+                "man"
+            ],
+            "perda_realinhamento_por_epoca": [
+                2.3820713402703406,
+                2.36739230081439,
+                2.3773538183420895,
+                2.377169720083475,
+                2.3746217319741847
+            ],
+            "tempo_treino_s": 5.54237961769104
+        },
+        "4": {
+            "classes": [
+                "poppy",
+                "rocket",
+                "hamster",
+                "plate",
+                "beetle",
+                "porcupine",
+                "skunk",
+                "bed",
+                "flatfish",
+                "beaver",
+                "mushroom",
+                "motorcycle",
+                "shark",
+                "turtle",
+                "keyboard",
+                "ray",
+                "dinosaur",
+                "mountain",
+                "pear",
+                "forest"
+            ],
+            "perda_realinhamento_por_epoca": [
+                2.5736310498416426,
+                2.5734647968411446,
+                2.5774376006424426,
+                2.5774707575142384,
+                2.5653065645694735
+            ],
+            "tempo_treino_s": 7.4296674728393555
+        }
+    },
+    "acc_apos_tarefa": [
+        62.4,
+        51.949999999999996,
+        46.96666666666667,
+        44.324999999999996,
+        41.510000000000005
+    ],
+    "acc_por_tarefa_apos_tarefa": [
+        [
+            62.4
+        ],
+        [
+            49.6,
+            54.300000000000004
+        ],
+        [
+            43.25,
+            47.65,
+            50.0
+        ],
+        [
+            38.3,
+            43.1,
+            43.65,
+            52.25
+        ],
+        [
+            35.099999999999994,
+            40.550000000000004,
+            41.099999999999994,
+            49.4,
+            41.4
+        ]
+    ],
+    "metricas_vazamento_por_fronteira": {
+        "1": {
+            "acc": 0.5195,
+            "vazamento": 0.2495,
+            "vazamento_balanceado": 0.24950000000000006,
+            "erro_dentro_da_tarefa": 0.231,
+            "parcela_do_erro_por_vazamento": 0.5192507804370448,
+            "acc_oraculo_tarefa": 0.63075,
+            "teto_de_ganho": 0.11125000000000007,
+            "matriz_L": [
+                [
+                    0.72,
+                    0.28
+                ],
+                [
+                    0.219,
+                    0.781
+                ]
+            ],
+            "contagens": [
+                [
+                    1440,
+                    560
+                ],
+                [
+                    438,
+                    1562
+                ]
+            ],
+            "indice_direcao": 1.2785388127853883,
+            "perfil_deslocamento": {
+                "-1": 0.219,
+                "1": 0.28
+            },
+            "spearman_recencia": 0.9999999999999999,
+            "spearman_semantica": 0.9999999999999999,
+            "spearman_semantica_parcial": 0.9999999999999999,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        },
+        "2": {
+            "acc": 0.4696666666666667,
+            "vazamento": 0.3525,
+            "vazamento_balanceado": 0.35250000000000004,
+            "erro_dentro_da_tarefa": 0.17783333333333334,
+            "parcela_do_erro_por_vazamento": 0.664676304211188,
+            "acc_oraculo_tarefa": 0.6343333333333333,
+            "teto_de_ganho": 0.16466666666666663,
+            "matriz_L": [
+                [
+                    0.602,
+                    0.207,
+                    0.191
+                ],
+                [
+                    0.1705,
+                    0.6635,
+                    0.166
+                ],
+                [
+                    0.1605,
+                    0.1625,
+                    0.677
+                ]
+            ],
+            "contagens": [
+                [
+                    1204,
+                    414,
+                    382
+                ],
+                [
+                    341,
+                    1327,
+                    332
+                ],
+                [
+                    321,
+                    325,
+                    1354
+                ]
+            ],
+            "indice_direcao": 1.1428571428571428,
+            "perfil_deslocamento": {
+                "-2": 0.1605,
+                "-1": 0.1665,
+                "1": 0.1865,
+                "2": 0.191
+            },
+            "spearman_recencia": 0.7650368522374495,
+            "spearman_semantica": 0.942857142857143,
+            "spearman_semantica_parcial": 0.9648036944441447,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        },
+        "3": {
+            "acc": 0.44325,
+            "vazamento": 0.41625,
+            "vazamento_balanceado": 0.41625,
+            "erro_dentro_da_tarefa": 0.1405,
+            "parcela_do_erro_por_vazamento": 0.7476425684777727,
+            "acc_oraculo_tarefa": 0.653625,
+            "teto_de_ganho": 0.21037500000000003,
+            "matriz_L": [
+                [
+                    0.504,
+                    0.167,
+                    0.149,
+                    0.18
+                ],
+                [
+                    0.1315,
+                    0.5885,
+                    0.1315,
+                    0.1485
+                ],
+                [
+                    0.113,
+                    0.122,
+                    0.575,
+                    0.19
+                ],
+                [
+                    0.098,
+                    0.0945,
+                    0.14,
+                    0.6675
+                ]
+            ],
+            "contagens": [
+                [
+                    1008,
+                    334,
+                    298,
+                    360
+                ],
+                [
+                    263,
+                    1177,
+                    263,
+                    297
+                ],
+                [
+                    226,
+                    244,
+                    1150,
+                    380
+                ],
+                [
+                    196,
+                    189,
+                    280,
+                    1335
+                ]
+            ],
+            "indice_direcao": 1.3819742489270384,
+            "perfil_deslocamento": {
+                "-3": 0.098,
+                "-2": 0.10375000000000001,
+                "-1": 0.13116666666666668,
+                "1": 0.16283333333333333,
+                "2": 0.14875,
+                "3": 0.18
+            },
+            "spearman_recencia": 0.8414630146864311,
+            "spearman_semantica": 0.5253948512537597,
+            "spearman_semantica_parcial": 0.3833382267924224,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        },
+        "4": {
+            "acc": 0.4151,
+            "vazamento": 0.4678,
+            "vazamento_balanceado": 0.4678,
+            "erro_dentro_da_tarefa": 0.1171,
+            "parcela_do_erro_por_vazamento": 0.7997948367242264,
+            "acc_oraculo_tarefa": 0.657,
+            "teto_de_ganho": 0.2419,
+            "matriz_L": [
+                [
+                    0.4525,
+                    0.1405,
+                    0.1225,
+                    0.1565,
+                    0.128
+                ],
+                [
+                    0.1065,
+                    0.5395,
+                    0.1095,
+                    0.1305,
+                    0.114
+                ],
+                [
+                    0.085,
+                    0.1055,
+                    0.5275,
+                    0.165,
+                    0.117
+                ],
+                [
+                    0.078,
+                    0.079,
+                    0.1215,
+                    0.6245,
+                    0.097
+                ],
+                [
+                    0.1005,
+                    0.105,
+                    0.111,
+                    0.1665,
+                    0.517
+                ]
+            ],
+            "contagens": [
+                [
+                    905,
+                    281,
+                    245,
+                    313,
+                    256
+                ],
+                [
+                    213,
+                    1079,
+                    219,
+                    261,
+                    228
+                ],
+                [
+                    170,
+                    211,
+                    1055,
+                    330,
+                    234
+                ],
+                [
+                    156,
+                    158,
+                    243,
+                    1249,
+                    194
+                ],
+                [
+                    201,
+                    210,
+                    222,
+                    333,
+                    1034
+                ]
+            ],
+            "indice_direcao": 1.2097307510628248,
+            "perfil_deslocamento": {
+                "-4": 0.1005,
+                "-3": 0.0915,
+                "-2": 0.09166666666666667,
+                "-1": 0.125,
+                "1": 0.128,
+                "2": 0.12333333333333334,
+                "3": 0.13525,
+                "4": 0.128
+            },
+            "spearman_recencia": 0.6411063492666272,
+            "spearman_semantica": 0.37744360902255636,
+            "spearman_semantica_parcial": 0.15357029524341217,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        }
+    },
+    "resultado_final": {
+        "acc_por_tarefa": [
+            35.099999999999994,
+            40.550000000000004,
+            41.099999999999994,
+            49.4,
+            41.4
+        ],
+        "aac": 41.510000000000005,
+        "aac_incremental": 49.43033333333333
+    },
+    "metricas_vazamento_final": {
+        "acc": 0.4151,
+        "vazamento": 0.4678,
+        "vazamento_balanceado": 0.4678,
+        "erro_dentro_da_tarefa": 0.1171,
+        "parcela_do_erro_por_vazamento": 0.7997948367242264,
+        "acc_oraculo_tarefa": 0.657,
+        "teto_de_ganho": 0.2419,
+        "matriz_L": [
+            [
+                0.4525,
+                0.1405,
+                0.1225,
+                0.1565,
+                0.128
+            ],
+            [
+                0.1065,
+                0.5395,
+                0.1095,
+                0.1305,
+                0.114
+            ],
+            [
+                0.085,
+                0.1055,
+                0.5275,
+                0.165,
+                0.117
+            ],
+            [
+                0.078,
+                0.079,
+                0.1215,
+                0.6245,
+                0.097
+            ],
+            [
+                0.1005,
+                0.105,
+                0.111,
+                0.1665,
+                0.517
+            ]
+        ],
+        "contagens": [
+            [
+                905,
+                281,
+                245,
+                313,
+                256
+            ],
+            [
+                213,
+                1079,
+                219,
+                261,
+                228
+            ],
+            [
+                170,
+                211,
+                1055,
+                330,
+                234
+            ],
+            [
+                156,
+                158,
+                243,
+                1249,
+                194
+            ],
+            [
+                201,
+                210,
+                222,
+                333,
+                1034
+            ]
+        ],
+        "indice_direcao": 1.2097307510628248,
+        "perfil_deslocamento": {
+            "-4": 0.1005,
+            "-3": 0.0915,
+            "-2": 0.09166666666666667,
+            "-1": 0.125,
+            "1": 0.128,
+            "2": 0.12333333333333334,
+            "3": 0.13525,
+            "4": 0.128
+        },
+        "spearman_recencia": 0.6411063492666272,
+        "spearman_semantica": 0.37744360902255636,
+        "spearman_semantica_parcial": 0.15357029524341217,
+        "vazamento_apos_normalizacao": null,
+        "parcela_atribuivel_a_escala": null
+    },
+    "metricas_vazamento_final_padronizada": null,
+    "versao_principal": "original",
+    "esquecimento_medio": 13.200000000000003,
+    "memoria": {
+        "bytes_por_classe": 69764.0,
+        "descricao": "banco de gaussianas + um vetor do classificador por classe"
+    },
+    "tempos": {
+        "cache_phi_s": 0.1306753158569336,
+        "treino_por_tarefa_s": [
+            2.4645848274230957,
+            2.704556465148926,
+            4.33321738243103,
+            5.54237961769104,
+            7.4296674728393555
+        ],
+        "total_s": 26.75142550468445
+    }
+}

@@ -266,6 +266,11 @@ if not (0.0 <= FRACAO_EST_VAL < 0.5):
 # [Fase B] diagnosticos_extras: t-SNE, aritmética de tarefas, drift, NC1, mapas de scores e gráficos.
 # Só avaliação (não mudam o treino); false economiza tempo nos cenários grandes.
 DIAGNOSTICOS_EXTRAS = bool(CFG_TREINO.get("diagnosticos_extras", True))
+# [Fase B] classificador: "adapters" (padrão: todos os braços com Adapters, inclusive o NCM) ou um dos braços
+# sem Adapters do plano de análise, implementados em bracos_sem_adapter.py: "fecam" ou "gauss_ca".
+CLASSIFICADOR = str(CFG_TREINO.get("classificador", "adapters")).lower()
+if CLASSIFICADOR not in ("adapters", "fecam", "gauss_ca"):
+    raise ValueError(f"treino.classificador inválido: {CLASSIFICADOR} (use 'adapters', 'fecam' ou 'gauss_ca')")
 # [Fase B] lote_extracao_phi: imagens por lote ao calcular phi (só afeta memória e tempo, não o resultado)
 LOTE_EXTRACAO_PHI = max(1, int(CFG_TREINO.get("lote_extracao_phi", 128)))
 
@@ -2555,4 +2560,8 @@ def executar_experimento():
 
 
 if __name__ == "__main__":
-    executar_experimento()
+    if CLASSIFICADOR == "adapters":
+        executar_experimento()
+    else:   # [Fase B, parte 2] fecam / gauss_ca
+        import bracos_sem_adapter
+        bracos_sem_adapter.executar(sys.modules[__name__])

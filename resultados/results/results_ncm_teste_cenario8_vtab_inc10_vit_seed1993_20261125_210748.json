@@ -1,0 +1,1397 @@
+{
+    "estrategia": "nova_estrategia_2",
+    "id_execucao": "ncm_teste_cenario8_vtab_inc10_vit_seed1993_20261125_210748",
+    "nome_config": "ncm_teste_cenario8_vtab_inc10_vit",
+    "arquivo_config": "/home/My_CIL/tests/My_projects/ReLat_4/nova_estrategia_1/_configs_teste/config_ncm_teste.json",
+    "configuracao_efetiva": {
+        "seed": 1993,
+        "dataset": "vtab",
+        "num_tasks": 5,
+        "classes_por_tarefa": 10,
+        "batch_size": 48,
+        "epochs_por_tarefa": 0,
+        "embedding_dim": 768,
+        "r_adapter": 64,
+        "lambda_lvq": 0.0,
+        "alpha_lvq": 0.0,
+        "tau_lvq": 1.0,
+        "som_linhas": 20,
+        "som_colunas": 40,
+        "otimizador": {
+            "tipo": "SGD",
+            "lr": 0.01,
+            "momentum": 0.9,
+            "weight_decay": 0.0,
+            "nesterov": false,
+            "nota": "tipo aceita 'SGD' (default), 'Adam', 'AdamW' ou 'RMSprop'. Hiperparâmetros não aplicáveis ao tipo escolhido são ignorados (ex.: 'momentum' é ignorado para Adam/AdamW, que usam 'betas' opcional)."
+        },
+        "adapter_residual": true,
+        "escala_logits": 16.0,
+        "init_classes_novas": "media_phi",
+        "atualizar_prototipos_novos": true,
+        "parada_antecipada": {
+            "ativo": false
+        },
+        "cache_phi": true,
+        "padronizar_notas": true,
+        "avaliar_teste_a_cada": 5,
+        "backbone": "vit_b16_in21k",
+        "transformacao": "pilot",
+        "adapter_compartilhado": false,
+        "fracao_estatisticas_validacao": 0.0,
+        "diagnosticos_extras": false,
+        "weight_decay_adapter": 0.0001,
+        "perfil": "cenario8_vtab_inc10_vit",
+        "pseudo_negativos": {
+            "modo": "nenhum",
+            "nota_modo": "'nenhum' reproduz a Nova Estratégia 1 (linha de base); 'gauss' = sorteio direto das gaussianas; 'is' = amostragem por importância focada onde há vazamento (recomendado começar por aqui); 'gfn' = GFlowNet híbrida com buffer do 'is' (só se o ESS do 'is' ficar muito baixo).",
+            "por_lote": 48,
+            "nota_por_lote": "Pseudo-negativos somados a cada lote real (default = batch_size).",
+            "lambda_pn": 0.5,
+            "nota_lambda_pn": "Peso da CE dos pseudo-negativos na perda total.",
+            "beta": 5.0,
+            "nota_beta": "Usado em 'is' e 'gfn'. Peso exp(beta * margem), margem = melhor score de classe nova - score da própria classe antiga (scores em [-1, 1]). beta = 0 equivale a 'gauss'; beta grande concentra tudo no pior ponto e derruba o ESS.",
+            "n_proposta": 4096,
+            "rank_cov": 32,
+            "encolhimento": 0.001,
+            "relu": false,
+            "nota_relu": "phi da ResNet-18 sai de ReLU + avgpool (não negativo); a gaussiana não é. relu=true aplica ReLU aos phi sintéticos antes de usá-los.",
+            "gfn": {
+                "passos": 4,
+                "oculta": 256,
+                "lr": 0.001,
+                "lr_logZ": 0.1,
+                "lote": 128,
+                "atualizacoes_por_lote": 1,
+                "fracao_buffer": 0.25,
+                "exploracao": 1.3
+            },
+            "nota_teste_rapido": "Para um primeiro teste de execução: treino.epochs_por_tarefa = 2 (mantendo 5 x 20). Isso já exercita todas as fronteiras, o banco com 80 classes e os gráficos de 100 classes.",
+            "nota_n_proposta": "Propostas da amostragem por importância por lote. Com até 80 classes antigas (tarefa 4), 4096 dá ~50 propostas por classe antiga; com 1024 seriam ~13, e o ESS ficaria instável.",
+            "margem_padronizada": false
+        }
+    },
+    "ambiente": {
+        "torch": "2.4.0",
+        "torchvision": "0.19.0",
+        "timm": "1.0.27",
+        "python": "3.11.9",
+        "gpu": "NVIDIA RTX A6000"
+    },
+    "particao_tarefas": {
+        "classes_originais_por_tarefa": [
+            [
+                0,
+                1,
+                2,
+                3,
+                4,
+                5,
+                6,
+                7,
+                8,
+                9
+            ],
+            [
+                10,
+                11,
+                12,
+                13,
+                14,
+                15,
+                16,
+                17,
+                18,
+                19
+            ],
+            [
+                20,
+                21,
+                22,
+                23,
+                24,
+                25,
+                26,
+                27,
+                28,
+                29
+            ],
+            [
+                30,
+                31,
+                32,
+                33,
+                34,
+                35,
+                36,
+                37,
+                38,
+                39
+            ],
+            [
+                40,
+                41,
+                42,
+                43,
+                44,
+                45,
+                46,
+                47,
+                48,
+                49
+            ]
+        ],
+        "nomes_por_tarefa": [
+            [
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19"
+            ],
+            [
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25",
+                "26",
+                "27",
+                "28",
+                "29"
+            ],
+            [
+                "30",
+                "31",
+                "32",
+                "33",
+                "34",
+                "35",
+                "36",
+                "37",
+                "38",
+                "39"
+            ],
+            [
+                "40",
+                "41",
+                "42",
+                "43",
+                "44",
+                "45",
+                "46",
+                "47",
+                "48",
+                "49"
+            ],
+            [
+                "50",
+                "51",
+                "52",
+                "53",
+                "54",
+                "55",
+                "56",
+                "57",
+                "58",
+                "59"
+            ]
+        ]
+    },
+    "tarefas": {
+        "0": {
+            "classes": [
+                "10",
+                "11",
+                "12",
+                "13",
+                "14",
+                "15",
+                "16",
+                "17",
+                "18",
+                "19"
+            ],
+            "historico_treino": [
+                {
+                    "epoca": 0,
+                    "loss_ce": null,
+                    "loss_lvq": null,
+                    "acc_treino": null,
+                    "acc_por_classe": {
+                        "10": 86.0,
+                        "11": 93.0,
+                        "12": 84.0,
+                        "13": 69.0,
+                        "14": 94.0,
+                        "15": 90.0,
+                        "16": 85.0,
+                        "17": 85.0,
+                        "18": 95.0,
+                        "19": 95.0
+                    },
+                    "acc_por_tarefa": [
+                        87.6
+                    ],
+                    "aac": 87.6
+                }
+            ],
+            "parada_antecipada": null,
+            "tempo_treino_s": 4.0531158447265625e-06
+        },
+        "1": {
+            "classes": [
+                "20",
+                "21",
+                "22",
+                "23",
+                "24",
+                "25",
+                "26",
+                "27",
+                "28",
+                "29"
+            ],
+            "historico_treino": [
+                {
+                    "epoca": 0,
+                    "loss_ce": null,
+                    "loss_lvq": null,
+                    "acc_treino": null,
+                    "acc_por_classe": {
+                        "10": 86.0,
+                        "11": 93.0,
+                        "12": 84.0,
+                        "13": 69.0,
+                        "14": 94.0,
+                        "15": 90.0,
+                        "16": 85.0,
+                        "17": 85.0,
+                        "18": 95.0,
+                        "19": 95.0,
+                        "20": 92.5,
+                        "21": 57.5,
+                        "22": 97.5,
+                        "23": 90.0,
+                        "24": 60.0,
+                        "25": 85.0,
+                        "26": 95.0,
+                        "27": 77.5,
+                        "28": 70.0,
+                        "29": 97.5
+                    },
+                    "acc_por_tarefa": [
+                        87.6,
+                        82.25
+                    ],
+                    "aac": 84.925
+                }
+            ],
+            "parada_antecipada": null,
+            "tempo_treino_s": 3.0994415283203125e-06
+        },
+        "2": {
+            "classes": [
+                "30",
+                "31",
+                "32",
+                "33",
+                "34",
+                "35",
+                "36",
+                "37",
+                "38",
+                "39"
+            ],
+            "historico_treino": [
+                {
+                    "epoca": 0,
+                    "loss_ce": null,
+                    "loss_lvq": null,
+                    "acc_treino": null,
+                    "acc_por_classe": {
+                        "10": 86.0,
+                        "11": 93.0,
+                        "12": 84.0,
+                        "13": 69.0,
+                        "14": 94.0,
+                        "15": 90.0,
+                        "16": 85.0,
+                        "17": 85.0,
+                        "18": 95.0,
+                        "19": 95.0,
+                        "20": 92.5,
+                        "21": 57.5,
+                        "22": 97.5,
+                        "23": 90.0,
+                        "24": 52.5,
+                        "25": 85.0,
+                        "26": 95.0,
+                        "27": 77.5,
+                        "28": 65.0,
+                        "29": 97.5,
+                        "30": 94.89795918367346,
+                        "31": 93.0,
+                        "32": 84.0,
+                        "33": 94.0,
+                        "34": 97.0,
+                        "35": 97.0,
+                        "36": 99.0,
+                        "37": 100.0,
+                        "38": 90.9090909090909,
+                        "39": 91.0
+                    },
+                    "acc_por_tarefa": [
+                        87.6,
+                        81.0,
+                        94.08070500927644
+                    ],
+                    "aac": 87.56023500309215
+                }
+            ],
+            "parada_antecipada": null,
+            "tempo_treino_s": 2.384185791015625e-06
+        },
+        "3": {
+            "classes": [
+                "40",
+                "41",
+                "42",
+                "43",
+                "44",
+                "45",
+                "46",
+                "47",
+                "48",
+                "49"
+            ],
+            "historico_treino": [
+                {
+                    "epoca": 0,
+                    "loss_ce": null,
+                    "loss_lvq": null,
+                    "acc_treino": null,
+                    "acc_por_classe": {
+                        "10": 86.0,
+                        "11": 93.0,
+                        "12": 84.0,
+                        "13": 69.0,
+                        "14": 94.0,
+                        "15": 90.0,
+                        "16": 85.0,
+                        "17": 85.0,
+                        "18": 95.0,
+                        "19": 94.0,
+                        "20": 92.5,
+                        "21": 55.0,
+                        "22": 97.5,
+                        "23": 90.0,
+                        "24": 52.5,
+                        "25": 85.0,
+                        "26": 95.0,
+                        "27": 77.5,
+                        "28": 65.0,
+                        "29": 97.5,
+                        "30": 94.89795918367346,
+                        "31": 93.0,
+                        "32": 84.0,
+                        "33": 94.0,
+                        "34": 97.0,
+                        "35": 97.0,
+                        "36": 99.0,
+                        "37": 100.0,
+                        "38": 90.9090909090909,
+                        "39": 91.0,
+                        "40": 89.70331588132635,
+                        "41": 93.21739130434783,
+                        "42": 84.70209339774557,
+                        "43": 61.904761904761905,
+                        "44": 98.00399201596807,
+                        "45": 80.10075566750629,
+                        "46": 67.85714285714286,
+                        "47": 77.96052631578948,
+                        "48": 63.20939334637965,
+                        "49": 79.70297029702971
+                    },
+                    "acc_por_tarefa": [
+                        87.5,
+                        80.75,
+                        94.08070500927644,
+                        79.63623429879979
+                    ],
+                    "aac": 85.49173482701906
+                }
+            ],
+            "parada_antecipada": null,
+            "tempo_treino_s": 3.0994415283203125e-06
+        },
+        "4": {
+            "classes": [
+                "50",
+                "51",
+                "52",
+                "53",
+                "54",
+                "55",
+                "56",
+                "57",
+                "58",
+                "59"
+            ],
+            "historico_treino": [
+                {
+                    "epoca": 0,
+                    "loss_ce": null,
+                    "loss_lvq": null,
+                    "acc_treino": null,
+                    "acc_por_classe": {
+                        "10": 86.0,
+                        "11": 93.0,
+                        "12": 84.0,
+                        "13": 69.0,
+                        "14": 94.0,
+                        "15": 90.0,
+                        "16": 85.0,
+                        "17": 85.0,
+                        "18": 95.0,
+                        "19": 94.0,
+                        "20": 92.5,
+                        "21": 52.5,
+                        "22": 97.5,
+                        "23": 90.0,
+                        "24": 50.0,
+                        "25": 85.0,
+                        "26": 95.0,
+                        "27": 77.5,
+                        "28": 65.0,
+                        "29": 97.5,
+                        "30": 94.89795918367346,
+                        "31": 93.0,
+                        "32": 84.0,
+                        "33": 94.0,
+                        "34": 97.0,
+                        "35": 97.0,
+                        "36": 99.0,
+                        "37": 100.0,
+                        "38": 90.9090909090909,
+                        "39": 91.0,
+                        "40": 89.70331588132635,
+                        "41": 93.21739130434783,
+                        "42": 84.70209339774557,
+                        "43": 61.904761904761905,
+                        "44": 98.00399201596807,
+                        "45": 80.10075566750629,
+                        "46": 67.85714285714286,
+                        "47": 77.96052631578948,
+                        "48": 63.20939334637965,
+                        "49": 79.70297029702971,
+                        "50": 99.15966386554622,
+                        "51": 100.0,
+                        "52": 100.0,
+                        "53": 100.0,
+                        "54": 100.0,
+                        "55": 100.0,
+                        "56": 100.0,
+                        "57": 100.0,
+                        "58": 100.0,
+                        "59": 100.0
+                    },
+                    "acc_por_tarefa": [
+                        87.5,
+                        80.25,
+                        94.08070500927644,
+                        79.63623429879979,
+                        99.91596638655463
+                    ],
+                    "aac": 88.27658113892616
+                }
+            ],
+            "parada_antecipada": null,
+            "tempo_treino_s": 2.384185791015625e-06
+        }
+    },
+    "diagnostico_task_arithmetic": {},
+    "acc_apos_tarefa": [
+        87.6,
+        86.07142857142858,
+        89.1404612159329,
+        82.76172125883109,
+        84.38333913447036
+    ],
+    "acc_apos_tarefa_padronizada": [
+        87.6,
+        79.28571428571428,
+        83.9832285115304,
+        80.5009633911368,
+        81.79603202227636
+    ],
+    "acc_por_tarefa_apos_tarefa": [
+        [
+            87.6
+        ],
+        [
+            87.6,
+            82.25
+        ],
+        [
+            87.6,
+            81.0,
+            94.01015228426395
+        ],
+        [
+            87.5,
+            80.75,
+            94.01015228426395,
+            79.98148148148148
+        ],
+        [
+            87.5,
+            80.25,
+            94.01015228426395,
+            79.98148148148148,
+            99.76019184652279
+        ]
+    ],
+    "acc_por_tarefa_apos_tarefa_padronizada": [
+        [
+            87.6
+        ],
+        [
+            76.9,
+            85.25
+        ],
+        [
+            76.9,
+            85.25,
+            90.65989847715737
+        ],
+        [
+            76.7,
+            85.25,
+            90.65989847715737,
+            79.0
+        ],
+        [
+            76.7,
+            85.25,
+            90.65989847715737,
+            79.0,
+            93.88489208633094
+        ]
+    ],
+    "metricas_vazamento_por_fronteira": {
+        "1": {
+            "acc": 0.8607142857142858,
+            "vazamento": 0.016428571428571428,
+            "vazamento_balanceado": 0.028000000000000025,
+            "erro_dentro_da_tarefa": 0.12285714285714286,
+            "parcela_do_erro_por_vazamento": 0.11794871794871799,
+            "acc_oraculo_tarefa": 0.8692857142857143,
+            "teto_de_ganho": 0.008571428571428563,
+            "matriz_L": [
+                [
+                    0.999,
+                    0.001
+                ],
+                [
+                    0.055,
+                    0.945
+                ]
+            ],
+            "contagens": [
+                [
+                    999,
+                    1
+                ],
+                [
+                    22,
+                    378
+                ]
+            ],
+            "indice_direcao": 0.01818181818181818,
+            "perfil_deslocamento": {
+                "-1": 0.055,
+                "1": 0.001
+            },
+            "spearman_recencia": -0.9999999999999999,
+            "spearman_semantica": -0.9999999999999999,
+            "spearman_semantica_parcial": -0.9999999999999999,
+            "vazamento_apos_normalizacao": 0.09571428571428571,
+            "parcela_atribuivel_a_escala": -4.826086956521739
+        },
+        "2": {
+            "acc": 0.8914046121593291,
+            "vazamento": 0.0129979035639413,
+            "vazamento_balanceado": 0.02533333333333332,
+            "erro_dentro_da_tarefa": 0.09559748427672957,
+            "parcela_do_erro_por_vazamento": 0.11969111969111963,
+            "acc_oraculo_tarefa": 0.8985324947589098,
+            "teto_de_ganho": 0.007127882599580748,
+            "matriz_L": [
+                [
+                    0.999,
+                    0.001,
+                    0.0
+                ],
+                [
+                    0.0525,
+                    0.925,
+                    0.0225
+                ],
+                [
+                    0.0,
+                    0.0,
+                    1.0
+                ]
+            ],
+            "contagens": [
+                [
+                    999,
+                    1,
+                    0
+                ],
+                [
+                    21,
+                    370,
+                    9
+                ],
+                [
+                    0,
+                    0,
+                    985
+                ]
+            ],
+            "indice_direcao": 0.44761904761904764,
+            "perfil_deslocamento": {
+                "-2": 0.0,
+                "-1": 0.02625,
+                "1": 0.01175,
+                "2": 0.0
+            },
+            "spearman_recencia": 0.06253053994807224,
+            "spearman_semantica": 0.3946648814672956,
+            "spearman_semantica_parcial": 0.4463088844523658,
+            "vazamento_apos_normalizacao": 0.07379454926624739,
+            "parcela_atribuivel_a_escala": -4.67741935483871
+        },
+        "3": {
+            "acc": 0.8276172125883109,
+            "vazamento": 0.006936416184971098,
+            "vazamento_balanceado": 0.02530555555555558,
+            "erro_dentro_da_tarefa": 0.16544637122671804,
+            "parcela_do_erro_por_vazamento": 0.04023845007451566,
+            "acc_oraculo_tarefa": 0.8313423249839434,
+            "teto_de_ganho": 0.003725112395632557,
+            "matriz_L": [
+                [
+                    0.996,
+                    0.001,
+                    0.0,
+                    0.003
+                ],
+                [
+                    0.0475,
+                    0.905,
+                    0.02,
+                    0.0275
+                ],
+                [
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                [
+                    0.0022222222222222222,
+                    0.0,
+                    0.0,
+                    0.9977777777777778
+                ]
+            ],
+            "contagens": [
+                [
+                    996,
+                    1,
+                    0,
+                    3
+                ],
+                [
+                    19,
+                    362,
+                    8,
+                    11
+                ],
+                [
+                    0,
+                    0,
+                    985,
+                    0
+                ],
+                [
+                    12,
+                    0,
+                    0,
+                    5388
+                ]
+            ],
+            "indice_direcao": 1.035754189944134,
+            "perfil_deslocamento": {
+                "-3": 0.0022222222222222222,
+                "-2": 0.0,
+                "-1": 0.015833333333333335,
+                "1": 0.007,
+                "2": 0.01375,
+                "3": 0.003
+            },
+            "spearman_recencia": 0.286850459466592,
+            "spearman_semantica": 0.38069773632727405,
+            "spearman_semantica_parcial": 0.41743970731591,
+            "vazamento_apos_normalizacao": 0.035838150289017344,
+            "parcela_atribuivel_a_escala": -4.166666666666667
+        },
+        "4": {
+            "acc": 0.8438333913447036,
+            "vazamento": 0.0064972734655992575,
+            "vazamento_balanceado": 0.0212444444444444,
+            "erro_dentro_da_tarefa": 0.1496693351896972,
+            "parcela_do_erro_por_vazamento": 0.04160475482912333,
+            "acc_oraculo_tarefa": 0.8474300962988746,
+            "teto_de_ganho": 0.0035967049541709706,
+            "matriz_L": [
+                [
+                    0.996,
+                    0.001,
+                    0.0,
+                    0.003,
+                    0.0
+                ],
+                [
+                    0.0475,
+                    0.9,
+                    0.0175,
+                    0.0225,
+                    0.0125
+                ],
+                [
+                    0.0,
+                    0.0,
+                    1.0,
+                    0.0,
+                    0.0
+                ],
+                [
+                    0.0022222222222222222,
+                    0.0,
+                    0.0,
+                    0.9977777777777778,
+                    0.0
+                ],
+                [
+                    0.0,
+                    0.0,
+                    0.0,
+                    0.0,
+                    1.0
+                ]
+            ],
+            "contagens": [
+                [
+                    996,
+                    1,
+                    0,
+                    3,
+                    0
+                ],
+                [
+                    19,
+                    360,
+                    7,
+                    9,
+                    5
+                ],
+                [
+                    0,
+                    0,
+                    985,
+                    0,
+                    0
+                ],
+                [
+                    12,
+                    0,
+                    0,
+                    5388,
+                    0
+                ],
+                [
+                    0,
+                    0,
+                    0,
+                    0,
+                    834
+                ]
+            ],
+            "indice_direcao": 1.1363128491620114,
+            "perfil_deslocamento": {
+                "-4": 0.0,
+                "-3": 0.0011111111111111111,
+                "-2": 0.0,
+                "-1": 0.011875,
+                "1": 0.004625000000000001,
+                "2": 0.0075,
+                "3": 0.00775,
+                "4": 0.0
+            },
+            "spearman_recencia": 0.29269385478040766,
+            "spearman_semantica": 0.35113060790710404,
+            "spearman_semantica_parcial": 0.4042338616692827,
+            "vazamento_apos_normalizacao": 0.03828750435085277,
+            "parcela_atribuivel_a_escala": -4.892857142857143
+        }
+    },
+    "metricas_vazamento_por_fronteira_padronizada": {
+        "1": {
+            "acc": 0.7928571428571428,
+            "vazamento": 0.09571428571428571,
+            "vazamento_balanceado": 0.06699999999999995,
+            "erro_dentro_da_tarefa": 0.11142857142857143,
+            "parcela_do_erro_por_vazamento": 0.46206896551724125,
+            "acc_oraculo_tarefa": 0.8692857142857143,
+            "teto_de_ganho": 0.07642857142857151,
+            "matriz_L": [
+                [
+                    0.866,
+                    0.134
+                ],
+                [
+                    0.0,
+                    1.0
+                ]
+            ],
+            "contagens": [
+                [
+                    866,
+                    134
+                ],
+                [
+                    0,
+                    400
+                ]
+            ],
+            "indice_direcao": "inf",
+            "perfil_deslocamento": {
+                "-1": 0.0,
+                "1": 0.134
+            },
+            "spearman_recencia": 0.9999999999999999,
+            "spearman_semantica": 0.9999999999999999,
+            "spearman_semantica_parcial": 0.9999999999999999,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        },
+        "2": {
+            "acc": 0.839832285115304,
+            "vazamento": 0.07379454926624739,
+            "vazamento_balanceado": 0.05887986463620987,
+            "erro_dentro_da_tarefa": 0.08637316561844864,
+            "parcela_do_erro_por_vazamento": 0.46073298429319365,
+            "acc_oraculo_tarefa": 0.8985324947589098,
+            "teto_de_ganho": 0.058700209643605894,
+            "matriz_L": [
+                [
+                    0.866,
+                    0.134,
+                    0.0
+                ],
+                [
+                    0.0,
+                    1.0,
+                    0.0
+                ],
+                [
+                    0.0,
+                    0.04263959390862944,
+                    0.9573604060913705
+                ]
+            ],
+            "contagens": [
+                [
+                    866,
+                    134,
+                    0
+                ],
+                [
+                    0,
+                    400,
+                    0
+                ],
+                [
+                    0,
+                    42,
+                    943
+                ]
+            ],
+            "indice_direcao": 3.142619047619048,
+            "perfil_deslocamento": {
+                "-2": 0.0,
+                "-1": 0.02131979695431472,
+                "1": 0.067,
+                "2": 0.0
+            },
+            "spearman_recencia": 0.06963106238227912,
+            "spearman_semantica": 0.6761234037828133,
+            "spearman_semantica_parcial": 0.7507735179910818,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        },
+        "3": {
+            "acc": 0.805009633911368,
+            "vazamento": 0.035838150289017344,
+            "vazamento_balanceado": 0.05069693551419441,
+            "erro_dentro_da_tarefa": 0.15915221579961464,
+            "parcela_do_erro_por_vazamento": 0.1837944664031621,
+            "acc_oraculo_tarefa": 0.8313423249839434,
+            "teto_de_ganho": 0.02633269107257541,
+            "matriz_L": [
+                [
+                    0.863,
+                    0.13,
+                    0.0,
+                    0.007
+                ],
+                [
+                    0.0,
+                    0.995,
+                    0.0,
+                    0.005
+                ],
+                [
+                    0.0,
+                    0.04263959390862944,
+                    0.9573604060913705,
+                    0.0
+                ],
+                [
+                    0.000925925925925926,
+                    0.017222222222222222,
+                    0.0,
+                    0.9818518518518519
+                ]
+            ],
+            "contagens": [
+                [
+                    863,
+                    130,
+                    0,
+                    7
+                ],
+                [
+                    0,
+                    398,
+                    0,
+                    2
+                ],
+                [
+                    0,
+                    42,
+                    943,
+                    0
+                ],
+                [
+                    5,
+                    93,
+                    0,
+                    5302
+                ]
+            ],
+            "indice_direcao": 2.3359972783224574,
+            "perfil_deslocamento": {
+                "-3": 0.000925925925925926,
+                "-2": 0.008611111111111111,
+                "-1": 0.014213197969543146,
+                "1": 0.043333333333333335,
+                "2": 0.0025,
+                "3": 0.007
+            },
+            "spearman_recencia": 0.03419409450595136,
+            "spearman_semantica": 0.4814706665315525,
+            "spearman_semantica_parcial": 0.4849406526791326,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        },
+        "4": {
+            "acc": 0.8179603202227637,
+            "vazamento": 0.03828750435085277,
+            "vazamento_balanceado": 0.05278776423869369,
+            "erro_dentro_da_tarefa": 0.14375217542638358,
+            "parcela_do_erro_por_vazamento": 0.21032504780114725,
+            "acc_oraculo_tarefa": 0.8474300962988746,
+            "teto_de_ganho": 0.0294697760761109,
+            "matriz_L": [
+                [
+                    0.863,
+                    0.13,
+                    0.0,
+                    0.007,
+                    0.0
+                ],
+                [
+                    0.0,
+                    0.995,
+                    0.0,
+                    0.005,
+                    0.0
+                ],
+                [
+                    0.0,
+                    0.04263959390862944,
+                    0.9573604060913705,
+                    0.0,
+                    0.0
+                ],
+                [
+                    0.000925925925925926,
+                    0.017222222222222222,
+                    0.0,
+                    0.9818518518518519,
+                    0.0
+                ],
+                [
+                    0.0,
+                    0.06115107913669065,
+                    0.0,
+                    0.0,
+                    0.9388489208633094
+                ]
+            ],
+            "contagens": [
+                [
+                    863,
+                    130,
+                    0,
+                    7,
+                    0
+                ],
+                [
+                    0,
+                    398,
+                    0,
+                    2,
+                    0
+                ],
+                [
+                    0,
+                    42,
+                    943,
+                    0,
+                    0
+                ],
+                [
+                    5,
+                    93,
+                    0,
+                    5302,
+                    0
+                ],
+                [
+                    0,
+                    51,
+                    0,
+                    0,
+                    783
+                ]
+            ],
+            "indice_direcao": 1.164518392175554,
+            "perfil_deslocamento": {
+                "-4": 0.0,
+                "-3": 0.031038502531308288,
+                "-2": 0.005740740740740741,
+                "-1": 0.01065989847715736,
+                "1": 0.0325,
+                "2": 0.0016666666666666668,
+                "3": 0.0035,
+                "4": 0.0
+            },
+            "spearman_recencia": -0.15527052052375281,
+            "spearman_semantica": 0.4446478049878906,
+            "spearman_semantica_parcial": 0.4351810495616821,
+            "vazamento_apos_normalizacao": null,
+            "parcela_atribuivel_a_escala": null
+        }
+    },
+    "resultado_final_padronizado": {
+        "acc_por_tarefa": [
+            76.7,
+            85.25,
+            90.65989847715737,
+            79.0,
+            93.88489208633094
+        ],
+        "aac": 85.09895811269766,
+        "aac_incremental": 82.63318764213156
+    },
+    "versao_principal": "padronizada",
+    "resultado_final": {
+        "acc_por_tarefa": [
+            87.5,
+            80.25,
+            94.01015228426395,
+            79.98148148148148,
+            99.76019184652279
+        ],
+        "aac": 88.30036512245364,
+        "aac_incremental": 85.99139003613257,
+        "nc1_concatenado": null,
+        "alinhamento_diagonal": null,
+        "matriz_scores_medios": null
+    },
+    "metricas_vazamento_final": {
+        "acc": 0.8438333913447036,
+        "vazamento": 0.0064972734655992575,
+        "vazamento_balanceado": 0.0212444444444444,
+        "erro_dentro_da_tarefa": 0.1496693351896972,
+        "parcela_do_erro_por_vazamento": 0.04160475482912333,
+        "acc_oraculo_tarefa": 0.8474300962988746,
+        "teto_de_ganho": 0.0035967049541709706,
+        "matriz_L": [
+            [
+                0.996,
+                0.001,
+                0.0,
+                0.003,
+                0.0
+            ],
+            [
+                0.0475,
+                0.9,
+                0.0175,
+                0.0225,
+                0.0125
+            ],
+            [
+                0.0,
+                0.0,
+                1.0,
+                0.0,
+                0.0
+            ],
+            [
+                0.0022222222222222222,
+                0.0,
+                0.0,
+                0.9977777777777778,
+                0.0
+            ],
+            [
+                0.0,
+                0.0,
+                0.0,
+                0.0,
+                1.0
+            ]
+        ],
+        "contagens": [
+            [
+                996,
+                1,
+                0,
+                3,
+                0
+            ],
+            [
+                19,
+                360,
+                7,
+                9,
+                5
+            ],
+            [
+                0,
+                0,
+                985,
+                0,
+                0
+            ],
+            [
+                12,
+                0,
+                0,
+                5388,
+                0
+            ],
+            [
+                0,
+                0,
+                0,
+                0,
+                834
+            ]
+        ],
+        "indice_direcao": 1.1363128491620114,
+        "perfil_deslocamento": {
+            "-4": 0.0,
+            "-3": 0.0011111111111111111,
+            "-2": 0.0,
+            "-1": 0.011875,
+            "1": 0.004625000000000001,
+            "2": 0.0075,
+            "3": 0.00775,
+            "4": 0.0
+        },
+        "spearman_recencia": 0.29269385478040766,
+        "spearman_semantica": 0.35113060790710404,
+        "spearman_semantica_parcial": 0.4042338616692827,
+        "vazamento_apos_normalizacao": 0.03828750435085277,
+        "parcela_atribuivel_a_escala": -4.892857142857143
+    },
+    "metricas_vazamento_final_padronizada": {
+        "acc": 0.8179603202227637,
+        "vazamento": 0.03828750435085277,
+        "vazamento_balanceado": 0.05278776423869369,
+        "erro_dentro_da_tarefa": 0.14375217542638358,
+        "parcela_do_erro_por_vazamento": 0.21032504780114725,
+        "acc_oraculo_tarefa": 0.8474300962988746,
+        "teto_de_ganho": 0.0294697760761109,
+        "matriz_L": [
+            [
+                0.863,
+                0.13,
+                0.0,
+                0.007,
+                0.0
+            ],
+            [
+                0.0,
+                0.995,
+                0.0,
+                0.005,
+                0.0
+            ],
+            [
+                0.0,
+                0.04263959390862944,
+                0.9573604060913705,
+                0.0,
+                0.0
+            ],
+            [
+                0.000925925925925926,
+                0.017222222222222222,
+                0.0,
+                0.9818518518518519,
+                0.0
+            ],
+            [
+                0.0,
+                0.06115107913669065,
+                0.0,
+                0.0,
+                0.9388489208633094
+            ]
+        ],
+        "contagens": [
+            [
+                863,
+                130,
+                0,
+                7,
+                0
+            ],
+            [
+                0,
+                398,
+                0,
+                2,
+                0
+            ],
+            [
+                0,
+                42,
+                943,
+                0,
+                0
+            ],
+            [
+                5,
+                93,
+                0,
+                5302,
+                0
+            ],
+            [
+                0,
+                51,
+                0,
+                0,
+                783
+            ]
+        ],
+        "indice_direcao": 1.164518392175554,
+        "perfil_deslocamento": {
+            "-4": 0.0,
+            "-3": 0.031038502531308288,
+            "-2": 0.005740740740740741,
+            "-1": 0.01065989847715736,
+            "1": 0.0325,
+            "2": 0.0016666666666666668,
+            "3": 0.0035,
+            "4": 0.0
+        },
+        "spearman_recencia": -0.15527052052375281,
+        "spearman_semantica": 0.4446478049878906,
+        "spearman_semantica_parcial": 0.4351810495616821,
+        "vazamento_apos_normalizacao": null,
+        "parcela_atribuivel_a_escala": null
+    },
+    "estatisticas_score_por_tarefa": [
+        [
+            0.758501410484314,
+            0.0866742830140686
+        ],
+        [
+            0.5574938058853149,
+            0.1487082640988922
+        ],
+        [
+            0.7809627056121826,
+            0.08568369852138519
+        ],
+        [
+            0.7387976050376892,
+            0.10837561147047042
+        ],
+        [
+            0.888372540473938,
+            0.06477634118629455
+        ]
+    ],
+    "dispersao_escala_DE": 1.2101138826048827,
+    "estatisticas_score_origem": "imagens_de_treino_no_fim_de_cada_tarefa",
+    "esquecimento_medio": 0.5249999999999986,
+    "esquecimento_medio_padronizado": 2.724999999999998,
+    "memoria": {
+        "bytes_banco_por_classe_media": 69271.52,
+        "bytes_banco_total": 3463576,
+        "bytes_prototipo_por_classe": 3072,
+        "bytes_adapters_total": 1982720,
+        "adapters_distintos": 5,
+        "bytes_estatisticas_padronizacao": 40
+    },
+    "tempos": {
+        "cache_phi_s": 95.3589837551117,
+        "treino_por_tarefa_s": [
+            4.0531158447265625e-06,
+            3.0994415283203125e-06,
+            2.384185791015625e-06,
+            3.0994415283203125e-06,
+            2.384185791015625e-06
+        ],
+        "total_s": 120.93436861038208
+    }
+}

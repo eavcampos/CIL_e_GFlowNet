@@ -115,3 +115,9 @@ config_ncm_teste_cenario7_omnibenchmark_inc30_vit_seed1993 | OK | 0h52min | AAC 
 Execução de 25/11/2026 21:09:51
 config_ncm_teste_cenario8_vtab_inc10_vit_seed1993 | OK | 0h2min | AAC (5 tarefas): 88.30% | padronizada: 85.10% | vazamento 0.65%
 3.83%
+Execução de 26/11/2026 03:29:26
+config_fecam_teste_cenario1_cifar100_inc20_resnet_seed1993 | OK | 0h0min | ? | vazamento 35.98%
+config_gauss_ca_teste_cenario1_cifar100_inc20_resnet_seed1993 | OK | 0h0min | ? | vazamento 46.78%
+Execução de 26/11/2026 03:41:38
+config_fecam_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h2min | ? | vazamento 33.87%
+config_gauss_ca_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h1min | ? | vazamento 39.42%
