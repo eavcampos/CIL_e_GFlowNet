@@ -103,3 +103,15 @@ config_margem_padronizada_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h
 config_baseline_estatval_teste_cenario5_imagenet_r_inc20_vit_seed1993 | OK | 0h1min | AAC (10 tarefas): 22.12% | padronizada: 39.87% | vazamento 73.95%
 55.37%
 54.38%
+Execução de 25/11/2026 20:10:25
+config_ncm_teste_cenario4_cifar100_inc5_vit_seed1993 | OK | 0h6min | AAC (20 tarefas): 81.26% | padronizada: 80.11% | vazamento 18.12%
+19.33%
+Execução de 25/11/2026 20:14:31
+config_ncm_teste_cenario6_imagenet_a_inc20_vit_seed1993 | OK | 0h3min | AAC (10 tarefas): 48.89% | padronizada: 46.38% | vazamento 46.87%
+49.70%
+Execução de 25/11/2026 21:07:04
+config_ncm_teste_cenario7_omnibenchmark_inc30_vit_seed1993 | OK | 0h52min | AAC (10 tarefas): 73.15% | padronizada: 72.37% | vazamento 24.24%
+25.38%
+Execução de 25/11/2026 21:09:51
+config_ncm_teste_cenario8_vtab_inc10_vit_seed1993 | OK | 0h2min | AAC (5 tarefas): 88.30% | padronizada: 85.10% | vazamento 0.65%
+3.83%
